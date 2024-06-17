@@ -13,8 +13,8 @@ CREATE TABLE `BingoSquare` (
 	`x_pos` integer NOT NULL,
 	`y_pos` integer NOT NULL,
 	`claimed_by` text,
-	FOREIGN KEY (`game_id`) REFERENCES `BingoGame`(`id`) ON UPDATE no action ON DELETE no action,
-	FOREIGN KEY (`map_id`) REFERENCES `Map`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`game_id`) REFERENCES `BingoGame`(`id`) ON UPDATE cascade ON DELETE cascade,
+	FOREIGN KEY (`map_id`) REFERENCES `Map`(`id`) ON UPDATE cascade ON DELETE restrict
 );
 --> statement-breakpoint
 CREATE TABLE `Chat` (
@@ -24,7 +24,7 @@ CREATE TABLE `Chat` (
 	`game_id` text NOT NULL,
 	`user_id` integer NOT NULL,
 	FOREIGN KEY (`game_id`) REFERENCES `BingoGame`(`id`) ON UPDATE cascade ON DELETE cascade,
-	FOREIGN KEY (`user_id`) REFERENCES `GameUser`(`user_id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`game_id`,`user_id`) REFERENCES `GameUser`(`game_id`,`user_id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `GameUser` (
@@ -32,7 +32,9 @@ CREATE TABLE `GameUser` (
 	`user_id` integer NOT NULL,
 	`team_name` text NOT NULL,
 	`host` integer DEFAULT false NOT NULL,
-	PRIMARY KEY(`game_id`, `user_id`)
+	PRIMARY KEY(`game_id`, `user_id`),
+	FOREIGN KEY (`game_id`) REFERENCES `BingoGame`(`id`) ON UPDATE cascade ON DELETE cascade,
+	FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON UPDATE cascade ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `Map` (
@@ -72,7 +74,7 @@ CREATE TABLE `OauthToken` (
 	`refresh_token` text NOT NULL,
 	`token_type` text NOT NULL,
 	`user_id` integer,
-	FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON UPDATE no action ON DELETE cascade
+	FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON UPDATE cascade ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `Score` (
@@ -84,9 +86,10 @@ CREATE TABLE `Score` (
 	`mods` text DEFAULT '',
 	`important` integer DEFAULT false,
 	`square_id` text NOT NULL,
+	`game_id` integer NOT NULL,
 	`user_id` integer NOT NULL,
 	FOREIGN KEY (`square_id`) REFERENCES `BingoSquare`(`id`) ON UPDATE cascade ON DELETE cascade,
-	FOREIGN KEY (`user_id`) REFERENCES `GameUser`(`user_id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`game_id`,`user_id`) REFERENCES `GameUser`(`game_id`,`user_id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `Session` (
@@ -98,7 +101,7 @@ CREATE TABLE `Session` (
 	`device` text,
 	`browser` text,
 	`os` text,
-	FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON UPDATE cascade ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `TimeEvent` (
@@ -107,7 +110,7 @@ CREATE TABLE `TimeEvent` (
 	`action` text NOT NULL,
 	`fulfilled` integer DEFAULT false,
 	`game_id` text NOT NULL,
-	FOREIGN KEY (`game_id`) REFERENCES `BingoGame`(`id`) ON UPDATE no action ON DELETE cascade
+	FOREIGN KEY (`game_id`) REFERENCES `BingoGame`(`id`) ON UPDATE cascade ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE TABLE `User` (
@@ -129,6 +132,7 @@ CREATE TABLE `User` (
 	`last_refreshed` integer
 );
 --> statement-breakpoint
+CREATE UNIQUE INDEX `MapStats_map_id_mod_string_unique` ON `MapStats` (`map_id`,`mod_string`);--> statement-breakpoint
 CREATE UNIQUE INDEX `OauthToken_access_token_unique` ON `OauthToken` (`access_token`);--> statement-breakpoint
 CREATE UNIQUE INDEX `OauthToken_refresh_token_unique` ON `OauthToken` (`refresh_token`);--> statement-breakpoint
 CREATE UNIQUE INDEX `Session_token_unique` ON `Session` (`token`);

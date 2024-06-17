@@ -11,7 +11,7 @@
 			// User in game
 			if (user && !game.users.map((x) => x.id).includes(user.id)) {
 				buttonType = 'JOIN';
-				return 'Join';
+				return 'This game has not started';
 			}
 			// Start Timer
 			buttonType = 'LEAVE';
@@ -24,9 +24,16 @@
 		return '';
 	};
 
-	const leave = () => {
+	const leave = async () => {
 		if (browser) {
-			fetch(`/api/leave_game?id=${game.id}`);
+			await fetch(`/api/leave_game?id=${game.id}`);
+			window.location.reload();
+		}
+	};
+
+	const join = async () => {
+		if (browser) {
+      await fetch(`/api/join_game?id=${game.id}&team=RED`);
 			window.location.reload();
 		}
 	};
@@ -37,7 +44,7 @@
 >
 	{announcerText()}
 	{#if buttonType == 'JOIN'}
-		<button class="bg-green-600 p-1 rounded-full text-sm px-2 ml-2">JOIN</button>
+    <button on:click={join} class="bg-green-600 p-1 rounded-full text-sm px-2 ml-2">JOIN</button>
 	{:else if buttonType == 'LEAVE'}
 		<button on:click={leave} class="bg-amber-600 p-1 rounded-full text-sm px-2 ml-2">LEAVE</button>
 	{/if}

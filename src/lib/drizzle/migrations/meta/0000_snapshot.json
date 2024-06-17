@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "2f012e20-fe39-463f-b22e-84b52edbfd0b",
+  "id": "900b23a9-dc65-4fee-8c4a-7577d73699ef",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "BingoGame": {
@@ -109,8 +109,8 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         },
         "BingoSquare_map_id_Map_id_fk": {
           "name": "BingoSquare_map_id_Map_id_fk",
@@ -122,8 +122,8 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -183,14 +183,16 @@
           "onDelete": "cascade",
           "onUpdate": "cascade"
         },
-        "Chat_user_id_GameUser_user_id_fk": {
-          "name": "Chat_user_id_GameUser_user_id_fk",
+        "Chat_game_id_user_id_GameUser_game_id_user_id_fk": {
+          "name": "Chat_game_id_user_id_GameUser_game_id_user_id_fk",
           "tableFrom": "Chat",
           "tableTo": "GameUser",
           "columnsFrom": [
+            "game_id",
             "user_id"
           ],
           "columnsTo": [
+            "game_id",
             "user_id"
           ],
           "onDelete": "no action",
@@ -234,7 +236,34 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "GameUser_game_id_BingoGame_id_fk": {
+          "name": "GameUser_game_id_BingoGame_id_fk",
+          "tableFrom": "GameUser",
+          "tableTo": "BingoGame",
+          "columnsFrom": [
+            "game_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "GameUser_user_id_User_id_fk": {
+          "name": "GameUser_user_id_User_id_fk",
+          "tableFrom": "GameUser",
+          "tableTo": "User",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
       "compositePrimaryKeys": {
         "GameUser_game_id_user_id_pk": {
           "columns": [
@@ -407,7 +436,16 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "MapStats_map_id_mod_string_unique": {
+          "name": "MapStats_map_id_mod_string_unique",
+          "columns": [
+            "map_id",
+            "mod_string"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {
         "MapStats_map_id_Map_id_fk": {
           "name": "MapStats_map_id_Map_id_fk",
@@ -515,7 +553,7 @@
             "id"
           ],
           "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -583,6 +621,13 @@
           "notNull": true,
           "autoincrement": false
         },
+        "game_id": {
+          "name": "game_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "user_id": {
           "name": "user_id",
           "type": "integer",
@@ -606,14 +651,16 @@
           "onDelete": "cascade",
           "onUpdate": "cascade"
         },
-        "Score_user_id_GameUser_user_id_fk": {
-          "name": "Score_user_id_GameUser_user_id_fk",
+        "Score_game_id_user_id_GameUser_game_id_user_id_fk": {
+          "name": "Score_game_id_user_id_GameUser_game_id_user_id_fk",
           "tableFrom": "Score",
           "tableTo": "GameUser",
           "columnsFrom": [
+            "game_id",
             "user_id"
           ],
           "columnsTo": [
+            "game_id",
             "user_id"
           ],
           "onDelete": "no action",
@@ -703,8 +750,8 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -763,7 +810,7 @@
             "id"
           ],
           "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
