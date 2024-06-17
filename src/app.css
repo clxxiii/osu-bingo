@@ -3,21 +3,21 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: "Roundor";
-  src: url("/fonts/RoundorNonCommercial.otf")
+	font-family: 'Roundor';
+	src: url('/fonts/RoundorNonCommercial.otf');
 }
 
 @font-face {
-  font-family: "Comfortaa";
-  src: url("/fonts/Comfortaa-VariableFont_wght.ttf")
+	font-family: 'Comfortaa';
+	src: url('/fonts/Comfortaa-VariableFont_wght.ttf');
 }
 
 @font-face {
-  font-family: "Montserrat";
-  font-weight: 400;
-  src: url("/fonts/montserrat/Montserrat-Regular.ttf")
+	font-family: 'Montserrat';
+	font-weight: 400;
+	src: url('/fonts/montserrat/Montserrat-Regular.ttf');
 }
 
 body {
-  @apply bg-zinc-900 text-purple-300 font-sans
+	@apply bg-zinc-900 text-purple-300 font-sans;
 }

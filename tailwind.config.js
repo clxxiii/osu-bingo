@@ -1,12 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-	content: ["./src/**/*.{html,js,ts,svelte}"],
+	content: ['./src/**/*.{html,js,ts,svelte}'],
 	theme: {
 		extend: {
 			fontFamily: {
 				sans: ['Montserrat', 'sans-serif'],
-				display: [ 'Roundor', 'display', 'sans-serif'],
-				rounded: [ 'Comfortaa', 'sans-serif']
+				display: ['Roundor', 'display', 'sans-serif'],
+				rounded: ['Comfortaa', 'sans-serif']
 			},
 			colors: {
 				base: {

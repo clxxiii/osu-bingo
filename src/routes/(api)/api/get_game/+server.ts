@@ -4,8 +4,8 @@ import type { RequestHandler } from './$types';
 import { StatusCodes } from '$lib/StatusCodes';
 
 export const GET: RequestHandler = async ({ url }) => {
-  const id = url.searchParams.get('id');
-  if (!id) error(StatusCodes.BAD_REQUEST);
-  const game = await getGame(id);
-  return json(game);
+	const id = url.searchParams.get('id');
+	if (!id) error(StatusCodes.BAD_REQUEST);
+	const game = await getGame(id);
+	return json(game);
 };

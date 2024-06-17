@@ -33,7 +33,7 @@
 
 	const join = async () => {
 		if (browser) {
-      await fetch(`/api/join_game?id=${game.id}&team=RED`);
+			await fetch(`/api/join_game?id=${game.id}&team=RED`);
 			window.location.reload();
 		}
 	};
@@ -44,7 +44,7 @@
 >
 	{announcerText()}
 	{#if buttonType == 'JOIN'}
-    <button on:click={join} class="bg-green-600 p-1 rounded-full text-sm px-2 ml-2">JOIN</button>
+		<button on:click={join} class="bg-green-600 p-1 rounded-full text-sm px-2 ml-2">JOIN</button>
 	{:else if buttonType == 'LEAVE'}
 		<button on:click={leave} class="bg-amber-600 p-1 rounded-full text-sm px-2 ml-2">LEAVE</button>
 	{/if}
