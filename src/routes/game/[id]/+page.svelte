@@ -15,6 +15,7 @@
 
 	const game = writable<Bingo.Card>(data.game);
 
+	// Show sidebar on bingo square click
 	const squareclick = (square: CustomEvent<Bingo.Card.FullSquare>) => {
 		if (!sidebar) {
 			selectedSquare = square.detail;
@@ -25,12 +26,14 @@
 		setTimeout(() => (selectedSquare = square.detail), 300);
 	};
 
+	// Recieve Game updates from server
 	onMount(async () => {
-		const gameStream = new EventSource(`/api/game_stream/${data.game.id}`);
+		const gameStream = new EventSource(`/game_stream/${data.game.id}`);
 		gameStream.onmessage = (msg) => {
 			const data = JSON.parse(msg.data);
 			game.set(data);
 		};
+		gameStream.onerror;
 	});
 </script>
 
@@ -42,7 +45,7 @@
 		{#if $game.squares}
 			<BingoCard on:squareclick={squareclick} card={$game} />
 		{:else}
-			<TeamList />
+			<TeamList gameStore={game} />
 		{/if}
 	</article>
 	{#if sidebar}

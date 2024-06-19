@@ -8,3 +8,28 @@ export const load: PageServerLoad = async ({ params }) => {
 	if (!game) error(StatusCodes.NOT_FOUND);
 	return { game };
 };
+
+export const actions = {
+	join_game: async ({ request, params, locals }) => {
+		const form = await request.formData()
+		const linkId = params.id;
+		const team = form.get('team');
+		const user = locals.user;
+		const game_id = await q.gameLinkToId(linkId);
+
+		if (!user) error(StatusCodes.UNAUTHORIZED);
+		if (!team || !game_id || typeof team != 'string') error(StatusCodes.BAD_REQUEST);
+
+		await q.joinGame(game_id, user.id, team);
+	},
+	leave_game: async ({ params, locals }) => {
+		const linkId = params.id;
+		const user = locals.user;
+		const game_id = await q.gameLinkToId(linkId);
+
+		if (!user) error(StatusCodes.UNAUTHORIZED);
+		if (!game_id) error(StatusCodes.BAD_REQUEST);
+
+		await q.leaveGame(game_id, user.id);
+	},
+}

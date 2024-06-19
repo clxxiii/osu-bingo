@@ -42,6 +42,8 @@
 		>
 		<a
 			class="font-rounded block bg-pink-800 rounded w-40 text-center font-bold hover:bg-pink-700 active:bg-pink-900 transition"
+			target="_blank"
+			rel="noopener noreferrer"
 			href="https://osu.ppy.sh/b/{map.id}">Open on osu!web</a
 		>
 	</div>
