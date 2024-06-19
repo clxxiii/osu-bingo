@@ -1,10 +1,10 @@
 import q from '$lib/drizzle/queries';
-import { json, redirect } from '@sveltejs/kit';
+import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { StatusCodes } from '$lib/StatusCodes';
 
 export const GET: RequestHandler = async ({ locals }) => {
-	if (!locals.user) redirect(StatusCodes.UNAUTHORIZED, '/');
+	if (!locals.user) error(StatusCodes.UNAUTHORIZED);
 
 	const token = await q.getToken(locals.user.id);
 	const game = await q.newGame();
