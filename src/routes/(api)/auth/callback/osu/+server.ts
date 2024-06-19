@@ -45,7 +45,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	await q.setToken({
 		user_id: user.id,
 		service: 'osu',
-		expires_at: new Date(Date.now() + 86400 * 1000),
+		expires_at: new Date(Date.now() + token.expires_in * 1000),
 		...token
 	});
 
