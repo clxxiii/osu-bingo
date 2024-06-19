@@ -1,5 +1,5 @@
 import { and, eq, or } from 'drizzle-orm';
-import { db } from '..';
+import { db, emitter } from '..';
 import {
 	BingoGame,
 	BingoSquare,
@@ -144,3 +144,19 @@ export const getGameFromLinkId = async (link: string) => {
 	if (!game_id) return null;
 	return await getGame(game_id);
 };
+
+export const setGameState = async (game_id: string, state: number) => {
+	await db
+		.update(BingoGame)
+		.set({ state })
+		.where(eq(BingoGame.id, game_id))
+
+	emitter.emit(game_id, await getGame(game_id));
+}
+
+export const getCurrentGames = async () => {
+	await db
+		.select({ id: BingoGame.id })
+		.from(BingoGame)
+		.where(eq(BingoGame.state, 1));
+}

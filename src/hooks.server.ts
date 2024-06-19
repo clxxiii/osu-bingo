@@ -5,8 +5,11 @@ import q from '$lib/drizzle/queries';
 import { StatusCodes } from '$lib/StatusCodes';
 
 // Start Polling Services
-import { tokens } from '$lib/server/polling';
+import { tokens, events } from '$lib/server/polling';
+import { setup as watch } from "$lib/server/game/watch"
 tokens.setup()
+events.setup()
+watch()
 
 const jwt_secret = new TextEncoder().encode(JWT_SECRET);
 

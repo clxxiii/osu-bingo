@@ -2,9 +2,6 @@
  * Finds tokens that will expire soon and refreshes them
  */
 
-import { db } from "$lib/drizzle";
-import { OauthToken } from "$lib/drizzle/schema";
-import { and, eq, lte } from "drizzle-orm";
 import { getMe, refreshOAuthToken } from "../osu";
 import q from "$lib/drizzle/queries";
 import { PUBLIC_OSU_CLIENT_ID } from "$env/static/public";
@@ -12,17 +9,17 @@ import { OSU_CLIENT_SECRET } from "$env/static/private";
 
 const POLLING_INTERVAL_MS = 60 * 1000;
 
+let timeout: Timer
+export const setup = () => {
+  clearTimeout(timeout)
+  timeout = setTimeout(async () => {
+    await interval();
+    setup();
+  }, POLLING_INTERVAL_MS)
+}
+
 const interval = async () => {
-  const cutoff = new Date(Date.now() + 1000 * 60 * 5); // Find all tokens that expire in the next 5 minutes
-  const lingeringTokens = await db
-    .select()
-    .from(OauthToken)
-    .where(
-      and(
-        lte(OauthToken.expires_at, cutoff),
-        eq(OauthToken.service, 'osu'),
-      )
-    )
+  const lingeringTokens = await q.getLingeringTokens();
 
   for (const old of lingeringTokens) {
     // Rate limit (make 1 request per second)
@@ -74,13 +71,4 @@ const interval = async () => {
 
     console.log(`Successfully updated user info for ${user.id} (${user.username}: #${user.statistics.global_rank?.toLocaleString()})`)
   }
-}
-
-let timeout: Timer
-export const setup = () => {
-  clearTimeout(timeout)
-  timeout = setTimeout(async () => {
-    await interval();
-    setup();
-  }, POLLING_INTERVAL_MS)
 }

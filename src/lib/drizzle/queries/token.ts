@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm';
+import { and, eq, lte } from 'drizzle-orm';
 import { db } from '..';
 import { OauthToken } from '../schema';
 
@@ -17,6 +17,19 @@ export const setToken = async (token: typeof OauthToken.$inferInsert) => {
 		await db.insert(OauthToken).values(token);
 	}
 };
+
+export const getLingeringTokens = async () => {
+	const cutoff = new Date(Date.now() + 1000 * 60 * 5); // Find all tokens that expire in the next 5 minutes
+	return await db
+		.select()
+		.from(OauthToken)
+		.where(
+			and(
+				lte(OauthToken.expires_at, cutoff),
+				eq(OauthToken.service, 'osu'),
+			)
+		)
+}
 
 export const getToken = async (user_id: number) => {
 	return (await db.select().from(OauthToken).where(eq(OauthToken.user_id, user_id)))[0];
