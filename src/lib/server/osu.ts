@@ -78,3 +78,32 @@ export const getBeatmaps = async (min_sr: number, max_sr: number, access_token: 
 
 	return beatmapsets;
 };
+
+export const refreshOAuthToken = async (token: Bingo.OauthToken,
+	client_id: string,
+	client_secret: string,
+): Promise<Osu.AuthorizationCodeTokenResponse | null> => {
+	const refreshBody = {
+		client_id,
+		client_secret,
+		grant_type: 'refresh_token',
+		refresh_token: token.refresh_token
+	}
+
+	const refreshReq = await fetch(TOKEN_URL, {
+		method: 'POST',
+		body: JSON.stringify(refreshBody),
+		headers: {
+			'Content-Type': 'application/json',
+			'Accept': 'application/json'
+		}
+	})
+
+	const updatedToken = await refreshReq.json();
+
+	// Successfully updated
+	if (refreshReq.ok && updatedToken.access_token) {
+		return updatedToken;
+	}
+	return null;
+}

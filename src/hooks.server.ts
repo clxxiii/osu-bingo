@@ -4,7 +4,13 @@ import { JWT_SECRET } from '$env/static/private';
 import q from '$lib/drizzle/queries';
 import { StatusCodes } from '$lib/StatusCodes';
 
+// Start Polling Services
+import { tokens } from '$lib/server/polling';
+tokens.setup()
+
 const jwt_secret = new TextEncoder().encode(JWT_SECRET);
+
+// Request Handler (Run before every request)
 export const handle: Handle = async ({ event, resolve }) => {
 	const sessionToken = event.cookies.get('osu_bingo_token');
 
