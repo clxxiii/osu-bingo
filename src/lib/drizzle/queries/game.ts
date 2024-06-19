@@ -57,7 +57,7 @@ export const fillSquares = async (
 		for (const set of sets) {
 			if (!set.beatmaps) continue;
 
-			for (const map of set?.beatmaps) {
+			for (const map of set.beatmaps) {
 				if (map.difficulty_rating < min_sr || map.difficulty_rating > max_sr) continue;
 
 				const newSet = structuredClone(set);
@@ -90,9 +90,9 @@ export const fillSquares = async (
 export const getGame = async (game_id: string) => {
 	const game = (await db.select().from(BingoGame).where(eq(BingoGame.id, game_id)))[0];
 
-	//@ts-ignore
+	//@ts-expect-error Strange 
 	const users: Bingo.Card.FullUser[] = await db
-		//@ts-ignore
+		//@ts-expect-error Drizzle gets angry with dereferencing, but it works fine.
 		.select({ ...GameUser, ...User })
 		.from(GameUser)
 		.where(eq(GameUser.game_id, game_id))

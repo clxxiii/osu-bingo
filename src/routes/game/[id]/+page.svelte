@@ -4,12 +4,16 @@
 	import Chatbox from '$lib/components/Chatbox.svelte';
 	import SquareSidebar from '$lib/components/SquareSidebar.svelte';
 	import TeamList from '$lib/components/TeamList.svelte';
+	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
+	import { writable } from 'svelte/store';
 
 	export let data: PageData;
 
 	let sidebar = false;
 	let selectedSquare: Bingo.Card.FullSquare | null;
+
+	const game = writable<Bingo.Card>(data.game);
 
 	const squareclick = (square: CustomEvent<Bingo.Card.FullSquare>) => {
 		if (!sidebar) {
@@ -20,15 +24,23 @@
 		selectedSquare = null;
 		setTimeout(() => (selectedSquare = square.detail), 300);
 	};
+
+	onMount(async () => {
+		const gameStream = new EventSource(`/api/game_stream/${data.game.id}`);
+		gameStream.onmessage = (msg) => {
+			const data = JSON.parse(msg.data);
+			game.set(data);
+		};
+	});
 </script>
 
 <section class="grid">
 	<article
 		class="row-start-1 flex flex-col items-center rounded-xl p-4 gap-y-2 row-end-2 col-start-1 col-end-2 bg-[rgba(0,0,0,0.5)]"
 	>
-		<Announcer game={data.game} user={data.user} />
-		{#if data.game.squares}
-			<BingoCard on:squareclick={squareclick} card={data.game} />
+		<Announcer gameStore={game} user={data.user} />
+		{#if $game.squares}
+			<BingoCard on:squareclick={squareclick} card={$game} />
 		{:else}
 			<TeamList />
 		{/if}
