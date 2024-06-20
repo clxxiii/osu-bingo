@@ -6,8 +6,10 @@ import { emitter } from "$lib/drizzle";
 import q from "$lib/drizzle/queries"
 import type { Osu } from "$lib/osu";
 import { getRecentScores } from "../osu";
-import { scoreBeatsBest } from "./best_score";
-import { isClaimworthy } from "./claimworthy";
+import { scoreBeatsBest } from "$lib/bingo-helpers/best_score";
+import { checkWin } from "$lib/bingo-helpers/check_win";
+import { isClaimworthy } from "$lib/bingo-helpers/claimworthy";
+import { removeGame } from "./watch";
 
 export const updateScores = async (game_id: string) => {
   console.log("Updating Scores for game " + game_id)
@@ -78,8 +80,15 @@ const processScore = async (score: Osu.Score, game: Bingo.Card) => {
   console.log("Claimworthy: " + claimworthy)
   const newScore = await q.addScore(score, game.id, square.id, claimworthy)
 
-  if (claimworthy && scoreBeatsBest(square, newScore, 'score')) {
+  if (game.state == 1 && claimworthy && scoreBeatsBest(square, newScore, 'score')) {
     const user = game.users.find(x => x.id == score.user_id)
     await q.setClaimer(square.id, user.team_name)
+
+
+    const win = checkWin(await q.getGame(game.id));
+    if (win) {
+      q.setGameState(game.id, 2);
+      removeGame(game.id);
+    }
   }
 }
