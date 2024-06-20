@@ -4,6 +4,8 @@ import * as token from './token';
 import * as game from './game';
 import * as gameuser from './gameuser';
 import * as event from './event';
+import * as score from './score';
+import * as square from './square';
 
 export default {
 	...session,
@@ -11,5 +13,7 @@ export default {
 	...token,
 	...game,
 	...gameuser,
-	...event
+	...event,
+	...score,
+	...square
 };

@@ -155,7 +155,7 @@ export const setGameState = async (game_id: string, state: number) => {
 }
 
 export const getCurrentGames = async () => {
-	await db
+	return await db
 		.select({ id: BingoGame.id })
 		.from(BingoGame)
 		.where(eq(BingoGame.state, 1));

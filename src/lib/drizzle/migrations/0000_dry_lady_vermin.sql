@@ -2,7 +2,9 @@ CREATE TABLE `BingoGame` (
 	`id` text PRIMARY KEY NOT NULL,
 	`link_id` text,
 	`state` integer DEFAULT 0 NOT NULL,
-	`allow_team_switching` integer DEFAULT true
+	`allow_team_switching` integer DEFAULT true,
+	`claim_condition` text DEFAULT 'fc' NOT NULL,
+	`tiebreaker` text DEFAULT 'score' NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `BingoSquare` (
@@ -21,6 +23,7 @@ CREATE TABLE `Chat` (
 	`id` text PRIMARY KEY NOT NULL,
 	`time` integer NOT NULL,
 	`text` text,
+	`channel` text DEFAULT 'GLOBAL' NOT NULL,
 	`game_id` text NOT NULL,
 	`user_id` integer NOT NULL,
 	FOREIGN KEY (`game_id`) REFERENCES `BingoGame`(`id`) ON UPDATE cascade ON DELETE cascade,
@@ -79,14 +82,17 @@ CREATE TABLE `OauthToken` (
 --> statement-breakpoint
 CREATE TABLE `Score` (
 	`id` text PRIMARY KEY NOT NULL,
+	`date` integer NOT NULL,
 	`is_fc` integer DEFAULT false NOT NULL,
 	`score` real NOT NULL,
+	`pp` real,
 	`grade` text NOT NULL,
 	`accuracy` real NOT NULL,
+	`max_combo` integer NOT NULL,
 	`mods` text DEFAULT '',
 	`important` integer DEFAULT false,
 	`square_id` text NOT NULL,
-	`game_id` integer NOT NULL,
+	`game_id` text NOT NULL,
 	`user_id` integer NOT NULL,
 	FOREIGN KEY (`square_id`) REFERENCES `BingoSquare`(`id`) ON UPDATE cascade ON DELETE cascade,
 	FOREIGN KEY (`game_id`,`user_id`) REFERENCES `GameUser`(`game_id`,`user_id`) ON UPDATE no action ON DELETE no action

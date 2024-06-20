@@ -27,11 +27,17 @@ export const BingoGame = sqliteTable('BingoGame', {
 	link_id: text('link_id'), // Four letters, similar to Jackbox
 
 	// Settings
-	state: integer('state').default(0).notNull(), // 0: Before starting, 1: In
-	// game, 2: Finished
-	allow_team_switching: integer('allow_team_switching', {
-		mode: 'boolean'
-	}).default(true) // Only takes effect when game state is 0.
+	// 0: Before starting, 1: In game, 2: Finished
+	state: integer('state').default(0).notNull(),
+
+	// Only takes effect when game state is 0.
+	allow_team_switching: integer('allow_team_switching', { mode: 'boolean' }).default(true),
+
+	// What dictates whether a square is claimed. See more: `lib/server/claimworthy.ts`
+	claim_condition: text('claim_condition').notNull().default('fc'),
+
+	// How to sort scores for reclaims See more: `lib/server/get_best_score.ts`
+	tiebreaker: text('tiebreaker').notNull().default('score')
 });
 
 export const BingoSquare = sqliteTable('BingoSquare', {
@@ -225,10 +231,14 @@ export const Score = sqliteTable(
 	{
 		id: text('id').primaryKey().$defaultFn(randomUUID),
 
+		date: integer('date', { mode: 'timestamp' }).notNull(),
+
 		is_fc: integer('is_fc', { mode: 'boolean' }).notNull().default(false),
 		score: real('score').notNull(),
+		pp: real('pp'),
 		grade: text('grade').notNull(),
 		accuracy: real('accuracy').notNull(),
+		max_combo: integer('max_combo').notNull(),
 		mods: text('mods').default(''),
 
 		important: integer('important', {
@@ -241,7 +251,7 @@ export const Score = sqliteTable(
 				onDelete: 'cascade',
 				onUpdate: 'cascade'
 			}),
-		game_id: integer('game_id').notNull(),
+		game_id: text('game_id').notNull(),
 		user_id: integer('user_id').notNull()
 	},
 	(table) => ({
@@ -264,6 +274,8 @@ export const Chat = sqliteTable(
 			.$defaultFn(() => new Date())
 			.notNull(),
 		text: text('text'),
+
+		channel: text('channel').notNull().default('GLOBAL'), // 'GLOBAL' or team name ('RED' or 'BLUE')
 
 		game_id: text('game_id')
 			.notNull()

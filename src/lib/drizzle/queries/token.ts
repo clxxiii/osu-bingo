@@ -31,8 +31,14 @@ export const getLingeringTokens = async () => {
 		)
 }
 
-export const getToken = async (user_id: number) => {
-	return (await db.select().from(OauthToken).where(eq(OauthToken.user_id, user_id)))[0];
+export const getToken = async (user_id: number, service?: string) => {
+	return (await db
+		.select()
+		.from(OauthToken)
+		.where(and(
+			eq(OauthToken.user_id, user_id),
+			eq(OauthToken.service, service ?? 'osu')
+		)))[0];
 };
 
 export const deleteToken = async (token_id: string) => {
