@@ -107,3 +107,18 @@ export const refreshOAuthToken = async (token: Bingo.OauthToken,
 	}
 	return null;
 }
+
+export const getRecentScores = async (user_id: number, access_token: string) => {
+	const scores = await fetch(`${BASE_URL}/users/${user_id}/scores/recent`, {
+		headers: {
+			'Content-Type': 'application/json',
+			Accept: 'application/json',
+			Authorization: `Bearer ${access_token}`
+		}
+	});
+	const response: Osu.Score[] = await scores.json();
+	if (scores.ok) {
+		return response;
+	}
+	return null;
+}

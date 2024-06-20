@@ -56,55 +56,55 @@ export namespace Osu {
 			url: string;
 			id: any;
 		};
-		comments_count: number;
-		favourite_beatmapset_count: number;
-		follower_count: number;
-		graveyard_beatmapset_count: number;
-		groups: any[];
-		guest_beatmapset_count: number;
-		loved_beatmapset_count: number;
-		mapping_follower_count: number;
-		monthly_playcounts: Count[];
-		nominated_beatmapset_count: number;
-		page: {
+		comments_count?: number;
+		favourite_beatmapset_count?: number;
+		follower_count?: number;
+		graveyard_beatmapset_count?: number;
+		// groups: any[];
+		guest_beatmapset_count?: number;
+		loved_beatmapset_count?: number;
+		mapping_follower_count?: number;
+		monthly_playcounts?: Count[];
+		nominated_beatmapset_count?: number;
+		page?: {
 			html: string;
 			raw: string;
 		};
-		pending_beatmapset_count: number;
-		previous_usernames: string[];
-		rank_highest: {
+		pending_beatmapset_count?: number;
+		previous_usernames?: string[];
+		rank_highest?: {
 			rank: number;
 			updated_at: string;
 		};
-		ranked_beatmapset_count: number;
-		replays_watched_counts: Count[];
+		ranked_beatmapset_count?: number;
+		replays_watched_counts?: Count[];
 		scores_best_count: number;
-		scores_first_count: number;
-		scores_pinned_count: number;
-		scores_recent_count: number;
-		session_verified: boolean;
-		statistics: UserStatistics;
-		statistics_rulesets: {
+		scores_first_count?: number;
+		scores_pinned_count?: number;
+		scores_recent_count?: number;
+		session_verified?: boolean;
+		statistics?: UserStatistics;
+		statistics_rulesets?: {
 			osu: UserStatistics;
 			taiko: UserStatistics;
 			fruits: UserStatistics;
 			mania: UserStatistics;
 		};
-		support_level: number;
-		user_achievements: {
+		support_level?: number;
+		user_achievements?: {
 			achieved_at: string;
 			achievement_id: number;
 		}[];
-		rank_history: {
+		rank_history?: {
 			mode: string;
 			data: number[];
 		};
-		rankHistory: {
+		rankHistory?: {
 			mode: string;
 			data: number[];
 		};
-		ranked_and_approved_beatmapset_count: number;
-		unranked_beatmapset_count: number;
+		ranked_and_approved_beatmapset_count?: number;
+		unranked_beatmapset_count?: number;
 	}
 
 	namespace User {
@@ -207,6 +207,37 @@ export namespace Osu {
 		};
 	}
 
+	type ModAbbr =
+		'NF' |
+		'EZ' |
+		'TD' |
+		'HD' |
+		'HR' |
+		'SD' |
+		'DT' |
+		'RX' |
+		'HT' |
+		'NC' |
+		'FL' |
+		'AT' |
+		'SO' |
+		'AP' |
+		'PF' |
+		'K4' |
+		'K5' |
+		'K6' |
+		'K7' |
+		'K8' |
+		'FI' |
+		'RD' |
+		'CN' |
+		'TP' |
+		'KC' |
+		'K1' |
+		'K3' |
+		'K2' |
+		'MI'
+
 	interface Beatmapset {
 		artist: string;
 		artist_unicode: string;
@@ -270,5 +301,36 @@ export namespace Osu {
 		status: number;
 		url: string;
 		max_combo: number;
+	}
+	interface Score {
+		accuracy: number
+		best_id?: number
+		created_at?: string
+		id: number
+		max_combo: number
+		mode: Ruleset
+		mode_int: number
+		mods: ModAbbr[]
+		passed: boolean
+		perfect: boolean
+		pp: number | null
+		rank?: string
+		replay: boolean
+		score: number
+		statistics: ScoreStatistics
+		type: string
+		user_id: number
+		beatmap?: BeatmapExtended
+		beatmapset?: Beatmapset
+		user: User
+	}
+
+	interface ScoreStatistics {
+		count_100: number
+		count_300: number
+		count_50: number
+		count_geki: number
+		count_katu: number
+		count_miss: number
 	}
 }
