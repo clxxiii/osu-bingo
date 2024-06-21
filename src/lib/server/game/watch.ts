@@ -26,12 +26,14 @@ export const setup = async () => {
 }
 
 export const addGame = (id: string) => {
+  console.log("Started watching game " + id + " for new scores")
   watchedGames.set(id, setInterval(() => {
     updateScores(id)
   }, POLLING_INTERVAL_MS))
 }
 
 export const removeGame = (id: string) => {
+  console.log("Stopped watching game " + id);
   clearInterval(watchedGames.get(id));
   watchedGames.delete(id);
 }

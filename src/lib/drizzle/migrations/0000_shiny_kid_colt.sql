@@ -14,9 +14,10 @@ CREATE TABLE `BingoSquare` (
 	`mod_string` text DEFAULT '',
 	`x_pos` integer NOT NULL,
 	`y_pos` integer NOT NULL,
-	`claimed_by` text,
+	`claimed_by_id` text,
 	FOREIGN KEY (`game_id`) REFERENCES `BingoGame`(`id`) ON UPDATE cascade ON DELETE cascade,
-	FOREIGN KEY (`map_id`) REFERENCES `Map`(`id`) ON UPDATE cascade ON DELETE restrict
+	FOREIGN KEY (`map_id`) REFERENCES `Map`(`id`) ON UPDATE cascade ON DELETE restrict,
+	FOREIGN KEY (`claimed_by_id`) REFERENCES `GameUser`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `Chat` (
@@ -25,17 +26,17 @@ CREATE TABLE `Chat` (
 	`text` text,
 	`channel` text DEFAULT 'GLOBAL' NOT NULL,
 	`game_id` text NOT NULL,
-	`user_id` integer NOT NULL,
+	`game_user_id` text NOT NULL,
 	FOREIGN KEY (`game_id`) REFERENCES `BingoGame`(`id`) ON UPDATE cascade ON DELETE cascade,
-	FOREIGN KEY (`game_id`,`user_id`) REFERENCES `GameUser`(`game_id`,`user_id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`game_user_id`) REFERENCES `GameUser`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `GameUser` (
+	`id` text PRIMARY KEY NOT NULL,
 	`game_id` text NOT NULL,
 	`user_id` integer NOT NULL,
 	`team_name` text NOT NULL,
 	`host` integer DEFAULT false NOT NULL,
-	PRIMARY KEY(`game_id`, `user_id`),
 	FOREIGN KEY (`game_id`) REFERENCES `BingoGame`(`id`) ON UPDATE cascade ON DELETE cascade,
 	FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON UPDATE cascade ON DELETE cascade
 );
@@ -48,7 +49,8 @@ CREATE TABLE `Map` (
 	`artist` text NOT NULL,
 	`difficulty_name` text NOT NULL,
 	`url` text NOT NULL,
-	`cover_url` text NOT NULL,
+	`square_url` text NOT NULL,
+	`banner_url` text NOT NULL,
 	`status` text NOT NULL,
 	`max_combo` integer NOT NULL,
 	`last_updated` integer NOT NULL,
@@ -82,6 +84,8 @@ CREATE TABLE `OauthToken` (
 --> statement-breakpoint
 CREATE TABLE `Score` (
 	`id` text PRIMARY KEY NOT NULL,
+	`score_id` integer,
+	`user_id` integer NOT NULL,
 	`date` integer NOT NULL,
 	`is_fc` integer DEFAULT false NOT NULL,
 	`score` real NOT NULL,
@@ -90,12 +94,12 @@ CREATE TABLE `Score` (
 	`accuracy` real NOT NULL,
 	`max_combo` integer NOT NULL,
 	`mods` text DEFAULT '',
+	`lazer` integer NOT NULL,
 	`important` integer DEFAULT false,
 	`square_id` text NOT NULL,
-	`game_id` text NOT NULL,
-	`user_id` integer NOT NULL,
+	`game_user_id` text NOT NULL,
 	FOREIGN KEY (`square_id`) REFERENCES `BingoSquare`(`id`) ON UPDATE cascade ON DELETE cascade,
-	FOREIGN KEY (`game_id`,`user_id`) REFERENCES `GameUser`(`game_id`,`user_id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`game_user_id`) REFERENCES `GameUser`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `Session` (

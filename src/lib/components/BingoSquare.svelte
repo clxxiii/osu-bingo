@@ -6,7 +6,7 @@
 	const dispatch = createEventDispatcher();
 
 	const difficulty = square.data.stats.star_rating.toFixed(2);
-	const claimed = square.claimed_by ?? 'UNCLAIMED';
+	const claimed = square.claimed_by?.team_name ?? 'UNCLAIMED';
 
 	const click = () => {
 		dispatch('click');
@@ -14,7 +14,7 @@
 </script>
 
 <button
-	style="--url: url({square.data.cover_url})"
+	style="--url: url({square.data.square_url})"
 	class="block transition bg-black relative square z-0 w-full h-full overflow-hidden rounded"
 	on:click={click}
 >

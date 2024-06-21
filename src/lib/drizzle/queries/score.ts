@@ -12,19 +12,20 @@ export const getScores = async (user_id: number, square_id: string) => {
     )))
 }
 
-export const addScore = async (score: Osu.Score, game_id: string, square_id: string, important?: boolean) => {
+export const addScore = async (score: Osu.LazerScore, game_user: Bingo.GameUser, square_id: string, important?: boolean) => {
   return (await db.insert(Score).values({
-    date: new Date(score.created_at ?? Date.now()),
-    is_fc: score.perfect,
-    score: score.score,
-    grade: score.rank ?? "F",
+    lazer: score.legacy_total_score != 0,
+    date: new Date(score.ended_at ?? Date.now()),
+    is_fc: score.is_perfect_combo,
+    score: score.total_score,
+    grade: score.rank,
     accuracy: score.accuracy,
     pp: score.pp,
-    mods: score.mods.join(''),
+    mods: score.mods.map(x => x.acronym).join(''),
     max_combo: score.max_combo,
     square_id,
     important,
-    game_id,
-    user_id: score.user_id
+    user_id: score.user_id,
+    game_user_id: game_user.id
   }).returning())[0]
 }

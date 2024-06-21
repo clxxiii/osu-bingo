@@ -16,14 +16,13 @@ const updating = new Set<string>();
 export const updateScores = async (game_id: string) => {
   if (updating.has(game_id)) return;
 
-  console.log("Updating Scores for game " + game_id)
   updating.add(game_id);
   const game = await q.getGame(game_id);
   if (game.state != 1 || !game.squares) return;
 
 
   // Get each user's recent scores
-  const scores: Osu.Score[] = [];
+  const scores: Osu.LazerScore[] = [];
   for (const user of game.users) {
     // a wee bit of ratelimiting
     await new Promise(resolve => setTimeout(resolve, 100))
@@ -55,8 +54,8 @@ export const updateScores = async (game_id: string) => {
   // one that beats that square within the same
   // polling period.
   scores.sort((a, b) => {
-    return new Date(a.created_at ?? Date.now()).valueOf() -
-      new Date(b.created_at ?? Date.now()).valueOf()
+    return new Date(a.ended_at ?? Date.now()).valueOf() -
+      new Date(b.ended_at ?? Date.now()).valueOf()
   });
 
   for (const score of scores) {
@@ -67,7 +66,7 @@ export const updateScores = async (game_id: string) => {
   updating.delete(game_id);
 }
 
-const processScore = async (score: Osu.Score, game: Bingo.Card) => {
+const processScore = async (score: Osu.LazerScore, game: Bingo.Card) => {
   if (!game.squares) return;
 
   // This score is not related to the board
@@ -78,16 +77,17 @@ const processScore = async (score: Osu.Score, game: Bingo.Card) => {
 
   // Score has already been processed
   const scoreMap = scores.map(x => x.score);
-  if (scoreMap.includes(score.score)) return
-  console.log(`New score for square ${square.x_pos},${square.y_pos} (${square.game_id})`)
+  if (scoreMap.includes(score.total_score)) return
+  console.log(`Processing Score: ${score.user.username} on ${score.beatmapset?.title}: (${score.total_score})`)
+
 
   // Add score to database
   const claimworthy = isClaimworthy(score, game.claim_condition)
-  console.log("Claimworthy: " + claimworthy)
-  const newScore = await q.addScore(score, game.id, square.id, claimworthy)
+  const user: Bingo.Card.FullUser = game.users.find(x => x.id == score.user_id)
+
+  const newScore = await q.addScore(score, user, square.id, claimworthy)
 
   if (game.state == 1 && claimworthy && scoreBeatsBest(square, newScore, 'score')) {
-    const user = game.users.find(x => x.id == score.user_id)
     await q.setClaimer(square.id, user.team_name)
 
 

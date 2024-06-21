@@ -18,7 +18,7 @@
 	transition:slide={{ axis: 'x' }}
 	bind:this={sidebar}
 	class="group bg-zinc-800 overflow-hidden relative w-[500px] transition rounded-xl size-full"
-	data-claimer={square?.claimed_by ?? 'UNCLAIMED'}
+	data-claimer={square?.claimed_by?.team_name ?? 'UNCLAIMED'}
 >
 	{#if square}
 		<div

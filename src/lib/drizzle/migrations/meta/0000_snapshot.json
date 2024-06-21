@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "5a3eddad-8210-4fd4-b599-4c0542abe99c",
+  "id": "dcfbb187-c39f-4126-bb7c-077d6888f839",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "BingoGame": {
@@ -105,8 +105,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "claimed_by": {
-          "name": "claimed_by",
+        "claimed_by_id": {
+          "name": "claimed_by_id",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -140,6 +140,19 @@
           ],
           "onDelete": "restrict",
           "onUpdate": "cascade"
+        },
+        "BingoSquare_claimed_by_id_GameUser_id_fk": {
+          "name": "BingoSquare_claimed_by_id_GameUser_id_fk",
+          "tableFrom": "BingoSquare",
+          "tableTo": "GameUser",
+          "columnsFrom": [
+            "claimed_by_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -184,9 +197,9 @@
           "notNull": true,
           "autoincrement": false
         },
-        "user_id": {
-          "name": "user_id",
-          "type": "integer",
+        "game_user_id": {
+          "name": "game_user_id",
+          "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -207,17 +220,15 @@
           "onDelete": "cascade",
           "onUpdate": "cascade"
         },
-        "Chat_game_id_user_id_GameUser_game_id_user_id_fk": {
-          "name": "Chat_game_id_user_id_GameUser_game_id_user_id_fk",
+        "Chat_game_user_id_GameUser_id_fk": {
+          "name": "Chat_game_user_id_GameUser_id_fk",
           "tableFrom": "Chat",
           "tableTo": "GameUser",
           "columnsFrom": [
-            "game_id",
-            "user_id"
+            "game_user_id"
           ],
           "columnsTo": [
-            "game_id",
-            "user_id"
+            "id"
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
@@ -229,6 +240,13 @@
     "GameUser": {
       "name": "GameUser",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
         "game_id": {
           "name": "game_id",
           "type": "text",
@@ -288,15 +306,7 @@
           "onUpdate": "cascade"
         }
       },
-      "compositePrimaryKeys": {
-        "GameUser_game_id_user_id_pk": {
-          "columns": [
-            "game_id",
-            "user_id"
-          ],
-          "name": "GameUser_game_id_user_id_pk"
-        }
-      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
     "Map": {
@@ -351,8 +361,15 @@
           "notNull": true,
           "autoincrement": false
         },
-        "cover_url": {
-          "name": "cover_url",
+        "square_url": {
+          "name": "square_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "banner_url": {
+          "name": "banner_url",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -593,6 +610,20 @@
           "notNull": true,
           "autoincrement": false
         },
+        "score_id": {
+          "name": "score_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "date": {
           "name": "date",
           "type": "integer",
@@ -651,6 +682,13 @@
           "autoincrement": false,
           "default": "''"
         },
+        "lazer": {
+          "name": "lazer",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "important": {
           "name": "important",
           "type": "integer",
@@ -666,16 +704,9 @@
           "notNull": true,
           "autoincrement": false
         },
-        "game_id": {
-          "name": "game_id",
+        "game_user_id": {
+          "name": "game_user_id",
           "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -696,17 +727,15 @@
           "onDelete": "cascade",
           "onUpdate": "cascade"
         },
-        "Score_game_id_user_id_GameUser_game_id_user_id_fk": {
-          "name": "Score_game_id_user_id_GameUser_game_id_user_id_fk",
+        "Score_game_user_id_GameUser_id_fk": {
+          "name": "Score_game_user_id_GameUser_id_fk",
           "tableFrom": "Score",
           "tableTo": "GameUser",
           "columnsFrom": [
-            "game_id",
-            "user_id"
+            "game_user_id"
           ],
           "columnsTo": [
-            "game_id",
-            "user_id"
+            "id"
           ],
           "onDelete": "no action",
           "onUpdate": "no action"

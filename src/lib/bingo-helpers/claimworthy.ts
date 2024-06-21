@@ -11,23 +11,23 @@
 
 import type { Osu } from "$lib/osu";
 
-const evaluators: { [key: string]: (score: Osu.Score, value: string) => boolean } = {
-  'fc': (score) => score.perfect,
+const evaluators: { [key: string]: (score: Osu.LazerScore, value: string) => boolean } = {
+  'fc': (score) => score.is_perfect_combo,
   'rank': (score, value) => {
     const hierarchy = ['SSH', 'SS', 'SH', 'S', 'A', 'B', 'C', 'D', 'F'];
-    const scoreRank = hierarchy.indexOf(score.rank?.toUpperCase() ?? "F");
+    const scoreRank = hierarchy.indexOf(score.rank.toUpperCase() ?? "F");
     const testRank = hierarchy.indexOf(value.toUpperCase() ?? "F");
 
     return scoreRank <= testRank;
   },
   'pass': (score) => {
     if (!score.passed) return false;
-    return !score.mods.includes('NF')
+    return !score.mods.map((x) => x.acronym).includes('NF')
   },
   'any': () => true
 }
 
-export const isClaimworthy = (score: Osu.Score, claim_condition: string) => {
+export const isClaimworthy = (score: Osu.LazerScore, claim_condition: string) => {
   const [type, value] = claim_condition.split("_");
 
   let evaluator = evaluators[type];

@@ -23,7 +23,8 @@ export const BingoGameRelations = relations(BingoGame, ({ many }) => ({
 export const BingoSquareRelations = relations(BingoSquare, ({ one, many }) => ({
 	scores: many(Score),
 	game: one(BingoGame, { fields: [BingoSquare.game_id], references: [BingoGame.id] }),
-	map: one(Map, { fields: [BingoSquare.map_id], references: [Map.id] })
+	map: one(Map, { fields: [BingoSquare.map_id], references: [Map.id] }),
+	claimed_by: one(GameUser, { fields: [BingoSquare.claimed_by_id], references: [GameUser.id] })
 }));
 
 export const GameUserRelations = relations(GameUser, ({ one }) => ({
@@ -61,12 +62,12 @@ export const MapStatsRelations = relations(MapStats, ({ one }) => ({
 export const ScoreRelations = relations(Score, ({ one }) => ({
 	square: one(BingoSquare, { fields: [Score.square_id], references: [BingoSquare.id] }),
 	game_user: one(GameUser, {
-		fields: [Score.user_id, Score.game_id],
-		references: [GameUser.user_id, GameUser.game_id]
+		fields: [Score.game_user_id],
+		references: [GameUser.id]
 	})
 }));
 
 export const ChatRelations = relations(Chat, ({ one }) => ({
 	game: one(BingoSquare, { fields: [Chat.game_id], references: [BingoSquare.id] }),
-	user: one(User, { fields: [Chat.user_id], references: [User.id] })
+	user: one(GameUser, { fields: [Chat.game_user_id], references: [GameUser.id] })
 }));

@@ -114,12 +114,20 @@ export const getGame = async (game_id: string) => {
 				.where(and(eq(Map.id, square.map_id), eq(MapStats.mod_string, square.mod_string ?? '')))
 		)[0];
 		const scores = await db.select().from(Score).where(eq(Score.square_id, square.id));
+		let claimed_by: Bingo.GameUser | null = null;
+		if (square.claimed_by_id) {
+			claimed_by = (await db
+				.select()
+				.from(GameUser)
+				.where(eq(GameUser.id, square.claimed_by_id)))[0]
+		}
 		squares.push({
 			...square,
 			data: {
 				...map.Map,
 				stats: map.MapStats
 			},
+			claimed_by,
 			scores
 		});
 	}

@@ -15,7 +15,7 @@
 <div class="grid top bg-zinc-900">
 	<img
 		class="rounded-l-lg row-start-1 row-end-1 col-start-1 col-end-2"
-		src={map.cover_url}
+		src={map.square_url}
 		alt=""
 	/>
 	<div

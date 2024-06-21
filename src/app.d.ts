@@ -43,6 +43,7 @@ declare global {
 		namespace Card {
 			type FullSquare = BingoSquare & {
 				data: FullMap;
+				claimed_by: GameUser | null;
 				scores: Score[];
 			};
 			type FullUser = GameUser & User;
@@ -59,4 +60,4 @@ declare global {
 	}
 }
 
-export {};
+export { };

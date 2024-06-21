@@ -6,7 +6,6 @@
  */
 
 import {
-	foreignKey,
 	integer,
 	primaryKey,
 	real,
@@ -56,7 +55,7 @@ export const BingoSquare = sqliteTable('BingoSquare', {
 	x_pos: integer('x_pos').notNull(),
 	y_pos: integer('y_pos').notNull(),
 
-	claimed_by: text('claimed_by')
+	claimed_by_id: text('claimed_by_id').references(() => GameUser.id)
 });
 
 /**
@@ -65,6 +64,7 @@ export const BingoSquare = sqliteTable('BingoSquare', {
 export const GameUser = sqliteTable(
 	'GameUser',
 	{
+		id: text('id').primaryKey().$defaultFn(randomUUID),
 		game_id: text('game_id')
 			.notNull()
 			.references(() => BingoGame.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
@@ -74,10 +74,7 @@ export const GameUser = sqliteTable(
 
 		team_name: text('team_name').notNull(),
 		host: integer('host', { mode: 'boolean' }).notNull().default(false)
-	},
-	(table) => ({
-		composite_key: primaryKey({ columns: [table.game_id, table.user_id] })
-	})
+	}
 );
 
 /**
@@ -181,7 +178,8 @@ export const Map = sqliteTable('Map', {
 
 	// Additional Fields for displaying nicely in a Web format.
 	url: text('url').notNull(),
-	cover_url: text('cover_url').notNull(),
+	square_url: text('square_url').notNull(),
+	banner_url: text('banner_url').notNull(),
 	status: text('status').notNull(),
 	max_combo: integer('max_combo').notNull(),
 	last_updated: integer('last_updated', { mode: 'timestamp_ms' }).notNull(),
@@ -230,6 +228,8 @@ export const Score = sqliteTable(
 	'Score',
 	{
 		id: text('id').primaryKey().$defaultFn(randomUUID),
+		score_id: integer('score_id'), // https://osu.ppy.sh/s/[score_id]
+		user_id: integer('user_id').notNull(),
 
 		date: integer('date', { mode: 'timestamp' }).notNull(),
 
@@ -240,6 +240,7 @@ export const Score = sqliteTable(
 		accuracy: real('accuracy').notNull(),
 		max_combo: integer('max_combo').notNull(),
 		mods: text('mods').default(''),
+		lazer: integer('lazer', { mode: 'boolean' }).notNull(),
 
 		important: integer('important', {
 			mode: 'boolean'
@@ -251,15 +252,8 @@ export const Score = sqliteTable(
 				onDelete: 'cascade',
 				onUpdate: 'cascade'
 			}),
-		game_id: text('game_id').notNull(),
-		user_id: integer('user_id').notNull()
-	},
-	(table) => ({
-		gameUser: foreignKey(() => ({
-			columns: [table.game_id, table.user_id],
-			foreignColumns: [GameUser.game_id, GameUser.user_id]
-		}))
-	})
+		game_user_id: text('game_user_id').notNull().references(() => GameUser.id)
+	}
 );
 
 /**
@@ -280,12 +274,6 @@ export const Chat = sqliteTable(
 		game_id: text('game_id')
 			.notNull()
 			.references(() => BingoGame.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
-		user_id: integer('user_id').notNull()
-	},
-	(table) => ({
-		gameUser: foreignKey(() => ({
-			columns: [table.game_id, table.user_id],
-			foreignColumns: [GameUser.game_id, GameUser.user_id]
-		}))
-	})
+		game_user_id: text('game_user_id').notNull().references(() => GameUser.id)
+	}
 );
