@@ -5,6 +5,9 @@
  * Currently supported conditions:
  * - 'fc': Claimable if the score is an FC
  * - 'rank_*': Claimable if the grade is *at least* the specified letter
+ * - 'pp_*': Claimable if the score has at least the specified amount of pp
+ * - 'miss_*': Claimable if the score has less than the specified amount of misses
+ * - 'combo_*': Claimable if the score has at least the specified combo
  * - 'pass': Claimable if the user passed (without NF)
  * - 'any': All scores are claimable (even fails)
  */
@@ -19,6 +22,24 @@ const evaluators: { [key: string]: (score: Osu.LazerScore, value: string) => boo
     const testRank = hierarchy.indexOf(value.toUpperCase() ?? "F");
 
     return scoreRank <= testRank;
+  },
+  'pp': (score, value) => {
+    const pp = score.pp ?? 0;
+    const target = parseFloat(value);
+
+    return pp > target;
+  },
+  'miss': (score, value) => {
+    const miss = score.statistics.miss ?? 0;
+    const target = parseInt(value);
+
+    return miss > target;
+  },
+  'combo': (score, value) => {
+    const combo = score.max_combo
+    const target = parseInt(value);
+
+    return combo > target;
   },
   'pass': (score) => {
     if (!score.passed) return false;
