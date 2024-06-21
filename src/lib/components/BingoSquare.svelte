@@ -1,13 +1,27 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onMount } from 'svelte';
+	import type { Writable } from 'svelte/store';
 	import OsuModeIcon from '$lib/components/OsuModeIcon.svelte';
 
 	export let square: Bingo.Card.FullSquare;
+	export let store: Writable<Bingo.Card>;
+
+	onMount(() => {
+		store.subscribe((card) => {
+			if (!card.squares) return;
+
+			square = card.squares
+				.filter((x) => x.x_pos == square.x_pos)
+				.filter((x) => x.y_pos == square.y_pos)[0];
+		});
+	});
 
 	const dispatch = createEventDispatcher();
 
 	const difficulty = square.data.stats.star_rating.toFixed(2);
-	const claimed = square.claimed_by?.team_name ?? 'UNCLAIMED';
+	let claimed: string;
+
+	$: claimed = square.claimed_by?.team_name ?? 'UNCLAIMED';
 
 	const click = () => {
 		dispatch('click');

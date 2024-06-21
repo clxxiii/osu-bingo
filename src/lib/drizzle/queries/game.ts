@@ -93,7 +93,7 @@ export const getGame = async (game_id: string) => {
 	//@ts-expect-error Strange 
 	const users: Bingo.Card.FullUser[] = await db
 		//@ts-expect-error Drizzle gets angry with dereferencing, but it works fine.
-		.select({ ...GameUser, ...User })
+		.select({ ...GameUser, ...User, game_user_id: GameUser.id })
 		.from(GameUser)
 		.where(eq(GameUser.game_id, game_id))
 		.innerJoin(User, eq(GameUser.user_id, User.id));

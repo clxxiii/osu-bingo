@@ -46,7 +46,7 @@ declare global {
 				claimed_by: GameUser | null;
 				scores: Score[];
 			};
-			type FullUser = GameUser & User;
+			type FullUser = GameUser & User & { game_user_id: string };
 			type FullMap = Map & {
 				stats: MapStats;
 			};

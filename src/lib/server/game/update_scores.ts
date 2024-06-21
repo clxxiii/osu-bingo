@@ -88,7 +88,7 @@ const processScore = async (score: Osu.LazerScore, game: Bingo.Card) => {
   const newScore = await q.addScore(score, user, square.id, claimworthy)
 
   if (game.state == 1 && claimworthy && scoreBeatsBest(square, newScore, 'score')) {
-    await q.setClaimer(square.id, user.team_name)
+    await q.setClaimer(square.id, user.game_user_id)
 
 
     const win = checkWin(await q.getGame(game.id));

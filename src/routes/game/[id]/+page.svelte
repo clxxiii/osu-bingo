@@ -13,7 +13,7 @@
 	let sidebar = false;
 	let selectedSquare: Bingo.Card.FullSquare | null;
 
-	const game = writable<Bingo.Card>(data.game);
+	const store = writable<Bingo.Card>(data.game);
 
 	// Show sidebar on bingo square click
 	const squareclick = (square: CustomEvent<Bingo.Card.FullSquare>) => {
@@ -31,7 +31,7 @@
 		const gameStream = new EventSource(`/game_stream/${data.game.id}`);
 		gameStream.onmessage = (msg) => {
 			const data = JSON.parse(msg.data);
-			game.set(data);
+			store.set(data);
 		};
 		gameStream.onerror;
 	});
@@ -41,11 +41,11 @@
 	<article
 		class="row-start-1 flex flex-col items-center rounded-xl p-4 gap-y-2 row-end-2 col-start-1 col-end-2 bg-[rgba(0,0,0,0.5)]"
 	>
-		<Announcer gameStore={game} user={data.user} />
-		{#if $game.squares}
-			<BingoCard on:squareclick={squareclick} card={$game} />
+		<Announcer gameStore={store} user={data.user} />
+		{#if $store.squares}
+			<BingoCard on:squareclick={squareclick} {store} />
 		{:else}
-			<TeamList gameStore={game} />
+			<TeamList gameStore={store} />
 		{/if}
 	</article>
 	{#if sidebar}
