@@ -11,8 +11,13 @@ import { checkWin } from "$lib/bingo-helpers/check_win";
 import { isClaimworthy } from "$lib/bingo-helpers/claimworthy";
 import { removeGame } from "./watch";
 
+const updating = new Set<string>();
+
 export const updateScores = async (game_id: string) => {
+  if (updating.has(game_id)) return;
+
   console.log("Updating Scores for game " + game_id)
+  updating.add(game_id);
   const game = await q.getGame(game_id);
   if (game.state != 1 || !game.squares) return;
 
@@ -59,6 +64,7 @@ export const updateScores = async (game_id: string) => {
   }
 
   emitter.emit(game.id, await q.getGame(game.id));
+  updating.delete(game_id);
 }
 
 const processScore = async (score: Osu.Score, game: Bingo.Card) => {

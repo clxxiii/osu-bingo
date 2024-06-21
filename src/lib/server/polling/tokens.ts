@@ -46,29 +46,31 @@ const interval = async () => {
 
     // Update user data
     const user = await getMe(token.access_token);
-    await q.setUser({
-      id: user.id,
 
-      username: user.username,
-      country_code: user.country_code,
-      country_name: user.country?.name ?? user.country_code,
+    if (user.statistics)
+      await q.setUser({
+        id: user.id,
 
-      cover_url: user.cover?.url ?? '',
-      avatar_url: user.avatar_url,
+        username: user.username,
+        country_code: user.country_code,
+        country_name: user.country?.name ?? user.country_code,
 
-      pp: user.statistics.pp,
+        cover_url: user.cover?.url ?? '',
+        avatar_url: user.avatar_url,
 
-      global_rank: user.statistics.global_rank,
-      country_rank: user.statistics.country_rank,
+        pp: user.statistics.pp,
 
-      total_score: user.statistics.total_score,
-      ranked_score: user.statistics.ranked_score,
-      hit_accuracy: user.statistics.hit_accuracy,
-      play_count: user.statistics.play_count,
-      level: user.statistics.level.current,
-      level_progress: user.statistics.level.progress
-    });
+        global_rank: user.statistics.global_rank,
+        country_rank: user.statistics.country_rank,
 
-    console.log(`Successfully updated user info for ${user.id} (${user.username}: #${user.statistics.global_rank?.toLocaleString()})`)
+        total_score: user.statistics.total_score,
+        ranked_score: user.statistics.ranked_score,
+        hit_accuracy: user.statistics.hit_accuracy,
+        play_count: user.statistics.play_count,
+        level: user.statistics.level.current,
+        level_progress: user.statistics.level.progress
+      });
+
+    console.log(`Successfully updated user info for ${user.id} (${user.username}: #${user?.statistics?.global_rank?.toLocaleString()})`)
   }
 }
