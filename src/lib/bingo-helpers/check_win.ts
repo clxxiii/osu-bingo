@@ -15,10 +15,9 @@ export const checkWin = (game: Bingo.Card) => {
 
   const board: (string | null)[] = new Array((yMax + 1) * (xMax + 1));
   for (const square of game.squares) {
-    const index = (yMax * 5) + (xMax);
-    board[index] = square.claimed_by;
+    const index = (square.y_pos * 5) + (square.x_pos);
+    board[index] = square.claimed_by?.team_name ?? null;
   }
-
   return bingoCheck(board);
 }
 
