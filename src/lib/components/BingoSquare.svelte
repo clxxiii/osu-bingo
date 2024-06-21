@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
+	import OsuModeIcon from '$lib/components/OsuModeIcon.svelte';
 
 	export let square: Bingo.Card.FullSquare;
 
@@ -31,8 +32,9 @@
 	</div>
 	<div class="popout-box font-display">
 		<div
-			class="font-rounded font-bold text-xs rounded-tr absolute w-10 bottom-0 left-0 bg-zinc-900 z-20 pointer-events-none"
+			class="flex items-center justify-center gap-1 font-rounded font-bold text-xs rounded-tr absolute w-12 bottom-0 left-0 bg-zinc-900 z-20 pointer-events-none"
 		>
+			<OsuModeIcon mode="osu" size={12} />
 			{difficulty}
 		</div>
 	</div>

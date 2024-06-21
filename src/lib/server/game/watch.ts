@@ -10,8 +10,8 @@ const watchedGames = new Map<string, Timer>();
 
 export const setup = async () => {
   // Clear current timers
-  for (const timer of watchedGames.values()) {
-    clearInterval(timer);
+  for (const timer of watchedGames.keys()) {
+    removeGame(timer)
   }
 
   const games = await q.getCurrentGames();
