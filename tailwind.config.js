@@ -6,7 +6,8 @@ export default {
 			fontFamily: {
 				sans: ['Montserrat', 'sans-serif'],
 				display: ['Roundor', 'display', 'sans-serif'],
-				rounded: ['Comfortaa', 'sans-serif']
+				rounded: ['Comfortaa', 'sans-serif'],
+				mono: ['CutiveMono', 'monospace']
 			},
 			colors: {
 				base: {

@@ -13,6 +13,11 @@
 }
 
 @font-face {
+	font-family: 'CutiveMono';
+	src: url('/fonts/CutiveMono-Regular.ttf');
+}
+
+@font-face {
 	font-family: 'Montserrat';
 	font-weight: 400;
 	src: url('/fonts/montserrat/Montserrat-Regular.ttf');
