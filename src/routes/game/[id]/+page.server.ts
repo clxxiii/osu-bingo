@@ -3,6 +3,7 @@ import q from '$lib/drizzle/queries';
 import { error } from '@sveltejs/kit';
 import { StatusCodes } from '$lib/StatusCodes';
 import { sendEvent } from '$lib/server/game/emitter';
+import { sendEvent as sendChat } from "$lib/server/game/chat_emitter"
 
 export const load: PageServerLoad = async ({ params }) => {
 	const game = await q.getGameFromLinkId(params.id);
@@ -66,6 +67,11 @@ export const actions = {
 		if (!message || typeof message != 'string') error(StatusCodes.BAD_REQUEST)
 		if (!channel || typeof channel != 'string') error(StatusCodes.BAD_REQUEST)
 
-		await q.sendChat(user.id, game_id, message, channel)
+		const chat = await q.sendChat(user.id, game_id, message, channel)
+		if (!chat) error(StatusCodes.BAD_REQUEST, "Gameuser is invalid")
+		sendChat(game_id, channel, {
+			type: 'user',
+			data: chat
+		})
 	}
 }

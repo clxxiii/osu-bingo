@@ -3,7 +3,6 @@ import { db } from '..';
 import {
 	BingoGame,
 	BingoSquare,
-	Chat,
 	GameUser,
 	Map,
 	MapStats,
@@ -99,15 +98,8 @@ export const getGame = async (game_id: string) => {
 
 	const events = await db.select().from(TimeEvent).where(eq(TimeEvent.game_id, game_id));
 
-	const chats: Bingo.Card.FullChat[] = []
-	const dbChats = await db.select().from(Chat).where(eq(Chat.game_id, game_id));
-	for (const chat of dbChats) {
-		const user = users.find(x => x.id == chat.game_user_id);
-		if (!user) continue
-		chats.push({ ...chat, user })
-	}
 
-	if (game.state == 0) return { ...game, users, events, chats, squares: null };
+	if (game.state == 0) return { ...game, users, events, squares: null };
 
 	const squares: Bingo.Card.FullSquare[] = [];
 	const dbSquares = await db.select().from(BingoSquare).where(eq(BingoSquare.game_id, game_id));
@@ -146,7 +138,7 @@ export const getGame = async (game_id: string) => {
 		});
 	}
 
-	return { ...game, users, events, squares, chats };
+	return { ...game, users, events, squares };
 };
 
 export const gameLinkToId = async (link: string) => {

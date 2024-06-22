@@ -1,20 +1,48 @@
 <script lang="ts">
 	import { MessageSquareText } from 'lucide-svelte';
-	import type { Writable } from 'svelte/store';
 	import ChatMessage from './ChatMessage.svelte';
-	import { onMount } from 'svelte';
+	import type { ChatEvent } from '$lib/server/game/chat_emitter';
+	import { browser } from '$app/environment';
+	import { writable } from 'svelte/store';
 
 	export let channel = 'global';
-	export let store: Writable<Bingo.Card>;
+	export let game_id: string;
 
-	let chats: Bingo.Card.FullChat[] = [];
-	onMount(() => {
-		store.subscribe((game) => {
-			if (!game) return;
-			chats = game.chats.filter((x) => x.channel?.toUpperCase() == channel?.toUpperCase());
+	let chats = writable<Bingo.Card.FullChat[]>([]);
+	let chatLength = 0;
+	const scroll = (node: HTMLDivElement, chatLength: number) => {
+		const scroll = () => scrollToBottom(node);
+		scroll();
+
+		return { update: scroll };
+	};
+
+	const scrollToBottom = (node: HTMLDivElement) => {
+		node.scroll({
+			top: node.scrollHeight,
+			behavior: 'smooth'
 		});
-	});
+	};
 
+	let chatStream: EventSource;
+
+	$: {
+		if (browser) {
+			chatStream = new EventSource(`/chat_stream/${game_id}/${channel}`);
+			chatStream.onmessage = (msg) => {
+				const event: ChatEvent = JSON.parse(msg.data);
+				console.log(event);
+				chats.update((chats) => {
+					if (event.type == 'fullUpdate') chats = event.data;
+					else chats.push(event.data);
+					chatLength = chats.length;
+
+					return chats;
+				});
+			};
+			chatStream.onerror = console.log;
+		}
+	}
 	let box: HTMLInputElement;
 	const keydown = async (ev: KeyboardEvent) => {
 		if (ev.key != 'Enter') return;
@@ -43,13 +71,11 @@
 	>
 		<MessageSquareText size={36} /> <span>{channel} Chat</span>
 	</h1>
-	<div class="overflow-y-scroll">
+	<div use:scroll={chatLength} class="overflow-y-scroll">
 		<div class="flex flex-col justify-end items-center">
-			{#key chats}
-				{#each chats as chat}
-					<ChatMessage {chat} />
-				{/each}
-			{/key}
+			{#each $chats as chat}
+				<ChatMessage {chat} />
+			{/each}
 		</div>
 	</div>
 	<div class="p-5 w-full">

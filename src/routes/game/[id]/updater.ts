@@ -2,7 +2,7 @@
  * Takes some update event from the game stream and returns an updated game
  */
 
-import type { EmitterEvent, FullUpdateEvent, GameUserEvent, NewScoreEvent, SquareUpdateEvent, StateChangeEvent } from "$lib/server/game/emitter";
+import type { EmitterEvent, FullUpdateEvent, GameUserEvent, SquareUpdateEvent, StateChangeEvent } from "$lib/server/game/emitter";
 
 export const updateGame = (game: Bingo.Card, event: EmitterEvent): Bingo.Card => {
   if (isFullUpdate(event)) return event.data;

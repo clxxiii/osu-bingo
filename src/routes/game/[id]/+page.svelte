@@ -59,7 +59,12 @@
 		{/if}
 	</article>
 	<article class=" w-[500px] pl-4 relative row-start-1 row-end-3 col-start-2 col-end-3">
-		<Chatbox {store} channel={$store.state == 1 ? currentTeam?.toLowerCase() : 'global'} />
+		{#key currentTeam}
+			<Chatbox
+				game_id={$store.id}
+				channel={$store.state == 1 ? currentTeam?.toLowerCase() : 'global'}
+			/>
+		{/key}
 	</article>
 	{#if sidebar}
 		<article class="pl-4 relative row-start-1 row-end-3 col-start-3 col-end-4">
