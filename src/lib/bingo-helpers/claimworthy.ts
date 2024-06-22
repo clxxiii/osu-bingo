@@ -8,6 +8,7 @@
  * - 'pp_*': Claimable if the score has at least the specified amount of pp
  * - 'miss_*': Claimable if the score has less than the specified amount of misses
  * - 'combo_*': Claimable if the score has at least the specified combo
+ * - 'score_*': Claimable if the score has at least the specified score
  * - 'pass': Claimable if the user passed (without NF)
  * - 'any': All scores are claimable (even fails)
  */
@@ -40,6 +41,12 @@ const evaluators: { [key: string]: (score: Osu.LazerScore, value: string) => boo
     const target = parseInt(value);
 
     return combo > target;
+  },
+  'score': (score, value) => {
+    const total_score = score.total_score
+    const target = parseInt(value);
+
+    return total_score > target;
   },
   'pass': (score) => {
     if (!score.passed) return false;

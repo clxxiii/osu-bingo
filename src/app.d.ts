@@ -44,12 +44,15 @@ declare global {
 			type FullSquare = BingoSquare & {
 				data: FullMap;
 				claimed_by: GameUser | null;
-				scores: Score[];
+				scores: FullScore[];
 			};
 			type FullUser = GameUser & User & { game_user_id: string };
 			type FullMap = Map & {
 				stats: MapStats;
 			};
+			type FullScore = Score & {
+				user: FullUser
+			}
 		}
 		type Card = BingoGame & {
 			squares: Card.FullSquare[] | null; // Null if game state is 0 (to hide squares)
