@@ -83,8 +83,8 @@ const processScore = async (score: Osu.LazerScore, game: Bingo.Card) => {
 
   // Add score to database
   const claimworthy = isClaimworthy(score, game.claim_condition)
-  const user: Bingo.Card.FullUser = game.users.find(x => x.id == score.user_id)
-
+  const user: Bingo.Card.FullUser | undefined = game.users.find(x => x.id == score.user_id)
+  if (!user) return
   const newScore = await q.addScore(score, user, square.id, claimworthy)
 
   if (game.state == 1 && claimworthy && scoreBeatsBest(square, newScore, 'score')) {

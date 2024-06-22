@@ -99,7 +99,14 @@ export const getGame = async (game_id: string) => {
 		.innerJoin(User, eq(GameUser.user_id, User.id));
 
 	const events = await db.select().from(TimeEvent).where(eq(TimeEvent.game_id, game_id));
-	const chats = await db.select().from(Chat).where(eq(Chat.game_id, game_id));
+
+	const chats: Bingo.Card.FullChat[] = []
+	const dbChats = await db.select().from(Chat).where(eq(Chat.game_id, game_id));
+	for (const chat of dbChats) {
+		const user = users.find(x => x.game_user_id == chat.game_user_id);
+		if (!user) continue
+		chats.push({ ...chat, user })
+	}
 
 	if (game.state == 0) return { ...game, users, events, chats, squares: null };
 
@@ -113,6 +120,7 @@ export const getGame = async (game_id: string) => {
 				.innerJoin(MapStats, eq(MapStats.map_id, Map.id))
 				.where(and(eq(Map.id, square.map_id), eq(MapStats.mod_string, square.mod_string ?? '')))
 		)[0];
+
 		const scores: Bingo.Card.FullScore[] = [];
 		const dbScores = await db.select().from(Score).where(eq(Score.square_id, square.id));
 		for (const score of dbScores) {

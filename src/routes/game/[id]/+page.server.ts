@@ -32,4 +32,21 @@ export const actions = {
 
 		await q.leaveGame(game_id, user.id);
 	},
+	chat: async ({ params, request, locals }) => {
+		const user = locals.user;
+		const linkId = params.id;
+		const game_id = await q.gameLinkToId(linkId);
+
+		if (!user) error(StatusCodes.UNAUTHORIZED);
+		if (!game_id) error(StatusCodes.BAD_REQUEST);
+
+		const body = await request.formData()
+
+		const message = body.get('message');
+		const channel = body.get('channel');
+		if (!message || typeof message != 'string') error(StatusCodes.BAD_REQUEST)
+		if (!channel || typeof channel != 'string') error(StatusCodes.BAD_REQUEST)
+
+		await q.sendChat(user.id, game_id, message, channel)
+	}
 }

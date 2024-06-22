@@ -30,7 +30,7 @@ declare global {
 	namespace Bingo {
 		type BingoGame = typeof BingoGame.$inferSelect;
 		type BingoSquare = typeof BingoSquare.$inferSelect;
-		type BingoSquare = typeof Chat.$inferSelect;
+		type Chat = typeof Chat.$inferSelect;
 		type GameUser = typeof GameUser.$inferSelect;
 		type Map = typeof Map.$inferSelect;
 		type MapStats = typeof MapStats.$inferSelect;
@@ -53,12 +53,15 @@ declare global {
 			type FullScore = Score & {
 				user: FullUser
 			}
+			type FullChat = Chat & {
+				user: FullUser
+			}
 		}
 		type Card = BingoGame & {
 			squares: Card.FullSquare[] | null; // Null if game state is 0 (to hide squares)
 			events: TimeEvent[];
-			users: FullUser[];
-			chats: Chat[];
+			users: Card.FullUser[];
+			chats: Card.FullChat[];
 		};
 	}
 }

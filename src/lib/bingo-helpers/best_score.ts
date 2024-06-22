@@ -22,7 +22,7 @@ export const scoreBeatsBest = (square: Bingo.Card.FullSquare, next: Bingo.Score,
   let evaluator = evaluators[tiebreaker];
   if (!evaluator) evaluator = evaluator['score']
 
-  const scores = square.scores.filter(x => x.important);
+  const scores: Bingo.Score[] = square.scores.filter(x => x.important);
   if (scores.length == 0) return true;
 
   const currentBest = evaluator(scores);

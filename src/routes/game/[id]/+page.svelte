@@ -15,6 +15,13 @@
 
 	const store = writable<Bingo.Card>(data.game);
 
+	let currentTeam: string | undefined;
+	store.subscribe((game) => {
+		if (!game) return;
+
+		currentTeam = game.users.find((x) => x.id == data?.user?.id)?.team_name;
+	});
+
 	// Show sidebar on bingo square click
 	const squareclick = (square: CustomEvent<Bingo.Card.FullSquare>) => {
 		if (!sidebar) {
@@ -48,8 +55,11 @@
 			<TeamList gameStore={store} />
 		{/if}
 	</article>
+	<article class=" w-[500px] pl-4 relative row-start-1 row-end-3 col-start-2 col-end-3">
+		<Chatbox {store} channel={$store.state == 1 ? currentTeam?.toLowerCase() : 'global'} />
+	</article>
 	{#if sidebar}
-		<article class="pl-4 relative row-start-1 row-end-3 col-start-2 col-end-3">
+		<article class="pl-4 relative row-start-1 row-end-3 col-start-3 col-end-4">
 			<SquareSidebar
 				tiebreaker={data.game.tiebreaker}
 				on:close={() => (sidebar = false)}
@@ -57,9 +67,6 @@
 			/>
 		</article>
 	{/if}
-	<article class="pt-4 row-start-2 row-end-3 col-start-1 col-end-2">
-		<Chatbox />
-	</article>
 </section>
 
 <style>
@@ -67,7 +74,7 @@
 		/* screen height - heading - padding */
 		height: calc(100vh - 3rem - 2rem);
 		max-width: calc(100vw - 2rem);
-		grid-template-columns: 2fr fit-content(500px);
-		grid-template-rows: repeat(2, 2fr);
+		grid-template-columns: 2fr fit-content(500px) fit-content(500px);
+		grid-template-rows: 1fr;
 	}
 </style>

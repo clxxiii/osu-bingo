@@ -34,7 +34,7 @@ const evaluators: { [key: string]: (score: Osu.LazerScore, value: string) => boo
     const miss = score.statistics.miss ?? 0;
     const target = parseInt(value);
 
-    return miss > target;
+    return miss < target;
   },
   'combo': (score, value) => {
     const combo = score.max_combo

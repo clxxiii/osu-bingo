@@ -30,7 +30,7 @@
 
 <button
 	style="--url: url({square.data.square_url})"
-	class="block transition bg-black relative square z-0 w-full h-full overflow-hidden rounded"
+	class="block group transition bg-black relative square z-0 w-full h-full overflow-hidden rounded"
 	on:click={click}
 >
 	<div class="background absolute top-0 size-full -z-10 transition">
@@ -41,7 +41,9 @@
 			<div class="absolute top-0 size-full bg-blue-600 z-10 opacity-70"></div>
 			<div class="absolute bg-img top-0 size-full z-0 grayscale"></div>
 		{:else}
-			<div class="absolute bg-img top-0 size-full z-0"></div>
+			<div
+				class="transition absolute bg-img top-0 size-full z-0 grayscale-[100%] hover:grayscale-[0%]"
+			></div>
 		{/if}
 	</div>
 	<div class="popout-box font-display">
@@ -59,9 +61,6 @@
 		background: var(--url);
 		background-size: cover;
 		background-position: 50% 50%;
-	}
-	button:hover div.background {
-		filter: blur(2px);
 	}
 	button:hover {
 		transform: translateY(-5px);

@@ -6,6 +6,7 @@ import * as gameuser from './gameuser';
 import * as event from './event';
 import * as score from './score';
 import * as square from './square';
+import * as chat from './chat';
 
 export default {
 	...session,
@@ -15,5 +16,6 @@ export default {
 	...gameuser,
 	...event,
 	...score,
-	...square
+	...square,
+	...chat
 };
