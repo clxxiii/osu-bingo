@@ -7,6 +7,8 @@
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import { writable } from 'svelte/store';
+	import type { EmitterEvent } from '$lib/server/game/emitter';
+	import { updateGame } from './updater';
 
 	export let data: PageData;
 
@@ -19,7 +21,7 @@
 	store.subscribe((game) => {
 		if (!game) return;
 
-		currentTeam = game.users.find((x) => x.id == data?.user?.id)?.team_name;
+		currentTeam = game.users.find((x) => x.user_id == data?.user?.id)?.team_name;
 	});
 
 	// Show sidebar on bingo square click
@@ -37,10 +39,11 @@
 	onMount(async () => {
 		const gameStream = new EventSource(`/game_stream/${data.game.id}`);
 		gameStream.onmessage = (msg) => {
-			const data = JSON.parse(msg.data);
-			store.set(data);
+			const event: EmitterEvent = JSON.parse(msg.data);
+			console.log(event);
+			store.update((current) => updateGame(current, event));
 		};
-		gameStream.onerror;
+		gameStream.onerror = console.log;
 	});
 </script>
 

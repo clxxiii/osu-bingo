@@ -20,8 +20,8 @@
 				}
 			}
 
-			red.sort((a, b) => (a.global_rank ?? 999999999) - (b.global_rank ?? 999999999));
-			blue.sort((a, b) => (a.global_rank ?? 999999999) - (b.global_rank ?? 999999999));
+			red.sort((a, b) => (a.user.global_rank ?? 999999999) - (b.user.global_rank ?? 999999999));
+			blue.sort((a, b) => (a.user.global_rank ?? 999999999) - (b.user.global_rank ?? 999999999));
 
 			redUsers = red;
 			blueUsers = blue;
@@ -37,8 +37,8 @@
 			Blue Team
 		</h1>
 		<div class="p-2">
-			{#each blueUsers as user}
-				<TeamListUser {user} />
+			{#each blueUsers as gameuser}
+				<TeamListUser {gameuser} />
 			{/each}
 		</div>
 	</div>
@@ -49,8 +49,8 @@
 			Red Team
 		</h1>
 		<div class="p-2 h-full overflow-y-scroll">
-			{#each redUsers as user}
-				<TeamListUser {user} />
+			{#each redUsers as gameuser}
+				<TeamListUser {gameuser} />
 			{/each}
 		</div>
 	</div>

@@ -1,5 +1,5 @@
 import { and, eq, or } from 'drizzle-orm';
-import { db, emitter } from '..';
+import { db } from '..';
 import {
 	BingoGame,
 	BingoSquare,
@@ -90,20 +90,19 @@ export const fillSquares = async (
 export const getGame = async (game_id: string) => {
 	const game = (await db.select().from(BingoGame).where(eq(BingoGame.id, game_id)))[0];
 
-	//@ts-expect-error Strange 
-	const users: Bingo.Card.FullUser[] = await db
-		//@ts-expect-error Drizzle gets angry with dereferencing, but it works fine.
-		.select({ ...GameUser, ...User, game_user_id: GameUser.id })
-		.from(GameUser)
-		.where(eq(GameUser.game_id, game_id))
-		.innerJoin(User, eq(GameUser.user_id, User.id));
+	const users: Bingo.Card.FullUser[] = [];
+	const gameusers = await db.select().from(GameUser).where(eq(GameUser.game_id, game_id))
+	for (const gameuser of gameusers) {
+		const user = (await db.select().from(User).where(and(eq(User.id, gameuser.user_id))))[0]
+		users.push({ ...gameuser, user })
+	}
 
 	const events = await db.select().from(TimeEvent).where(eq(TimeEvent.game_id, game_id));
 
 	const chats: Bingo.Card.FullChat[] = []
 	const dbChats = await db.select().from(Chat).where(eq(Chat.game_id, game_id));
 	for (const chat of dbChats) {
-		const user = users.find(x => x.game_user_id == chat.game_user_id);
+		const user = users.find(x => x.id == chat.game_user_id);
 		if (!user) continue
 		chats.push({ ...chat, user })
 	}
@@ -174,7 +173,7 @@ export const setGameState = async (game_id: string, state: number) => {
 		.set({ state })
 		.where(eq(BingoGame.id, game_id))
 
-	emitter.emit(game_id, await getGame(game_id));
+	return state;
 }
 
 export const getCurrentGames = async () => {

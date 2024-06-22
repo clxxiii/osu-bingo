@@ -2,7 +2,6 @@
  * The main logic of the game; fetches new scores,
  * decides what to do when a new score is added.
  */
-import { emitter } from "$lib/drizzle";
 import q from "$lib/drizzle/queries"
 import type { Osu } from "$lib/osu";
 import { getRecentScores } from "../osu";
@@ -10,6 +9,7 @@ import { scoreBeatsBest } from "$lib/bingo-helpers/best_score";
 import { checkWin } from "$lib/bingo-helpers/check_win";
 import { isClaimworthy } from "$lib/bingo-helpers/claimworthy";
 import { removeGame } from "./watch";
+import { sendEvent } from "./emitter";
 
 const updating = new Set<string>();
 
@@ -23,21 +23,21 @@ export const updateScores = async (game_id: string) => {
 
   // Get each user's recent scores
   const scores: Osu.LazerScore[] = [];
-  for (const user of game.users) {
+  for (const gameuser of game.users) {
     // a wee bit of ratelimiting
     await new Promise(resolve => setTimeout(resolve, 100))
-    const token = await q.getToken(user.id);
+    const token = await q.getToken(gameuser.user_id);
 
     // If there's no token to use, we can't get scores
     if (!token) {
-      console.log(`Failed to fetch scores for ${user.username}`)
+      console.log(`Failed to fetch scores for ${gameuser.user.username}`)
       continue;
     }
 
-    const scoreList = await getRecentScores(user.id, token.access_token);
+    const scoreList = await getRecentScores(gameuser.user_id, token.access_token);
 
     if (!scoreList) {
-      console.log(`Failed to fetch scores for ${user.username}`)
+      console.log(`Failed to fetch scores for ${gameuser.user.username}`)
       continue;
     }
 
@@ -58,11 +58,38 @@ export const updateScores = async (game_id: string) => {
       new Date(b.ended_at ?? Date.now()).valueOf()
   });
 
+
+
+  const updates: { score: Bingo.Card.FullScore, claim: boolean }[] = []
+  let win = false;
   for (const score of scores) {
-    await processScore(score, game);
+    const event = await processScore(score, game);
+    if (event) {
+      updates.push({
+        score: {
+          ...event.score,
+
+        },
+        claim: event.claimer
+      })
+      win = (win || event.win)
+    }
+  }
+  if (updates.length > 1) {
+    sendEvent(game_id, {
+      type: 'square',
+      data: updates
+    })
+  }
+  if (win) {
+    sendEvent(game_id, {
+      type: 'state',
+      data: {
+        state: 2
+      }
+    })
   }
 
-  emitter.emit(game.id, await q.getGame(game.id));
   updating.delete(game_id);
 }
 
@@ -83,18 +110,25 @@ const processScore = async (score: Osu.LazerScore, game: Bingo.Card) => {
 
   // Add score to database
   const claimworthy = isClaimworthy(score, game.claim_condition)
-  const user: Bingo.Card.FullUser | undefined = game.users.find(x => x.id == score.user_id)
+  const user: Bingo.Card.FullUser | undefined = game.users.find(x => x.user_id == score.user_id)
   if (!user) return
   const newScore = await q.addScore(score, user, square.id, claimworthy)
 
+  const update = {
+    score: newScore,
+    claimer: false,
+    win: false
+  }
   if (game.state == 1 && claimworthy && scoreBeatsBest(square, newScore, 'score')) {
-    await q.setClaimer(square.id, user.game_user_id)
-
+    update.claimer = true;
+    await q.setClaimer(square.id, user.id)
 
     const win = checkWin(await q.getGame(game.id));
     if (win) {
       q.setGameState(game.id, 2);
       removeGame(game.id);
+      update.win = true;
     }
   }
+  return update;
 }

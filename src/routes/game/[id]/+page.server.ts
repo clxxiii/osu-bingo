@@ -2,6 +2,7 @@ import type { PageServerLoad } from './$types';
 import q from '$lib/drizzle/queries';
 import { error } from '@sveltejs/kit';
 import { StatusCodes } from '$lib/StatusCodes';
+import { sendEvent } from '$lib/server/game/emitter';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const game = await q.getGameFromLinkId(params.id);
@@ -20,7 +21,16 @@ export const actions = {
 		if (!user) error(StatusCodes.UNAUTHORIZED);
 		if (!team || !game_id || typeof team != 'string') error(StatusCodes.BAD_REQUEST);
 
-		await q.joinGame(game_id, user.id, team);
+		const fulluser = await q.joinGame(game_id, user.id, team);
+		if (fulluser == null) error(StatusCodes.BAD_REQUEST, 'User is already in game')
+
+		sendEvent(game_id, {
+			type: 'gameUser',
+			data: {
+				type: 'join',
+				user: fulluser
+			}
+		})
 	},
 	leave_game: async ({ params, locals }) => {
 		const linkId = params.id;
@@ -30,7 +40,16 @@ export const actions = {
 		if (!user) error(StatusCodes.UNAUTHORIZED);
 		if (!game_id) error(StatusCodes.BAD_REQUEST);
 
-		await q.leaveGame(game_id, user.id);
+		const fulluser = await q.leaveGame(game_id, user.id);
+		if (fulluser == null) error(StatusCodes.BAD_REQUEST)
+
+		sendEvent(game_id, {
+			type: 'gameUser',
+			data: {
+				type: 'leave',
+				user: fulluser
+			}
+		})
 	},
 	chat: async ({ params, request, locals }) => {
 		const user = locals.user;

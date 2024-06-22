@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
 	import { type Writable } from 'svelte/store';
 
 	export let gameStore: Writable<Bingo.Card>;
@@ -36,7 +35,7 @@
 		// Before Game
 		if (game.state == 0) {
 			// User in game
-			if (user && !game.users.map((x) => x.id).includes(user.id)) {
+			if (user && !game.users.map((x) => x.user_id).includes(user.id)) {
 				buttonType = 'JOIN';
 				text = 'This game has not started';
 				return;

@@ -12,8 +12,8 @@ export const getScores = async (user_id: number, square_id: string) => {
     )))
 }
 
-export const addScore = async (score: Osu.LazerScore, user: Bingo.Card.FullUser, square_id: string, important?: boolean) => {
-  return (await db.insert(Score).values({
+export const addScore = async (score: Osu.LazerScore, user: Bingo.Card.FullUser, square_id: string, important?: boolean): Promise<Bingo.Card.FullScore> => {
+  const dbScore = (await db.insert(Score).values({
     score_id: score.id,
     lazer: !score.mods.map(x => x.acronym).includes('CL'),
     date: new Date(score.ended_at ?? Date.now()),
@@ -27,6 +27,8 @@ export const addScore = async (score: Osu.LazerScore, user: Bingo.Card.FullUser,
     square_id,
     important,
     user_id: score.user_id,
-    game_user_id: user.game_user_id
+    game_user_id: user.id
   }).returning())[0]
+
+  return { ...dbScore, user }
 }

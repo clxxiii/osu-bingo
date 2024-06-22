@@ -5,8 +5,8 @@
  * https://developer.mozilla.org/en-US/docs/Web/API/EventSource
  */
 import type { RequestHandler } from "./$types"
-import q from "$lib/drizzle/queries"
-import { emitter } from "$lib/drizzle";
+import q from "$lib/drizzle/queries";
+import { deafen, listen } from "$lib/server/game/emitter";
 
 export const GET: RequestHandler = ({ params }) => {
   let eventHandler: (game: unknown) => void;
@@ -14,15 +14,18 @@ export const GET: RequestHandler = ({ params }) => {
     start: async (controller) => {
       // Send initial game state
       const game = await q.getGame(params.id);
-      controller.enqueue(`data: ${JSON.stringify(game)}\n\n`)
+      controller.enqueue(`data: ${JSON.stringify({
+        type: 'fullUpdate',
+        data: game
+      })}\n\n`)
 
       eventHandler = (game) => {
         controller.enqueue(`data: ${JSON.stringify(game)}\n\n`)
       }
-      emitter.on(params.id, eventHandler)
+      listen(params.id, eventHandler)
     },
     cancel: () => {
-      if (eventHandler) emitter.off(params.id, eventHandler);
+      if (eventHandler) deafen(params.id, eventHandler);
     }
   })
 

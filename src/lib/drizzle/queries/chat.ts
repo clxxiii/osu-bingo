@@ -1,21 +1,21 @@
 import { and, eq } from "drizzle-orm"
-import { db, emitter } from ".."
-import { Chat, GameUser } from "../schema"
-import { getGame } from "./game";
+import { db } from ".."
+import { Chat, GameUser, User } from "../schema"
 
-export const sendChat = async (user_id: number, game_id: string, text: string, channel: string) => {
-  const gameUser = (await db.select().from(GameUser).where(and(
+export const sendChat = async (user_id: number, game_id: string, text: string, channel: string): Promise<Bingo.Card.FullChat | null> => {
+  const gameuser = (await db.select().from(GameUser).where(and(
     eq(GameUser.user_id, user_id),
     eq(GameUser.game_id, game_id)
   )))[0];
-  if (!gameUser) return;
+  if (!gameuser) return null;
 
-  await db.insert(Chat).values({
-    game_user_id: gameUser.id,
+  const chat = (await db.insert(Chat).values({
+    game_user_id: gameuser.id,
     text,
     channel,
     game_id
-  })
+  }).returning())[0]
 
-  emitter.emit(game_id, await getGame(game_id));
+  const user = (await db.select().from(User).where(and(eq(User.id, gameuser.user_id))))[0]
+  return { ...chat, user: { ...gameuser, user } }
 }

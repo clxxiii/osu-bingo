@@ -15,14 +15,14 @@
 		<div class="grid gap-x-1">
 			<img
 				class="row-start-1 row-end-3 col-start-1 col-end-2 h-10 rounded-full"
-				src={score.user.avatar_url}
+				src={score.user.user.avatar_url}
 				alt=""
 			/>
 			<div class="text-l text-left col-start-2 col-end-3 row-start-1 row-end 2">
-				{score.user.username}
+				{score.user.user.username}
 			</div>
 			<div class="text-xs text-left col-start-2 col-end-3 row-start-2 row-end-3">
-				#{score.user.global_rank?.toLocaleString()}
+				#{score.user.user.global_rank?.toLocaleString()}
 			</div>
 		</div>
 	</div>
