@@ -113,7 +113,14 @@ export const getGame = async (game_id: string) => {
 				.innerJoin(MapStats, eq(MapStats.map_id, Map.id))
 				.where(and(eq(Map.id, square.map_id), eq(MapStats.mod_string, square.mod_string ?? '')))
 		)[0];
-		const scores = await db.select().from(Score).where(eq(Score.square_id, square.id));
+		const scores: Bingo.Card.FullScore[] = [];
+		const dbScores = await db.select().from(Score).where(eq(Score.square_id, square.id));
+		for (const score of dbScores) {
+			const user = users.find(x => x.user_id == score.user_id);
+			if (!user) continue
+			scores.push({ ...score, user })
+		}
+
 		let claimed_by: Bingo.GameUser | null = null;
 		if (square.claimed_by_id) {
 			claimed_by = (await db

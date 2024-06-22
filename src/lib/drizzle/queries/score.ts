@@ -14,6 +14,7 @@ export const getScores = async (user_id: number, square_id: string) => {
 
 export const addScore = async (score: Osu.LazerScore, user: Bingo.Card.FullUser, square_id: string, important?: boolean) => {
   return (await db.insert(Score).values({
+    score_id: score.id,
     lazer: !score.mods.map(x => x.acronym).includes('CL'),
     date: new Date(score.ended_at ?? Date.now()),
     is_fc: score.is_perfect_combo,

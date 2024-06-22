@@ -50,7 +50,11 @@
 	</article>
 	{#if sidebar}
 		<article class="pl-4 relative row-start-1 row-end-3 col-start-2 col-end-3">
-			<SquareSidebar on:close={() => (sidebar = false)} square={selectedSquare} />
+			<SquareSidebar
+				tiebreaker={data.game.tiebreaker}
+				on:close={() => (sidebar = false)}
+				square={selectedSquare}
+			/>
 		</article>
 	{/if}
 	<article class="pt-4 row-start-2 row-end-3 col-start-1 col-end-2">

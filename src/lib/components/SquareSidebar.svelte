@@ -3,12 +3,22 @@
 	import { createEventDispatcher } from 'svelte';
 	import { X } from 'lucide-svelte';
 	import MapCard from './MapCard.svelte';
+	import ScoreListItem from './ScoreListItem.svelte';
 	export let square: Bingo.Card.FullSquare | null;
+	export let tiebreaker: string;
 
 	let sidebar: HTMLDivElement;
 
 	const dispatch = createEventDispatcher();
-
+	$: if (square) {
+		square.scores.sort((a, b) => {
+			if (tiebreaker == 'accuracy') return b.accuracy - a.accuracy;
+			if (tiebreaker == 'combo') return b.max_combo - a.max_combo;
+			if (tiebreaker == 'pp') return (b.pp ?? 0) - (a.pp ?? 0);
+			return b.score - a.score;
+		});
+		square.scores.sort((a, b) => (b.important ? 1 : 0) - (a.important ? 1 : 0));
+	}
 	const close = () => {
 		dispatch('close');
 	};
@@ -39,7 +49,10 @@
 
 		<div class="w-full absolute top-56 p-2 pt-4">
 			<h2 class="text-xl font-bold font-rounded">Scores</h2>
-			<hr class="border-zinc-600" />
+			<hr class="border-zinc-600 mb-2" />
+			{#each square.scores as score, index}
+				<ScoreListItem {score} {index} sort={tiebreaker} />
+			{/each}
 		</div>
 	{/if}
 </div>
