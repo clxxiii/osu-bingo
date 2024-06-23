@@ -161,3 +161,11 @@ export const getCurrentGames = async () => {
 		.from(BingoGame)
 		.where(eq(BingoGame.state, 1));
 }
+
+export const getAllGames = async () => {
+	return await db
+		.select()
+		.from(BingoGame)
+		.orderBy(BingoGame.state)
+		.limit(10)
+}
