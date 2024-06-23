@@ -6,8 +6,7 @@ import { StatusCodes } from '$lib/StatusCodes';
 export const GET: RequestHandler = async ({ locals }) => {
 	if (!locals.user) error(StatusCodes.UNAUTHORIZED);
 
-	const token = await q.getToken(locals.user.id);
 	const game = await q.newGame();
-	await q.fillSquares(game.id, 4.5, 5.5, token.access_token);
+	await q.fillSquares(game.id, 4.5, 5.5, 'osu');
 	return json(await q.getGame(game.id));
 };

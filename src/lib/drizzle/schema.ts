@@ -170,6 +170,7 @@ export const Map = sqliteTable('Map', {
 	fetch_time: integer('fetch_time', { mode: 'timestamp' })
 		.$defaultFn(() => new Date())
 		.notNull(),
+	gamemode: text('gamemode').notNull().default('osu'),
 
 	// Rendered as "title - artist [difficulty_name]" in chat
 	title: text('title').notNull(),

@@ -1,4 +1,4 @@
-import { and, eq, or } from 'drizzle-orm';
+import { and, eq, gte, lte, or, sql } from 'drizzle-orm';
 import { db } from '..';
 import {
 	BingoGame,
@@ -10,9 +10,7 @@ import {
 	TimeEvent,
 	User
 } from '../schema';
-import { getBeatmaps } from '$lib/server/osu';
 import type { Osu } from '$lib/osu';
-import { addMap } from './map';
 
 export const newGame = async () => {
 	const randomLetter = () => {
@@ -45,32 +43,21 @@ export const fillSquares = async (
 	game_id: string,
 	min_sr: number,
 	max_sr: number,
-	access_token: string
+	mode: Osu.Ruleset
 ) => {
-	// Currently, the app just gets the 25 most recent beatmaps.
-	// In the future, some better solution should be used for this.
-	const sets = await getBeatmaps(min_sr, max_sr, access_token);
 
-	const beatmaps: { map: Osu.BeatmapExtended; set: Osu.Beatmapset }[] = [];
-	outer_loop: while (beatmaps.length < 25) {
-		for (const set of sets) {
-			if (!set.beatmaps) continue;
+	const beatmaps = await db
+		.select({ id: Map.id })
+		.from(Map)
+		.innerJoin(MapStats, eq(Map.id, MapStats.map_id))
+		.where(and(
+			lte(MapStats.star_rating, max_sr),
+			gte(MapStats.star_rating, min_sr),
+			eq(Map.gamemode, mode)
+		))
+		.limit(25)
+		.orderBy(sql`RANDOM()`)
 
-			for (const map of set.beatmaps) {
-				if (map.difficulty_rating < min_sr || map.difficulty_rating > max_sr) continue;
-
-				const newSet = structuredClone(set);
-				delete newSet.beatmaps;
-
-				beatmaps.push({ map: map as Osu.BeatmapExtended, set: newSet });
-				if (beatmaps.length >= 25) break outer_loop;
-			}
-		}
-	}
-
-	for (const map of beatmaps) {
-		await addMap(map.map, map.set);
-	}
 
 	for (let y = 0; y < 5; y++) {
 		for (let x = 0; x < 5; x++) {
@@ -78,7 +65,7 @@ export const fillSquares = async (
 
 			await db.insert(BingoSquare).values({
 				game_id,
-				map_id: beatmap.map.id,
+				map_id: beatmap.id,
 				x_pos: x,
 				y_pos: y
 			});

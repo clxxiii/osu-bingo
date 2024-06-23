@@ -50,7 +50,7 @@
 		<div
 			class="flex items-center justify-center gap-1 font-rounded font-bold text-xs rounded-tr absolute w-12 bottom-0 left-0 bg-zinc-900 z-20 pointer-events-none"
 		>
-			<OsuModeIcon mode="osu" size={12} />
+			<OsuModeIcon mode={square.data.gamemode} size={12} />
 			{difficulty}
 		</div>
 	</div>

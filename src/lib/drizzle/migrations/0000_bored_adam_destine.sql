@@ -45,6 +45,7 @@ CREATE TABLE `Map` (
 	`id` integer PRIMARY KEY NOT NULL,
 	`beatmapset_id` integer NOT NULL,
 	`fetch_time` integer NOT NULL,
+	`gamemode` text DEFAULT 'osu' NOT NULL,
 	`title` text NOT NULL,
 	`artist` text NOT NULL,
 	`difficulty_name` text NOT NULL,

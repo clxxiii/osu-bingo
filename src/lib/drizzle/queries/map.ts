@@ -11,6 +11,7 @@ export const addMap = async (map: Osu.BeatmapExtended, set: Osu.Beatmapset, mods
 		artist: set.artist,
 		difficulty_name: map.version,
 		url: map.url,
+		gamemode: map.mode,
 		square_url: set.covers['list@2x'],
 		banner_url: set.covers['card@2x'],
 		status: set.status,
@@ -22,7 +23,7 @@ export const addMap = async (map: Osu.BeatmapExtended, set: Osu.Beatmapset, mods
 
 	const stats: typeof MapStats.$inferInsert = {
 		map_id: map.id,
-		length: map.hit_length,
+		length: map.total_length,
 		bpm: map.bpm,
 		star_rating: map.difficulty_rating,
 		cs: map.cs,
