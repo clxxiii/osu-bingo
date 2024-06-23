@@ -75,7 +75,7 @@ export const updateScores = async (game_id: string) => {
       win = (win || event.win)
     }
   }
-  if (updates.length > 1) {
+  if (updates.length > 0) {
     sendEvent(game_id, {
       type: 'square',
       data: updates

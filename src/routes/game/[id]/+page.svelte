@@ -47,15 +47,25 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Bingo Game: {$store.link_id}</title>
+</svelte:head>
+
 <section class="grid">
+	<article class="row-start-1 row-end-2 col-start-1 col-end-2">
+		<Announcer {currentTeam} gameStore={store} user={data.user} />
+	</article>
 	<article
-		class="row-start-1 flex flex-col items-center rounded-xl p-4 gap-y-2 row-end-2 col-start-1 col-end-2 bg-[rgba(0,0,0,0.5)]"
+		class="row-start-2 flex gap-x-4 items-center justify-center rounded-xl p-4 gap-y-2 row-end-3 col-start-1 col-end-2 bg-[rgba(0,0,0,0.5)]"
 	>
-		<Announcer gameStore={store} user={data.user} />
-		{#if $store.squares}
+		{#if $store.state == 0}
+			<TeamList team="BLUE" gameStore={store} />
+		{/if}
+		{#if $store.state == 1}
 			<BingoCard on:squareclick={squareclick} {store} />
-		{:else}
-			<TeamList gameStore={store} />
+		{/if}
+		{#if $store.state == 0}
+			<TeamList team="RED" gameStore={store} />
 		{/if}
 	</article>
 	<article class=" w-[500px] pl-4 relative row-start-1 row-end-3 col-start-2 col-end-3">
@@ -67,7 +77,7 @@
 		{/key}
 	</article>
 	{#if sidebar}
-		<article class="pl-4 relative row-start-1 row-end-3 col-start-3 col-end-4">
+		<article class="pl-4 relative row-start-1 row-end-3 col-start-2 col-end-3">
 			<SquareSidebar
 				tiebreaker={data.game.tiebreaker}
 				on:close={() => (sidebar = false)}
@@ -83,6 +93,6 @@
 		height: calc(100vh - 3rem - 2rem);
 		max-width: calc(100vw - 2rem);
 		grid-template-columns: 2fr fit-content(500px) fit-content(500px);
-		grid-template-rows: 1fr;
+		grid-template-rows: fit-content(100px) 1fr;
 	}
 </style>

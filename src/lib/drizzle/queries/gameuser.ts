@@ -33,11 +33,12 @@ export const leaveGame = async (game_id: string, user_id: number): Promise<Bingo
 	return { ...gameuser, user }
 };
 
-export const getFullUser = async (game_id: string, user_id: number): Promise<Bingo.Card.FullUser> => {
+export const getFullUser = async (game_id: string, user_id: number): Promise<Bingo.Card.FullUser | null> => {
 	const gameuser = (await db
 		.select()
 		.from(GameUser)
 		.where(and(eq(GameUser.game_id, game_id), eq(GameUser.user_id, user_id))))[0];
+	if (!gameuser) return null;
 	const user = (await db.select().from(User).where(and(eq(User.id, gameuser.user_id))))[0]
 	return { ...gameuser, user }
 }

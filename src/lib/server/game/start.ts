@@ -12,7 +12,8 @@ export const startGame = async (game_id: string) => {
   sendEvent(game_id, {
     type: 'state',
     data: {
-      'state': 1
+      'state': 1,
+      card: await q.getGame(game_id)
     }
   })
 }

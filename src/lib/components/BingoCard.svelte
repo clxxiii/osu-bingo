@@ -2,6 +2,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import BingoSquare from './BingoSquare.svelte';
+	import { scale, slide } from 'svelte/transition';
 
 	export let store: Writable<Bingo.Card>;
 	let yMax: number;
@@ -21,6 +22,7 @@
 </script>
 
 <div
+	transition:scale={{ delay: 300 }}
 	class="grid p-2 bg-base-950 w-full max-w-[500px] rounded"
 	style="
 	grid-template-columns: repeat({xMax + 1}, {xMax + 1}fr); 

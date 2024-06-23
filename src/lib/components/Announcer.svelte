@@ -3,6 +3,7 @@
 
 	export let gameStore: Writable<Bingo.Card>;
 	export let user: Bingo.User | undefined;
+	export let currentTeam: string | undefined;
 
 	let text: string;
 	let gameId: string;
@@ -50,6 +51,11 @@
 			text = 'The game will start when the host starts it';
 			return;
 		}
+
+		if (game.state == 1) {
+			text = 'Get an FC to claim a square';
+			return;
+		}
 		text = '';
 	};
 
@@ -73,12 +79,17 @@
 </script>
 
 <div
-	class="min-w-[300px] px-4 font-rounded font-bold flex items-center justify-center rounded-full h-12 bg-zinc-900"
+	data-team={currentTeam}
+	class="data-[team=BLUE]:bg-blue-700 transition data-[team=RED]:bg-amber-700 size-full mb-4 h-32 px-4 font-rounded font-bold flex items-center justify-center rounded-xl bg-zinc-800"
 >
 	{text}
-	{#if buttonType == 'JOIN'}
-		<button on:click={join} class="bg-green-600 p-1 rounded-full text-sm px-2 ml-2">JOIN</button>
-	{:else if buttonType == 'LEAVE'}
-		<button on:click={leave} class="bg-amber-600 p-1 rounded-full text-sm px-2 ml-2">LEAVE</button>
+	{#if $gameStore.state == 0}
+		{#if buttonType == 'JOIN'}
+			<button on:click={join} class="bg-green-600 p-1 rounded-full text-sm px-2 ml-2">JOIN</button>
+		{:else if buttonType == 'LEAVE'}
+			<button on:click={leave} class="bg-amber-600 p-1 rounded-full text-sm px-2 ml-2">
+				LEAVE
+			</button>
+		{/if}
 	{/if}
 </div>

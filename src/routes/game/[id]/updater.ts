@@ -9,6 +9,9 @@ export const updateGame = (game: Bingo.Card, event: EmitterEvent): Bingo.Card =>
 
   if (isStateUpdate(event)) {
     game.state = event.data.state;
+    if (event.data.card) {
+      game = event.data.card;
+    }
     return game;
   }
 

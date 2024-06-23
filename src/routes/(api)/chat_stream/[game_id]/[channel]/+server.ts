@@ -16,6 +16,7 @@ export const GET: RequestHandler = async ({ params, locals }) => {
 
   if (!locals.user) error(StatusCodes.UNAUTHORIZED);
   const gameUser = await q.getFullUser(game_id, locals.user.id)
+  if (!gameUser) error(StatusCodes.UNAUTHORIZED);
 
   if (channel.toUpperCase() != 'GLOBAL' && channel.toUpperCase() != gameUser.team_name.toUpperCase())
     error(StatusCodes.UNAUTHORIZED)
