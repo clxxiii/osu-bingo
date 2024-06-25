@@ -25,6 +25,9 @@ export const BingoGame = sqliteTable('BingoGame', {
 	id: text('id').primaryKey().$defaultFn(randomUUID),
 	link_id: text('link_id'), // Four letters, similar to Jackbox
 
+	// Don't bother processing scores before this date:
+	start_time: integer('start_time', { mode: 'timestamp' }),
+
 	// Settings
 	// 0: Before starting, 1: In game, 2: Finished
 	state: integer('state').default(0).notNull(),
@@ -36,7 +39,10 @@ export const BingoGame = sqliteTable('BingoGame', {
 	claim_condition: text('claim_condition').notNull().default('fc'),
 
 	// How to sort scores for reclaims See more: `lib/server/get_best_score.ts`
-	tiebreaker: text('tiebreaker').notNull().default('score')
+	tiebreaker: text('tiebreaker').notNull().default('score'),
+
+	// Whether this game shows up in public listing
+	public: integer('public', { mode: 'boolean' }).notNull().default(false)
 });
 
 export const BingoSquare = sqliteTable('BingoSquare', {
@@ -233,6 +239,7 @@ export const Score = sqliteTable(
 		user_id: integer('user_id').notNull(),
 
 		date: integer('date', { mode: 'timestamp' }).notNull(),
+		percentage: real('percentage'), // If you fail, how far through the map you are.
 
 		is_fc: integer('is_fc', { mode: 'boolean' }).notNull().default(false),
 		score: real('score').notNull(),

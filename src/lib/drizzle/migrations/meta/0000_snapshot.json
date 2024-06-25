@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "8f34dba3-6b93-4bb7-a491-1c2cfed471c4",
+  "id": "b1a38a5e-9cf3-4923-8d94-cb7adb02b99b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "BingoGame": {
@@ -17,6 +17,13 @@
         "link_id": {
           "name": "link_id",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "start_time": {
+          "name": "start_time",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -52,6 +59,14 @@
           "notNull": true,
           "autoincrement": false,
           "default": "'score'"
+        },
+        "public": {
+          "name": "public",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": false
         }
       },
       "indexes": {},
@@ -637,6 +652,13 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false
+        },
+        "percentage": {
+          "name": "percentage",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "is_fc": {

@@ -42,6 +42,9 @@ export const updateScores = async (game_id: string) => {
     }
 
     for (const score of scoreList) {
+      if (game.start_time && new Date(score.ended_at).valueOf() <= game.start_time.valueOf()) {
+        continue;
+      }
       scores.push(score)
     }
   }
@@ -57,7 +60,6 @@ export const updateScores = async (game_id: string) => {
     return new Date(a.ended_at ?? Date.now()).valueOf() -
       new Date(b.ended_at ?? Date.now()).valueOf()
   });
-
 
 
   const updates: { score: Bingo.Card.FullScore, claim: boolean }[] = []

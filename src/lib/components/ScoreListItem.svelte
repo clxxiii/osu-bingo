@@ -8,7 +8,8 @@
 
 <div
 	data-claimer={score.important ? score.user.team_name : ''}
-	class="flex justify-between data-[claimer=RED]:bg-amber-600 data-[claimer=BLUE]:bg-blue-600 hover:shadow-lg mb-2 w-full p-2 h-14 hover:bg-zinc-700 transition rounded"
+	data-pass={score.grade != 'F'}
+	class="flex justify-between data-[pass=false]:opacity-60 data-[claimer=RED]:bg-amber-600 data-[claimer=BLUE]:bg-blue-600 hover:shadow-lg mb-2 w-full p-2 h-14 hover:bg-zinc-700 transition rounded"
 >
 	<div class="flex">
 		<span class="font-rounded flex items-center w-3 mr-2 justify-center">{index + 1}</span>
@@ -31,14 +32,18 @@
 			<div>+{score.mods}</div>
 		{/if}
 		<div class="text-2xl font-rounded font-bold">
-			{#if sort == 'score'}
-				{score.score.toLocaleString()}
-			{:else if sort == 'accuracy'}
-				{(score.accuracy * 100).toFixed(2)}%
-			{:else if sort == 'combo'}
-				{score.max_combo.toLocaleString()}x
-			{:else if sort == 'pp'}
-				{Math.round(score.pp ?? 0).toLocaleString()}pp
+			{#if score.grade != 'F'}
+				{#if sort == 'score'}
+					{score.score.toLocaleString()}
+				{:else if sort == 'accuracy'}
+					{(score.accuracy * 100).toFixed(2)}%
+				{:else if sort == 'combo'}
+					{score.max_combo.toLocaleString()}x
+				{:else if sort == 'pp'}
+					{Math.round(score.pp ?? 0).toLocaleString()}pp
+				{/if}
+			{:else}
+				{((score.percentage ?? 0) * 100).toFixed(1)}%
 			{/if}
 		</div>
 		<ScoreGrade grade={score.grade} />

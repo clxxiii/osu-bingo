@@ -112,7 +112,7 @@ export const getRecentScores = async (user_id: number, access_token: string) => 
 	const params = new URLSearchParams()
 	params.set("include_fails", '1')
 
-	const scores = await fetch(`${BASE_URL}/users/${user_id}/scores/recent`, {
+	const scores = await fetch(`${BASE_URL}/users/${user_id}/scores/recent?${params.toString()}`, {
 		headers: {
 			'Content-Type': 'application/json',
 			Accept: 'application/json',

@@ -1,10 +1,12 @@
 CREATE TABLE `BingoGame` (
 	`id` text PRIMARY KEY NOT NULL,
 	`link_id` text,
+	`start_time` integer,
 	`state` integer DEFAULT 0 NOT NULL,
 	`allow_team_switching` integer DEFAULT true,
 	`claim_condition` text DEFAULT 'fc' NOT NULL,
-	`tiebreaker` text DEFAULT 'score' NOT NULL
+	`tiebreaker` text DEFAULT 'score' NOT NULL,
+	`public` integer DEFAULT false NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `BingoSquare` (
@@ -88,6 +90,7 @@ CREATE TABLE `Score` (
 	`score_id` integer,
 	`user_id` integer NOT NULL,
 	`date` integer NOT NULL,
+	`percentage` real,
 	`is_fc` integer DEFAULT false NOT NULL,
 	`score` real NOT NULL,
 	`pp` real,

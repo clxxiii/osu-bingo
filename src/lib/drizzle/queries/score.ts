@@ -19,7 +19,8 @@ export const addScore = async (score: Osu.LazerScore, user: Bingo.Card.FullUser,
     date: new Date(score.ended_at ?? Date.now()),
     is_fc: score.is_perfect_combo,
     score: score.total_score,
-    grade: score.rank,
+    grade: score.passed ? score.rank : 'F',
+    percentage: score.passed ? 1000 : percentage(score),
     accuracy: score.accuracy,
     pp: score.pp,
     mods: score.mods.map(x => x.acronym).filter(x => x != 'CL').join(''),
@@ -31,4 +32,18 @@ export const addScore = async (score: Osu.LazerScore, user: Bingo.Card.FullUser,
   }).returning())[0]
 
   return { ...dbScore, user }
+}
+
+const percentage = (score: Osu.LazerScore) => {
+  const hits =
+    (score.statistics.miss ?? 0) +
+    (score.statistics.ok ?? 0) +
+    (score.statistics.meh ?? 0) +
+    (score.statistics.great ?? 0)
+
+  const total_hits = score.maximum_statistics?.great
+
+  if (!hits || !total_hits) return null;
+
+  return hits / total_hits;
 }
