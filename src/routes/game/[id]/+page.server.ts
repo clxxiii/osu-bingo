@@ -32,6 +32,13 @@ export const actions = {
 				user: fulluser
 			}
 		})
+		sendChat(game_id, 'global', {
+			type: 'player',
+			data: {
+				action: 'join',
+				player: fulluser
+			}
+		})
 	},
 	leave_game: async ({ params, locals }) => {
 		const linkId = params.id;
@@ -49,6 +56,13 @@ export const actions = {
 			data: {
 				type: 'leave',
 				user: fulluser
+			}
+		})
+		sendChat(game_id, 'global', {
+			type: 'player',
+			data: {
+				action: 'leave',
+				player: fulluser
 			}
 		})
 	},
@@ -70,7 +84,7 @@ export const actions = {
 		const chat = await q.sendChat(user.id, game_id, message, channel)
 		if (!chat) error(StatusCodes.BAD_REQUEST, "Gameuser is invalid")
 		sendChat(game_id, channel, {
-			type: 'user',
+			type: 'chat',
 			data: chat
 		})
 	}

@@ -7,6 +7,7 @@ import * as event from './event';
 import * as score from './score';
 import * as square from './square';
 import * as chat from './chat';
+import * as map from './map'
 
 export default {
 	...session,
@@ -17,5 +18,6 @@ export default {
 	...event,
 	...score,
 	...square,
-	...chat
+	...chat,
+	...map
 };

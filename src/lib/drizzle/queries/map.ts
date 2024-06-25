@@ -59,3 +59,18 @@ export const addMap = async (map: Osu.BeatmapExtended, set: Osu.Beatmapset, mods
 		.where(eq(Map.id, map.id))
 		.innerJoin(MapStats, eq(MapStats.map_id, map.id));
 };
+
+export const getMap = async (id: number, mods?: string): Promise<Bingo.Card.FullMap> => {
+	mods = mods ?? '';
+
+	const map = (await db.select()
+		.from(Map)
+		.innerJoin(MapStats, and(
+			eq(Map.id, MapStats.map_id),
+			eq(MapStats.mod_string, mods)
+		))
+		.where(eq(Map.id, id)))[0]
+
+
+	return { ...map.Map, stats: map.MapStats }
+}

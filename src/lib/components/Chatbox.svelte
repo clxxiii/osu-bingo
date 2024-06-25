@@ -1,20 +1,24 @@
 <script lang="ts">
 	import { MessageSquareText } from 'lucide-svelte';
 	import ChatMessage from './ChatMessage.svelte';
-	import type { ChatEvent } from '$lib/server/game/chat_emitter';
+	import type { ChatEvent, FullUpdate } from '$lib/server/game/chat_emitter';
 	import { browser } from '$app/environment';
 	import { writable } from 'svelte/store';
 
 	export let channel = 'global';
 	export let game_id: string;
 
-	let chats = writable<Bingo.Card.FullChat[]>([]);
+	let chats = writable<ChatEvent[]>([]);
 	let chatLength = 0;
 	const scroll = (node: HTMLDivElement, chatLength: number) => {
 		const scroll = () => scrollToBottom(node);
 		scroll();
 
 		return { update: scroll };
+	};
+
+	const isFullUpdate = (event: ChatEvent): event is FullUpdate => {
+		return event.type == 'fullUpdate';
 	};
 
 	const scrollToBottom = (node: HTMLDivElement) => {
@@ -33,10 +37,9 @@
 			chatStream.onmessage = (msg) => {
 				enabled = true;
 				const event: ChatEvent = JSON.parse(msg.data);
-				console.log(event);
 				chats.update((chats) => {
-					if (event.type == 'fullUpdate') chats = event.data;
-					else chats.push(event.data);
+					if (isFullUpdate(event)) chats = event.data.map((x) => ({ type: 'chat', data: x }));
+					else chats.push(event);
 					chatLength = chats.length;
 
 					return chats;
@@ -84,8 +87,8 @@
 					<div>Use this channel to collaborate with your fellow teammates!</div>
 				{/if}
 			</div>
-			{#each $chats as chat}
-				<ChatMessage {chat} />
+			{#each $chats as event}
+				<ChatMessage {event} />
 			{/each}
 		</div>
 	</div>

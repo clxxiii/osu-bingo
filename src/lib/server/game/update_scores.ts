@@ -10,6 +10,7 @@ import { checkWin } from "$lib/bingo-helpers/check_win";
 import { isClaimworthy } from "$lib/bingo-helpers/claimworthy";
 import { removeGame } from "./watch";
 import { sendEvent } from "./emitter";
+import { sendEvent as sendChat } from "./chat_emitter";
 
 const updating = new Set<string>();
 
@@ -62,16 +63,14 @@ export const updateScores = async (game_id: string) => {
   });
 
 
-  const updates: { score: Bingo.Card.FullScore, claim: boolean }[] = []
+  const updates: { score: Bingo.Card.FullScore, map: Bingo.Card.FullMap, claim: boolean }[] = []
   let win = false;
   for (const score of scores) {
     const event = await processScore(score, game);
     if (event) {
       updates.push({
-        score: {
-          ...event.score,
-
-        },
+        score: event.score,
+        map: event.map,
         claim: event.claimer
       })
       win = (win || event.win)
@@ -80,6 +79,14 @@ export const updateScores = async (game_id: string) => {
   if (updates.length > 0) {
     sendEvent(game_id, {
       type: 'square',
+      data: updates
+    })
+    sendChat(game_id, 'red', {
+      type: 'score',
+      data: updates
+    })
+    sendChat(game_id, 'blue', {
+      type: 'score',
       data: updates
     })
   }
@@ -118,6 +125,7 @@ const processScore = async (score: Osu.LazerScore, game: Bingo.Card) => {
 
   const update = {
     score: newScore,
+    map: square.data,
     claimer: false,
     win: false
   }
