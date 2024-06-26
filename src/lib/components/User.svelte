@@ -4,6 +4,7 @@
 	import { cubicInOut } from 'svelte/easing';
 	import { tweened, type Tweened } from 'svelte/motion';
 	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
 
 	export let user: Bingo.User | undefined;
 	let width: Tweened<number>;
@@ -82,10 +83,10 @@
 			</button>
 		{/if}
 	</div>
-{:else}
+{:else if browser}
 	<a
 		class="font-rounded px-10 hover:bg-pink-900 transition active:bg-pink-950 font-bold bg-pink-800 border-pink-200 rounded-full p-1 w-40"
-		href="/auth/login/osu">login with osu!</a
+		href="/auth/login/osu?from={window.location.href}">login with osu!</a
 	>
 {/if}
 

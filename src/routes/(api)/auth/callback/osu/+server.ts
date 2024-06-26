@@ -5,10 +5,16 @@ import { PUBLIC_OSU_CLIENT_ID } from '$env/static/public';
 import { OSU_CLIENT_SECRET } from '$env/static/private';
 import q from '$lib/drizzle/queries';
 import { exchangeAuthCode, getMe } from '$lib/server/osu';
+import { getState } from '../../state';
 
 export const GET: RequestHandler = async ({ url, cookies }) => {
 	const code = url.searchParams.get('code');
-	if (code == null) {
+	const stateId = url.searchParams.get('state');
+	if (code == null || stateId == null) {
+		redirect(StatusCodes.TEMPORARY_REDIRECT, '/');
+	}
+	const state = getState(stateId)
+	if (!state) {
 		redirect(StatusCodes.TEMPORARY_REDIRECT, '/');
 	}
 
@@ -29,17 +35,17 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		cover_url: user.cover?.url ?? '',
 		avatar_url: user.avatar_url,
 
-		pp: user.statistics.pp,
+		pp: user?.statistics?.pp,
 
-		global_rank: user.statistics.global_rank,
-		country_rank: user.statistics.country_rank,
+		global_rank: user?.statistics?.global_rank,
+		country_rank: user?.statistics?.country_rank,
 
-		total_score: user.statistics.total_score,
-		ranked_score: user.statistics.ranked_score,
-		hit_accuracy: user.statistics.hit_accuracy,
-		play_count: user.statistics.play_count,
-		level: user.statistics.level.current,
-		level_progress: user.statistics.level.progress
+		total_score: user?.statistics?.total_score,
+		ranked_score: user?.statistics?.ranked_score,
+		hit_accuracy: user?.statistics?.hit_accuracy,
+		play_count: user?.statistics?.play_count,
+		level: user?.statistics?.level?.current,
+		level_progress: user?.statistics?.level?.progress
 	});
 
 	await q.setToken({
@@ -56,5 +62,5 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 			expires: new Date(Date.now() + 60 * 60 * 24 * 1000)
 		});
 
-	redirect(StatusCodes.TEMPORARY_REDIRECT, '/');
+	redirect(StatusCodes.TEMPORARY_REDIRECT, state.from);
 };
