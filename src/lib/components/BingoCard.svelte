@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import BingoSquare from './BingoSquare.svelte';
 	import { scale, slide } from 'svelte/transition';
+	import { square } from '$lib/stores';
 
 	export let store: Writable<Bingo.Card>;
 	let yMax: number;
@@ -15,9 +15,8 @@
 		}
 	});
 
-	const dispatch = createEventDispatcher();
-	const click = (square: Bingo.Card.FullSquare) => {
-		dispatch('squareclick', square);
+	const click = (s: Bingo.Card.FullSquare) => {
+		$square = s;
 	};
 </script>
 

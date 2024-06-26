@@ -16,7 +16,7 @@ export type ScoreMessage = {
   type: 'score',
   data: {
     score: Bingo.Card.FullScore,
-    map: Bingo.Card.FullMap
+    square: Bingo.Card.FullSquare
     claim: boolean
   }[]
 }

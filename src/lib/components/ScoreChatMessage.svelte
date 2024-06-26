@@ -1,8 +1,14 @@
 <script lang="ts">
+	import { square } from '$lib/stores';
 	export let score: {
 		score: Bingo.Card.FullScore;
-		map: Bingo.Card.FullMap;
+		square: Bingo.Card.FullSquare;
 		claim: boolean;
+	};
+
+	score.square.scores.push(score.score);
+	const click = () => {
+		$square = score.square;
 	};
 </script>
 
@@ -19,17 +25,21 @@
 				{score.score.user.user.username} has claimed a square for {score.score.user.team_name.toLowerCase()}
 				team!
 			</div>
-			<div class="w-full relative flex gap-x-1 bg-zinc-800 rounded overflow-hidden h-14">
-				<img src={score.map.square_url} class="size-14" alt="" />
+			<button
+				on:click={click}
+				class="w-full z-0 text-left relative flex gap-x-1 bg-zinc-800 rounded overflow-hidden h-14"
+			>
+				<img src={score.square.data.square_url} class="size-14" alt="" />
 				<div class="font-rounded flex flex-col justify-center">
-					<div class="font-black">{score.map.title}</div>
-					<div>by {score.map.artist}</div>
+					<div class="font-black">{score.square.data.title}</div>
+					<div>by {score.square.data.artist}</div>
 				</div>
-			</div>
+			</button>
 		</div>
 	</div>
 {:else}
 	<div class="italic w-full pl-2 text-zinc-500">
-		{score.score.user.user.username} set a new score on {score.map.artist} - {score.map.title}: ({score.score.score.toLocaleString()})
+		{score.score.user.user.username} set a new score on {score.square.data.artist} - {score.square
+			.data.title}: ({score.score.score.toLocaleString()})
 	</div>
 {/if}

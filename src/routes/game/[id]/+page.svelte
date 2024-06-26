@@ -9,11 +9,10 @@
 	import { writable } from 'svelte/store';
 	import type { EmitterEvent } from '$lib/server/game/emitter';
 	import { updateGame } from './updater';
+	import { square } from '$lib/stores';
+	import { fade, slide } from 'svelte/transition';
 
 	export let data: PageData;
-
-	let sidebar = false;
-	let selectedSquare: Bingo.Card.FullSquare | null;
 
 	const store = writable<Bingo.Card>(data.game);
 
@@ -23,17 +22,6 @@
 
 		currentTeam = game.users.find((x) => x.user_id == data?.user?.id)?.team_name;
 	});
-
-	// Show sidebar on bingo square click
-	const squareclick = (square: CustomEvent<Bingo.Card.FullSquare>) => {
-		if (!sidebar) {
-			selectedSquare = square.detail;
-			sidebar = true;
-			return;
-		}
-		selectedSquare = null;
-		setTimeout(() => (selectedSquare = square.detail), 300);
-	};
 
 	// Recieve Game updates from server
 	onMount(async () => {
@@ -62,7 +50,7 @@
 			<TeamList team="BLUE" gameStore={store} />
 		{/if}
 		{#if $store.state == 1}
-			<BingoCard on:squareclick={squareclick} {store} />
+			<BingoCard {store} />
 		{/if}
 		{#if $store.state == 0}
 			<TeamList team="RED" gameStore={store} />
@@ -76,13 +64,9 @@
 			/>
 		{/key}
 	</article>
-	{#if sidebar}
-		<article class="pl-4 relative row-start-1 row-end-3 col-start-2 col-end-3">
-			<SquareSidebar
-				tiebreaker={data.game.tiebreaker}
-				on:close={() => (sidebar = false)}
-				square={selectedSquare}
-			/>
+	{#if $square}
+		<article transition:fade class="pl-4 relative row-start-1 row-end-3 col-start-2 col-end-3">
+			<SquareSidebar tiebreaker={data.game.tiebreaker} />
 		</article>
 	{/if}
 </section>

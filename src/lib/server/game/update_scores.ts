@@ -63,16 +63,12 @@ export const updateScores = async (game_id: string) => {
   });
 
 
-  const updates: { score: Bingo.Card.FullScore, map: Bingo.Card.FullMap, claim: boolean }[] = []
+  const updates: { score: Bingo.Card.FullScore, square: Bingo.Card.FullSquare, claim: boolean }[] = []
   let win = false;
   for (const score of scores) {
     const event = await processScore(score, game);
     if (event) {
-      updates.push({
-        score: event.score,
-        map: event.map,
-        claim: event.claimer
-      })
+      updates.push(event)
       win = (win || event.win)
     }
   }
@@ -123,14 +119,15 @@ const processScore = async (score: Osu.LazerScore, game: Bingo.Card) => {
   if (!user) return
   const newScore = await q.addScore(score, user, square.id, claimworthy)
 
+  // For sending to the client
   const update = {
     score: newScore,
-    map: square.data,
-    claimer: false,
+    square,
+    claim: false,
     win: false
   }
   if (game.state == 1 && claimworthy && scoreBeatsBest(square, newScore, 'score')) {
-    update.claimer = true;
+    update.claim = true;
     await q.setClaimer(square.id, user.id)
 
     const win = checkWin(await q.getGame(game.id));
