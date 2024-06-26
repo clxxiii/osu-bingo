@@ -10,7 +10,7 @@
 	import type { EmitterEvent } from '$lib/server/game/emitter';
 	import { updateGame } from './updater';
 	import { square } from '$lib/stores';
-	import { fade, slide } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 
 	export let data: PageData;
 

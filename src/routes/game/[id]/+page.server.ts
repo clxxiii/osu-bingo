@@ -4,6 +4,7 @@ import { error } from '@sveltejs/kit';
 import { StatusCodes } from '$lib/StatusCodes';
 import { sendEvent } from '$lib/server/game/emitter';
 import { sendEvent as sendChat } from "$lib/server/game/chat_emitter"
+import { sendBoard } from '$lib/server/bancho/bancho_board';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const game = await q.getGameFromLinkId(params.id);
@@ -87,5 +88,17 @@ export const actions = {
 			type: 'chat',
 			data: chat
 		})
+	},
+	send_board: async ({ params, locals }) => {
+		const user = locals.user;
+		const linkId = params.id;
+		const game_id = await q.gameLinkToId(linkId);
+
+		if (!user) error(StatusCodes.UNAUTHORIZED);
+		if (!game_id) error(StatusCodes.BAD_REQUEST);
+
+		const game = await q.getGame(game_id);
+
+		sendBoard(user.id, game);
 	}
 }

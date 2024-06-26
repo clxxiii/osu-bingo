@@ -76,6 +76,13 @@
 	};
 
 	gameStore.subscribe((value) => update(value));
+
+	const sendBoard = () => {
+		fetch('?/send_board', {
+			body: new FormData(),
+			method: 'POST'
+		});
+	};
 </script>
 
 <div
