@@ -168,4 +168,14 @@ export const getAllGames = async () => {
 		.from(BingoGame)
 		.orderBy(BingoGame.state)
 		.limit(10)
+		.where(eq(BingoGame.public, true));
+}
+
+export const gameExists = async (game_id: string) => {
+	const q = await db
+		.select()
+		.from(BingoGame)
+		.where(eq(BingoGame.id, `gam_${game_id}`))
+	if (q.length > 0) return `gam_${game_id}`
+	return null
 }

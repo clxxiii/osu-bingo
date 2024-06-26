@@ -7,7 +7,7 @@ import { sendEvent as sendChat } from "$lib/server/game/chat_emitter"
 import { sendBoard } from '$lib/server/bancho/bancho_board';
 
 export const load: PageServerLoad = async ({ params }) => {
-	const game = await q.getGameFromLinkId(params.id);
+	const game = await q.getGame(`gam_${params.id}`);
 	if (!game) error(StatusCodes.NOT_FOUND);
 	return { game };
 };
@@ -18,7 +18,7 @@ export const actions = {
 		const linkId = params.id;
 		const team = form.get('team');
 		const user = locals.user;
-		const game_id = await q.gameLinkToId(linkId);
+		const game_id = await q.gameExists(linkId);
 
 		if (!user) error(StatusCodes.UNAUTHORIZED);
 		if (!team || !game_id || typeof team != 'string') error(StatusCodes.BAD_REQUEST);
@@ -44,7 +44,7 @@ export const actions = {
 	leave_game: async ({ params, locals }) => {
 		const linkId = params.id;
 		const user = locals.user;
-		const game_id = await q.gameLinkToId(linkId);
+		const game_id = await q.gameExists(linkId);
 
 		if (!user) error(StatusCodes.UNAUTHORIZED);
 		if (!game_id) error(StatusCodes.BAD_REQUEST);
@@ -70,7 +70,7 @@ export const actions = {
 	chat: async ({ params, request, locals }) => {
 		const user = locals.user;
 		const linkId = params.id;
-		const game_id = await q.gameLinkToId(linkId);
+		const game_id = await q.gameExists(linkId);
 
 		if (!user) error(StatusCodes.UNAUTHORIZED);
 		if (!game_id) error(StatusCodes.BAD_REQUEST);
@@ -92,7 +92,7 @@ export const actions = {
 	send_board: async ({ params, locals }) => {
 		const user = locals.user;
 		const linkId = params.id;
-		const game_id = await q.gameLinkToId(linkId);
+		const game_id = await q.gameExists(linkId);
 
 		if (!user) error(StatusCodes.UNAUTHORIZED);
 		if (!game_id) error(StatusCodes.BAD_REQUEST);
