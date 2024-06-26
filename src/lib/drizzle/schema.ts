@@ -13,7 +13,8 @@ import {
 	text,
 	unique
 } from 'drizzle-orm/sqlite-core';
-import { randomUUID } from 'node:crypto';
+import ShortUniqueId from 'short-unique-id';
+const { randomUUID } = new ShortUniqueId({ length: 12, dictionary: 'alpha' })
 
 /**
  * Represents a game of Bingo
@@ -22,7 +23,7 @@ import { randomUUID } from 'node:crypto';
  * multiple scores.
  */
 export const BingoGame = sqliteTable('BingoGame', {
-	id: text('id').primaryKey().$defaultFn(randomUUID),
+	id: text('id').primaryKey().$defaultFn(() => `gam_${randomUUID()}`),
 	link_id: text('link_id'), // Four letters, similar to Jackbox
 
 	// Don't bother processing scores before this date:
@@ -46,7 +47,7 @@ export const BingoGame = sqliteTable('BingoGame', {
 });
 
 export const BingoSquare = sqliteTable('BingoSquare', {
-	id: text('id').primaryKey().$defaultFn(randomUUID),
+	id: text('id').primaryKey().$defaultFn(() => `sqr_${randomUUID()}`),
 
 	// References
 	game_id: text('game_id')
@@ -70,7 +71,7 @@ export const BingoSquare = sqliteTable('BingoSquare', {
 export const GameUser = sqliteTable(
 	'GameUser',
 	{
-		id: text('id').primaryKey().$defaultFn(randomUUID),
+		id: text('id').primaryKey().$defaultFn(() => `gmu_${randomUUID()}`),
 		game_id: text('game_id')
 			.notNull()
 			.references(() => BingoGame.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
@@ -118,7 +119,7 @@ export const User = sqliteTable('User', {
  * Represents an Oauth token for a user,
  */
 export const OauthToken = sqliteTable('OauthToken', {
-	id: text('id').primaryKey().$defaultFn(randomUUID),
+	id: text('id').primaryKey().$defaultFn(() => `tkn_${randomUUID()}`),
 	service: text('service').notNull(),
 	access_token: text('access_token').unique().notNull(),
 	expires_at: integer('expires_at', { mode: 'timestamp' }).notNull(),
@@ -135,7 +136,7 @@ export const OauthToken = sqliteTable('OauthToken', {
  * Represents a user's login session.
  */
 export const Session = sqliteTable('Session', {
-	id: text('id').primaryKey().$defaultFn(randomUUID),
+	id: text('id').primaryKey().$defaultFn(() => `ses_${randomUUID()}`),
 	user_id: integer('user_id')
 		.notNull()
 		.references(() => User.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
@@ -156,7 +157,7 @@ export const Session = sqliteTable('Session', {
  *
  */
 export const TimeEvent = sqliteTable('TimeEvent', {
-	id: text('id').primaryKey().$defaultFn(randomUUID),
+	id: text('id').primaryKey().$defaultFn(() => `evt_${randomUUID()}`),
 	time: integer('time', { mode: 'timestamp' }).notNull(),
 	action: text('action').notNull(), // Some string that represents what to do
 	// when the time hits
@@ -234,7 +235,7 @@ export const MapStats = sqliteTable(
 export const Score = sqliteTable(
 	'Score',
 	{
-		id: text('id').primaryKey().$defaultFn(randomUUID),
+		id: text('id').primaryKey().$defaultFn(() => `scr_${randomUUID()}`),
 		score_id: integer('score_id'), // https://osu.ppy.sh/s/[score_id]
 		user_id: integer('user_id').notNull(),
 
@@ -270,7 +271,7 @@ export const Score = sqliteTable(
 export const Chat = sqliteTable(
 	'Chat',
 	{
-		id: text('id').primaryKey().$defaultFn(randomUUID),
+		id: text('id').primaryKey().$defaultFn(() => `cht_${randomUUID()}`),
 
 		time: integer('time', { mode: 'timestamp' })
 			.$defaultFn(() => new Date())
