@@ -33,17 +33,24 @@ export const BingoGame = sqliteTable('BingoGame', {
 	// 0: Before starting, 1: In game, 2: Finished
 	state: integer('state').default(0).notNull(),
 
+	// Square Filling Settings
+	min_sr: real('min_sr'),
+	max_sr: real('max_sr'),
+	min_length: real('min_length'),
+	max_length: real('max_length'),
+
 	// Only takes effect when game state is 0.
 	allow_team_switching: integer('allow_team_switching', { mode: 'boolean' }).default(true),
 
 	// What dictates whether a square is claimed. See more: `lib/server/claimworthy.ts`
 	claim_condition: text('claim_condition').notNull().default('fc'),
-
 	// How to sort scores for reclaims See more: `lib/server/get_best_score.ts`
 	tiebreaker: text('tiebreaker').notNull().default('score'),
 
 	// Whether this game shows up in public listing
-	public: integer('public', { mode: 'boolean' }).notNull().default(false)
+	public: integer('public', { mode: 'boolean' }).notNull().default(false),
+
+	template_id: text('template_id').references(() => Template.id)
 });
 
 export const BingoSquare = sqliteTable('BingoSquare', {
@@ -283,6 +290,12 @@ export const Chat = sqliteTable(
 		game_id: text('game_id')
 			.notNull()
 			.references(() => BingoGame.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
-		game_user_id: text('game_user_id').notNull().references(() => GameUser.id)
+		user_id: integer('user_id').notNull().references(() => User.id)
 	}
 );
+
+export const Template = sqliteTable('Template', {
+	id: text('id').primaryKey().$defaultFn(() => `tmt_${randomUUID()}`),
+
+	data: text('data').notNull(),
+})

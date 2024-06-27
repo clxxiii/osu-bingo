@@ -10,14 +10,16 @@ import {
 	OauthToken,
 	Score,
 	Session,
+	Template,
 	TimeEvent,
 	User
 } from './schema';
 
-export const BingoGameRelations = relations(BingoGame, ({ many }) => ({
+export const BingoGameRelations = relations(BingoGame, ({ one, many }) => ({
 	users: many(GameUser),
 	events: many(TimeEvent),
-	squares: many(BingoSquare)
+	squares: many(BingoSquare),
+	template: one(Template, { fields: [BingoGame.template_id], references: [Template.id] })
 }));
 
 export const BingoSquareRelations = relations(BingoSquare, ({ one, many }) => ({
@@ -35,7 +37,8 @@ export const GameUserRelations = relations(GameUser, ({ one }) => ({
 export const UserRelations = relations(User, ({ many }) => ({
 	game_list: many(GameUser),
 	tokens: many(OauthToken),
-	sessions: many(Session)
+	sessions: many(Session),
+	chats: many(Chat)
 }));
 
 export const TokenRelations = relations(OauthToken, ({ one }) => ({
@@ -69,5 +72,9 @@ export const ScoreRelations = relations(Score, ({ one }) => ({
 
 export const ChatRelations = relations(Chat, ({ one }) => ({
 	game: one(BingoSquare, { fields: [Chat.game_id], references: [BingoSquare.id] }),
-	user: one(GameUser, { fields: [Chat.game_user_id], references: [GameUser.id] })
+	user: one(User, { fields: [Chat.user_id], references: [User.id] })
 }));
+
+export const TemplateRelations = relations(Template, ({ many }) => ({
+	games: many(BingoGame)
+}))

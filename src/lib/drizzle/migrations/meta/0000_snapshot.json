@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "b1a38a5e-9cf3-4923-8d94-cb7adb02b99b",
+  "id": "c1cb4a29-1651-470a-87bb-c1deed3f8280",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "BingoGame": {
@@ -36,6 +36,34 @@
           "autoincrement": false,
           "default": 0
         },
+        "min_sr": {
+          "name": "min_sr",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "max_sr": {
+          "name": "max_sr",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "min_length": {
+          "name": "min_length",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "max_length": {
+          "name": "max_length",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "allow_team_switching": {
           "name": "allow_team_switching",
           "type": "integer",
@@ -67,10 +95,31 @@
           "notNull": true,
           "autoincrement": false,
           "default": false
+        },
+        "template_id": {
+          "name": "template_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "BingoGame_template_id_Template_id_fk": {
+          "name": "BingoGame_template_id_Template_id_fk",
+          "tableFrom": "BingoGame",
+          "tableTo": "Template",
+          "columnsFrom": [
+            "template_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
@@ -212,9 +261,9 @@
           "notNull": true,
           "autoincrement": false
         },
-        "game_user_id": {
-          "name": "game_user_id",
-          "type": "text",
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -235,12 +284,12 @@
           "onDelete": "cascade",
           "onUpdate": "cascade"
         },
-        "Chat_game_user_id_GameUser_id_fk": {
-          "name": "Chat_game_user_id_GameUser_id_fk",
+        "Chat_user_id_User_id_fk": {
+          "name": "Chat_user_id_User_id_fk",
           "tableFrom": "Chat",
-          "tableTo": "GameUser",
+          "tableTo": "User",
           "columnsFrom": [
-            "game_user_id"
+            "user_id"
           ],
           "columnsTo": [
             "id"
@@ -858,6 +907,29 @@
           "onUpdate": "cascade"
         }
       },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "Template": {
+      "name": "Template",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "data": {
+          "name": "data",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },

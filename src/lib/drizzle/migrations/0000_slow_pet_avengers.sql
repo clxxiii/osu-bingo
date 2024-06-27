@@ -3,10 +3,16 @@ CREATE TABLE `BingoGame` (
 	`link_id` text,
 	`start_time` integer,
 	`state` integer DEFAULT 0 NOT NULL,
+	`min_sr` real,
+	`max_sr` real,
+	`min_length` real,
+	`max_length` real,
 	`allow_team_switching` integer DEFAULT true,
 	`claim_condition` text DEFAULT 'fc' NOT NULL,
 	`tiebreaker` text DEFAULT 'score' NOT NULL,
-	`public` integer DEFAULT false NOT NULL
+	`public` integer DEFAULT false NOT NULL,
+	`template_id` text,
+	FOREIGN KEY (`template_id`) REFERENCES `Template`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `BingoSquare` (
@@ -28,9 +34,9 @@ CREATE TABLE `Chat` (
 	`text` text,
 	`channel` text DEFAULT 'GLOBAL' NOT NULL,
 	`game_id` text NOT NULL,
-	`game_user_id` text NOT NULL,
+	`user_id` integer NOT NULL,
 	FOREIGN KEY (`game_id`) REFERENCES `BingoGame`(`id`) ON UPDATE cascade ON DELETE cascade,
-	FOREIGN KEY (`game_user_id`) REFERENCES `GameUser`(`id`) ON UPDATE no action ON DELETE no action
+	FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `GameUser` (
@@ -116,6 +122,11 @@ CREATE TABLE `Session` (
 	`browser` text,
 	`os` text,
 	FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON UPDATE cascade ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `Template` (
+	`id` text PRIMARY KEY NOT NULL,
+	`data` text NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `TimeEvent` (

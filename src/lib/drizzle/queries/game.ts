@@ -75,6 +75,7 @@ export const fillSquares = async (
 
 export const getGame = async (game_id: string) => {
 	const game = (await db.select().from(BingoGame).where(eq(BingoGame.id, game_id)))[0];
+	if (!game) return null;
 
 	const users: Bingo.Card.FullUser[] = [];
 	const gameusers = await db.select().from(GameUser).where(eq(GameUser.game_id, game_id))
