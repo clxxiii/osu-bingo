@@ -65,7 +65,10 @@
 		{/key}
 	</article>
 	{#if $square}
-		<article transition:fade class="pl-4 relative row-start-1 row-end-3 col-start-2 col-end-3">
+		<article
+			transition:fade={{ duration: 150 }}
+			class="pl-4 relative row-start-1 row-end-3 col-start-2 col-end-3"
+		>
 			<SquareSidebar tiebreaker={data.game.tiebreaker} />
 		</article>
 	{/if}
