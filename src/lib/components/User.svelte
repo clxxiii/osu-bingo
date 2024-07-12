@@ -30,7 +30,7 @@
 	});
 </script>
 
-{#if user != undefined}
+{#if user != undefined && browser}
 	<div
 		data-expand={expanded}
 		style="--w: {$width}px"
@@ -58,7 +58,7 @@
 					in:fly={{ y: 30, delay: 400 }}
 					out:fly={{ y: -30, delay: 100 }}
 					class="size-8 text-amber-600 flex items-center hover:bg-zinc-700 justify-center transition rounded"
-					href="/auth/logout"
+					href="/auth/logout?from={window.location.href}"
 				>
 					<LogOut />
 				</a>
