@@ -1,4 +1,5 @@
 <script lang="ts">
+	import NavLink from './NavLink.svelte';
 	import User from './User.svelte';
 	import VR from './VerticalRule.svelte';
 
@@ -11,6 +12,9 @@
 		<div class="flex items-center font-display h-6 text-lg text-nowrap">bingo</div>
 	</a>
 	<VR />
+	<NavLink href="/">Home</NavLink>
+	<NavLink href="/games">Games</NavLink>
+	<NavLink href="/templates">Templates</NavLink>
 	<div class="absolute right-1">
 		<User {user} />
 	</div>
