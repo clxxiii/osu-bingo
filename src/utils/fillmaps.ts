@@ -9,8 +9,12 @@ import type { Osu } from "$lib/osu";
 const sqlite = createClient({ url: 'file:./db/dev.db' });
 export const db = drizzle(sqlite);
 
-const POPULAR_CUTOFF = 1_000
+const POPULAR_CUTOFF = 300
 const TOTAL = 10_000 // Change this when starting from a new date (adding newer maps)
+
+// Next time you run this script, set the `earlier` property to the current date, 
+// to only fetch maps that weren't ranked when this script ran.
+// Current Date: 2024-07-12T06:01:36.957Z
 
 const current = new Date();
 const earliest = new Date("2007-10-06"); // Date of the first osu map (disco prince)
