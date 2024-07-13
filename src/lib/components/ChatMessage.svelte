@@ -24,7 +24,7 @@
 	};
 </script>
 
-<div transition:fly={{ x: -30 }} class="w-full">
+<div transition:fly={{ x: -30, duration: 100 }} class="w-full">
 	{#if isChatEvent(event)}
 		<UserChatMessage chat={event.data} />
 	{:else if isScoreEvent(event)}
