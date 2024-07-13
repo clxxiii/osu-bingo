@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "c1cb4a29-1651-470a-87bb-c1deed3f8280",
+  "id": "150d302e-0a48-46a9-9293-500bcc8c38cd",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "BingoGame": {
@@ -920,6 +920,13 @@
           "notNull": true,
           "autoincrement": false
         },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "data": {
           "name": "data",
           "type": "text",
@@ -929,7 +936,21 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "Template_user_id_User_id_fk": {
+          "name": "Template_user_id_User_id_fk",
+          "tableFrom": "Template",
+          "tableTo": "User",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },

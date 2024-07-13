@@ -296,6 +296,7 @@ export const Chat = sqliteTable(
 
 export const Template = sqliteTable('Template', {
 	id: text('id').primaryKey().$defaultFn(() => `tmt_${randomUUID()}`),
+	owner_id: integer('user_id').notNull().references(() => User.id),
 
 	data: text('data').notNull(),
 })

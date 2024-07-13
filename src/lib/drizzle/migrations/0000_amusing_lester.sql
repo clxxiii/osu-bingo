@@ -126,7 +126,9 @@ CREATE TABLE `Session` (
 --> statement-breakpoint
 CREATE TABLE `Template` (
 	`id` text PRIMARY KEY NOT NULL,
-	`data` text NOT NULL
+	`user_id` integer NOT NULL,
+	`data` text NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `TimeEvent` (

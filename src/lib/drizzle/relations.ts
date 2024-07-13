@@ -38,7 +38,8 @@ export const UserRelations = relations(User, ({ many }) => ({
 	game_list: many(GameUser),
 	tokens: many(OauthToken),
 	sessions: many(Session),
-	chats: many(Chat)
+	chats: many(Chat),
+	templates: many(Template)
 }));
 
 export const TokenRelations = relations(OauthToken, ({ one }) => ({
@@ -75,6 +76,7 @@ export const ChatRelations = relations(Chat, ({ one }) => ({
 	user: one(User, { fields: [Chat.user_id], references: [User.id] })
 }));
 
-export const TemplateRelations = relations(Template, ({ many }) => ({
-	games: many(BingoGame)
+export const TemplateRelations = relations(Template, ({ many, one }) => ({
+	games: many(BingoGame),
+	owner: one(User, { fields: [Template.owner_id], references: [User.id] })
 }))
