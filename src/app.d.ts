@@ -63,6 +63,7 @@ declare global {
 			squares: Card.FullSquare[] | null; // Null if game state is 0 (to hide squares)
 			events: TimeEvent[];
 			users: Card.FullUser[];
+			hosts: User[],
 		};
 	}
 }

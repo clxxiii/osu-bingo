@@ -8,7 +8,21 @@ export const joinGame = async (game_id: string, user_id: number, team: string): 
 		.from(GameUser)
 		.where(and(eq(GameUser.game_id, game_id), eq(GameUser.user_id, user_id)));
 
-	if (test.length != 0) return null;
+	if (test.length != 0) {
+		if (test[0].host) {
+
+			const gameuser = (
+				await db
+					.update(GameUser)
+					.set({ team_name: team })
+					.where(eq(GameUser.id, test[0].id))
+					.returning()
+			)[0]
+			const user = (await db.select().from(User).where(and(eq(User.id, gameuser.user_id))))[0]
+			return { ...gameuser, user }
+		}
+		return null;
+	};
 
 	const gameuser = (
 		await db
@@ -24,7 +38,25 @@ export const joinGame = async (game_id: string, user_id: number, team: string): 
 	return { ...gameuser, user }
 };
 
-export const leaveGame = async (game_id: string, user_id: number): Promise<Bingo.Card.FullUser> => {
+export const leaveGame = async (game_id: string, user_id: number): Promise<Bingo.Card.FullUser | null> => {
+	const test = await db
+		.select()
+		.from(GameUser)
+		.where(and(eq(GameUser.game_id, game_id), eq(GameUser.user_id, user_id)));
+
+	if (test.length == 0 || test.length > 1) return null;
+	if (test[0].host) {
+		const gameuser = (await db
+			.update(GameUser)
+			.set({
+				team_name: 'none'
+			})
+			.where(eq(GameUser.id, test[0].id))
+			.returning()
+		)[0]
+		const user = (await db.select().from(User).where(and(eq(User.id, gameuser.user_id))))[0]
+		return { ...gameuser, user }
+	}
 	const gameuser = (await db
 		.delete(GameUser)
 		.where(and(eq(GameUser.game_id, game_id), eq(GameUser.user_id, user_id)))
@@ -38,6 +70,17 @@ export const getFullUser = async (game_id: string, user_id: number): Promise<Bin
 		.select()
 		.from(GameUser)
 		.where(and(eq(GameUser.game_id, game_id), eq(GameUser.user_id, user_id))))[0];
+	if (!gameuser) return null;
+	const user = (await db.select().from(User).where(and(eq(User.id, gameuser.user_id))))[0]
+	return { ...gameuser, user }
+}
+
+export const setHost = async (game_id: string, user_id: number, host?: boolean): Promise<Bingo.Card.FullUser | null> => {
+	const gameuser = (await db.update(GameUser).set({
+		host: host ?? true
+	})
+		.where(and(eq(GameUser.game_id, game_id), eq(GameUser.user_id, user_id)))
+		.returning())[0]
 	if (!gameuser) return null;
 	const user = (await db.select().from(User).where(and(eq(User.id, gameuser.user_id))))[0]
 	return { ...gameuser, user }

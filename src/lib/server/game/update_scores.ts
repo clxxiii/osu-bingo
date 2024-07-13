@@ -19,6 +19,7 @@ export const updateScores = async (game_id: string) => {
 
   updating.add(game_id);
   const game = await q.getGame(game_id);
+  if (!game) return;
   if (game.state != 1 || !game.squares) return;
 
 
@@ -130,7 +131,9 @@ const processScore = async (score: Osu.LazerScore, game: Bingo.Card) => {
     update.claim = true;
     await q.setClaimer(square.id, user.id)
 
-    const win = checkWin(await q.getGame(game.id));
+    const winCheck = await q.getGame(game.id); // Refetch the game to get updated properties
+    if (!winCheck) return update;
+    const win = checkWin(winCheck);
     if (win) {
       q.setGameState(game.id, 2);
       removeGame(game.id);

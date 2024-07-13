@@ -1,4 +1,4 @@
-import { and, eq, gte, lte, or, sql } from 'drizzle-orm';
+import { and, eq, gte, lte, not, or, sql } from 'drizzle-orm';
 import { db } from '..';
 import {
 	BingoGame,
@@ -41,20 +41,37 @@ export const newGame = async () => {
 
 export const fillSquares = async (
 	game_id: string,
-	min_sr: number,
-	max_sr: number,
-	mode: Osu.Ruleset
+	mode?: Osu.Ruleset
 ) => {
+
+	const settings = (await db.select({
+		max_sr: BingoGame.max_sr,
+		min_sr: BingoGame.min_sr,
+		max_length: BingoGame.max_length,
+		min_length: BingoGame.min_length,
+	})
+		.from(BingoGame).where(eq(BingoGame.id, game_id)))[0]
+	if (!settings) return;
+
+	// Add restrictions for finding maps
+	const restrictions = []
+	if (mode)
+		restrictions.push(eq(Map.gamemode, mode))
+	if (settings.max_sr)
+		restrictions.push(lte(MapStats.star_rating, settings.max_sr))
+	if (settings.min_sr)
+		restrictions.push(gte(MapStats.star_rating, settings.min_sr))
+	if (settings.max_length)
+		restrictions.push(lte(MapStats.length, settings.max_length))
+	if (settings.min_length)
+		restrictions.push(gte(MapStats.length, settings.min_length))
+
 
 	const beatmaps = await db
 		.select({ id: Map.id })
 		.from(Map)
 		.innerJoin(MapStats, eq(Map.id, MapStats.map_id))
-		.where(and(
-			lte(MapStats.star_rating, max_sr),
-			gte(MapStats.star_rating, min_sr),
-			eq(Map.gamemode, mode)
-		))
+		.where(and(...restrictions))
 		.limit(25)
 		.orderBy(sql`RANDOM()`)
 
@@ -78,16 +95,31 @@ export const getGame = async (game_id: string) => {
 	if (!game) return null;
 
 	const users: Bingo.Card.FullUser[] = [];
-	const gameusers = await db.select().from(GameUser).where(eq(GameUser.game_id, game_id))
+	const gameusers = await db
+		.select()
+		.from(GameUser)
+		.where(and(
+			eq(GameUser.game_id, game_id),
+			not(eq(GameUser.team_name, "none"))
+		))
 	for (const gameuser of gameusers) {
 		const user = (await db.select().from(User).where(and(eq(User.id, gameuser.user_id))))[0]
 		users.push({ ...gameuser, user })
 	}
 
+	const hosts = (await db
+		.select({ user: User })
+		.from(GameUser)
+		.innerJoin(User, eq(GameUser.user_id, User.id))
+		.where(and(
+			eq(GameUser.game_id, game.id),
+			eq(GameUser.host, true)
+		))).map(x => x.user)
+
 	const events = await db.select().from(TimeEvent).where(eq(TimeEvent.game_id, game_id));
 
 
-	if (game.state == 0) return { ...game, users, events, squares: null };
+	if (game.state == 0) return { ...game, users, events, squares: null, hosts };
 
 	const squares: Bingo.Card.FullSquare[] = [];
 	const dbSquares = await db.select().from(BingoSquare).where(eq(BingoSquare.game_id, game_id));
@@ -126,7 +158,7 @@ export const getGame = async (game_id: string) => {
 		});
 	}
 
-	return { ...game, users, events, squares };
+	return { ...game, users, events, squares, hosts };
 };
 
 export const gameLinkToId = async (link: string) => {
@@ -179,4 +211,27 @@ export const gameExists = async (game_id: string) => {
 		.where(eq(BingoGame.id, `gam_${game_id}`))
 	if (q.length > 0) return `gam_${game_id}`
 	return null
+}
+
+type Settings = {
+	public?: boolean
+	allow_team_switching?: boolean
+	claim_condition?: string
+	tiebreaker?: string
+	template_id?: string
+	min_sr?: number
+	max_sr?: number
+	min_length?: number
+	max_length?: number
+	min_rank?: number
+	max_rank?: number
+}
+export const updateGameSettings = async (game_id: string, settings: Settings) => {
+	const q = (await db
+		.update(BingoGame)
+		.set(settings)
+		.where(eq(BingoGame.id, game_id))
+		.returning())[0]
+	if (!q) return null;
+	return q;
 }

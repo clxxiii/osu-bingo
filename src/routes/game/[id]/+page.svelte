@@ -41,7 +41,7 @@
 
 <section class="grid">
 	<article class="row-start-1 row-end-2 col-start-1 col-end-2">
-		<Announcer {currentTeam} gameStore={store} user={data.user} />
+		<Announcer {currentTeam} gameStore={store} user={data.user} isHost={data.is_host} />
 	</article>
 	<article
 		class="row-start-2 flex gap-x-4 items-center justify-center rounded-xl p-4 gap-y-2 row-end-3 col-start-1 col-end-2 bg-[rgba(0,0,0,0.5)]"

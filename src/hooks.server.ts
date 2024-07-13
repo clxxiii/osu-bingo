@@ -24,7 +24,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 			const link = match[0].slice(1, 5);
 			const gameId = await q.gameLinkToId(link);
 			if (gameId != null) {
-				redirect(StatusCodes.TEMPORARY_REDIRECT, `/game/${gameId.split('_')[1]}`);
+				redirect(StatusCodes.TEMPORARY_REDIRECT, `/game/${gameId.split('_')[1]}?code=${link}`);
 			}
 		}
 	}

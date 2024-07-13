@@ -7,6 +7,7 @@ import { sendEvent } from "./emitter";
 import { addGame } from "./watch";
 
 export const startGame = async (game_id: string) => {
+  await q.fillSquares(game_id, 'osu')
   await q.setGameState(game_id, 1);
   addGame(game_id);
   sendEvent(game_id, {

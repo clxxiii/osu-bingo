@@ -22,7 +22,7 @@ export type StateChangeEvent = {
   type: 'state'
   data: {
     state: number
-    card?: Bingo.Card
+    card?: Bingo.Card | null
   }
 }
 

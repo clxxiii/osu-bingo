@@ -5,11 +5,14 @@ import { StatusCodes } from '$lib/StatusCodes';
 import { sendEvent } from '$lib/server/game/emitter';
 import { sendEvent as sendChat } from "$lib/server/game/chat_emitter"
 import { sendBoard } from '$lib/server/bancho/bancho_board';
+import { startGame } from '$lib/server/game/start';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, locals }) => {
 	const game = await q.getGame(`gam_${params.id}`);
 	if (!game) error(StatusCodes.NOT_FOUND);
-	return { game };
+
+	const is_host = game.hosts.find(x => x.id == locals?.user?.id) != undefined;
+	return { game, is_host };
 };
 
 export const actions = {
@@ -98,7 +101,24 @@ export const actions = {
 		if (!game_id) error(StatusCodes.BAD_REQUEST);
 
 		const game = await q.getGame(game_id);
+		if (!game) error(StatusCodes.BAD_REQUEST);
 
 		sendBoard(user.id, game);
+	},
+	start_game: async ({ params, locals }) => {
+		const user = locals.user;
+		const linkId = params.id;
+		const game_id = await q.gameExists(linkId);
+
+		if (!user) error(StatusCodes.UNAUTHORIZED);
+		if (!game_id) error(StatusCodes.BAD_REQUEST);
+
+		const game = await q.getGame(game_id);
+		if (!game) error(StatusCodes.BAD_REQUEST);
+
+		const is_host = game.hosts.filter(x => x.id == user.id).length != 0
+		if (!is_host) error(StatusCodes.UNAUTHORIZED)
+
+		await startGame(game_id);
 	}
 }

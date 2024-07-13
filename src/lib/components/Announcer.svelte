@@ -3,6 +3,7 @@
 
 	export let gameStore: Writable<Bingo.Card>;
 	export let user: Bingo.User | undefined;
+	export let isHost: boolean;
 	export let currentTeam: string | undefined;
 
 	let text: string;
@@ -74,6 +75,13 @@
 			method: 'POST'
 		});
 	};
+	const start = async () => {
+		const data = new FormData();
+		await fetch(`?/start_game`, {
+			body: data,
+			method: 'POST'
+		});
+	};
 
 	gameStore.subscribe((value) => update(value));
 
@@ -97,6 +105,11 @@
 			<button on:click={leave} class="bg-amber-600 p-1 rounded-full text-sm px-2 ml-2">
 				LEAVE
 			</button>
+		{/if}
+		{#if isHost}
+			<button on:click={start} class="bg-green-600 p-1 rounded-full text-sm px-2 ml-2">
+				START</button
+			>
 		{/if}
 	{/if}
 </div>
