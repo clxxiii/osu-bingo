@@ -100,7 +100,8 @@ export const getGame = async (game_id: string) => {
 		.from(GameUser)
 		.where(and(
 			eq(GameUser.game_id, game_id),
-			not(eq(GameUser.team_name, "none"))
+			not(eq(GameUser.team_name, "none")),
+			not(eq(GameUser.team_name, "invited"))
 		))
 	for (const gameuser of gameusers) {
 		const user = (await db.select().from(User).where(and(eq(User.id, gameuser.user_id))))[0]

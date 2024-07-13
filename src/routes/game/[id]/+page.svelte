@@ -14,7 +14,8 @@
 
 	export let data: PageData;
 
-	const store = writable<Bingo.Card>(data.game);
+	const store = writable<Bingo.Card>();
+	if (data.game) store.set(data.game);
 
 	let currentTeam: string | undefined;
 	store.subscribe((game) => {
@@ -25,6 +26,7 @@
 
 	// Recieve Game updates from server
 	onMount(async () => {
+		if (!data.game) return;
 		const gameStream = new EventSource(`/game_stream/${data.game.id}`);
 		gameStream.onmessage = (msg) => {
 			const event: EmitterEvent = JSON.parse(msg.data);
@@ -36,43 +38,53 @@
 </script>
 
 <svelte:head>
-	<title>Bingo Game: {$store.link_id}</title>
+	{#if data.game}
+		<title>
+			Bingo Game: {$store.link_id}
+		</title>
+	{:else}
+		<title>Private Game</title>
+	{/if}
 </svelte:head>
 
-<section class="grid">
-	<article class="row-start-1 row-end-2 col-start-1 col-end-2">
-		<Announcer {currentTeam} gameStore={store} user={data.user} isHost={data.is_host} />
-	</article>
-	<article
-		class="row-start-2 flex gap-x-4 items-center justify-center rounded-xl p-4 gap-y-2 row-end-3 col-start-1 col-end-2 bg-[rgba(0,0,0,0.5)]"
-	>
-		{#if $store.state == 0}
-			<TeamList team="BLUE" gameStore={store} />
-		{/if}
-		{#if $store.state == 1}
-			<BingoCard {store} />
-		{/if}
-		{#if $store.state == 0}
-			<TeamList team="RED" gameStore={store} />
-		{/if}
-	</article>
-	<article class=" w-[500px] pl-4 relative row-start-1 row-end-3 col-start-2 col-end-3">
-		{#key currentTeam}
-			<Chatbox
-				game_id={$store.id}
-				channel={$store.state == 1 ? currentTeam?.toLowerCase() : 'global'}
-			/>
-		{/key}
-	</article>
-	{#if $square}
-		<article
-			transition:fade={{ duration: 150 }}
-			class="pl-4 relative row-start-1 row-end-3 col-start-2 col-end-3"
-		>
-			<SquareSidebar tiebreaker={data.game.tiebreaker} />
+{#if data.game}
+	<section class="grid">
+		<article class="row-start-1 row-end-2 col-start-1 col-end-2">
+			<Announcer {currentTeam} gameStore={store} user={data.user} isHost={data.is_host} />
 		</article>
-	{/if}
-</section>
+		<article
+			class="row-start-2 flex gap-x-4 items-center justify-center rounded-xl p-4 gap-y-2 row-end-3 col-start-1 col-end-2 bg-[rgba(0,0,0,0.5)]"
+		>
+			{#if $store.state == 0}
+				<TeamList team="BLUE" gameStore={store} />
+			{/if}
+			{#if $store.state == 1}
+				<BingoCard {store} />
+			{/if}
+			{#if $store.state == 0}
+				<TeamList team="RED" gameStore={store} />
+			{/if}
+		</article>
+		<article class=" w-[500px] pl-4 relative row-start-1 row-end-3 col-start-2 col-end-3">
+			{#key currentTeam}
+				<Chatbox
+					game_id={$store.id}
+					channel={$store.state == 1 ? currentTeam?.toLowerCase() : 'global'}
+				/>
+			{/key}
+		</article>
+		{#if $square}
+			<article
+				transition:fade={{ duration: 150 }}
+				class="pl-4 relative row-start-1 row-end-3 col-start-2 col-end-3"
+			>
+				<SquareSidebar tiebreaker={data.game.tiebreaker} />
+			</article>
+		{/if}
+	</section>
+{:else}
+	You haven't been invited to this private game
+{/if}
 
 <style>
 	section.grid {

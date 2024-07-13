@@ -1,17 +1,45 @@
 import type { PageServerLoad } from './$types';
 import q from '$lib/drizzle/queries';
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import { StatusCodes } from '$lib/StatusCodes';
 import { sendEvent } from '$lib/server/game/emitter';
 import { sendEvent as sendChat } from "$lib/server/game/chat_emitter"
 import { sendBoard } from '$lib/server/bancho/bancho_board';
 import { startGame } from '$lib/server/game/start';
 
-export const load: PageServerLoad = async ({ params, locals }) => {
+export const load: PageServerLoad = async ({ params, locals, url }) => {
+	const join = url.searchParams.get('join') == '' ? true : false
+	const code = url.searchParams.get('code');
+
+	// Auto join game by appending `join` to query string
+	if (join && locals.user) {
+		await q.joinGame(`gam_${params.id}`, locals.user.id);
+		redirect(StatusCodes.TEMPORARY_REDIRECT, `/game/${params.id}`)
+	}
+	if (code && locals.user) {
+		const game = await q.getGame(`gam_${params.id}`);
+		if (game?.link_id == code) {
+			await q.setInvited(`gam_${params.id}`, locals.user.id)
+			redirect(StatusCodes.TEMPORARY_REDIRECT, `/game/${params.id}`)
+		}
+	}
+
 	const game = await q.getGame(`gam_${params.id}`);
 	if (!game) error(StatusCodes.NOT_FOUND);
 
-	const is_host = game.hosts.find(x => x.id == locals?.user?.id) != undefined;
+	const is_host = game.hosts.find(x => x.id == locals.user?.id) != undefined;
+
+	// Private Games
+	if (!game.public) {
+		if (!locals.user) {
+			redirect(StatusCodes.TEMPORARY_REDIRECT, `/auth/login/osu?from=/game/${params.id}%3F${url.searchParams.toString()}`)
+		}
+
+		if (await q.isInvited(game.id, locals.user?.id)) return { game, is_host }
+
+		return { game: null, is_host }
+	}
+
 	return { game, is_host };
 };
 
