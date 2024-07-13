@@ -39,6 +39,10 @@ export const BingoGame = sqliteTable('BingoGame', {
 	min_length: real('min_length'),
 	max_length: real('max_length'),
 
+	// Restrict users that can join
+	min_rank: integer('min_rank'),
+	max_rank: integer('max_rank'),
+
 	// Only takes effect when game state is 0.
 	allow_team_switching: integer('allow_team_switching', { mode: 'boolean' }).default(true),
 
@@ -48,7 +52,7 @@ export const BingoGame = sqliteTable('BingoGame', {
 	tiebreaker: text('tiebreaker').notNull().default('score'),
 
 	// Whether this game shows up in public listing
-	public: integer('public', { mode: 'boolean' }).notNull().default(false),
+	public: integer('public', { mode: 'boolean' }).notNull().default(true),
 
 	template_id: text('template_id').references(() => Template.id)
 });

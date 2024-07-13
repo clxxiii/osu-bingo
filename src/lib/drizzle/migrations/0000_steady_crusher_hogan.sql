@@ -7,10 +7,12 @@ CREATE TABLE `BingoGame` (
 	`max_sr` real,
 	`min_length` real,
 	`max_length` real,
+	`min_rank` integer,
+	`max_rank` integer,
 	`allow_team_switching` integer DEFAULT true,
 	`claim_condition` text DEFAULT 'fc' NOT NULL,
 	`tiebreaker` text DEFAULT 'score' NOT NULL,
-	`public` integer DEFAULT false NOT NULL,
+	`public` integer DEFAULT true NOT NULL,
 	`template_id` text,
 	FOREIGN KEY (`template_id`) REFERENCES `Template`(`id`) ON UPDATE no action ON DELETE no action
 );

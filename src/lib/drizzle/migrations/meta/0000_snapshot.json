@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "150d302e-0a48-46a9-9293-500bcc8c38cd",
+  "id": "1d2246f0-27cd-496a-b843-4e8e36d5c843",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "BingoGame": {
@@ -64,6 +64,20 @@
           "notNull": false,
           "autoincrement": false
         },
+        "min_rank": {
+          "name": "min_rank",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "max_rank": {
+          "name": "max_rank",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "allow_team_switching": {
           "name": "allow_team_switching",
           "type": "integer",
@@ -94,7 +108,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": false
+          "default": true
         },
         "template_id": {
           "name": "template_id",
