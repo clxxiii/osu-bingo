@@ -4,6 +4,7 @@
 	import type { ChatEvent, FullUpdate } from '$lib/server/game/chat_emitter';
 	import { browser } from '$app/environment';
 	import { writable } from 'svelte/store';
+	import { source } from 'sveltekit-sse';
 
 	export let channel = 'global';
 	export let game_id: string;
@@ -28,15 +29,20 @@
 		});
 	};
 
-	let chatStream: EventSource;
 	let enabled: boolean;
 
 	$: {
 		if (browser) {
-			chatStream = new EventSource(`/chat_stream/${game_id}/${channel}`);
-			chatStream.onmessage = (msg) => {
+			const stream = source(`/chat_stream/${game_id}/${channel}`).select('message');
+			stream.subscribe((msg) => {
 				enabled = true;
-				const event: ChatEvent = JSON.parse(msg.data);
+				let event: ChatEvent | null = null;
+				try {
+					event = JSON.parse(msg);
+				} catch {
+					return;
+				}
+				if (!event) return;
 				chats.update((chats) => {
 					if (isFullUpdate(event)) chats = event.data.map((x) => ({ type: 'chat', data: x }));
 					else chats.push(event);
@@ -44,10 +50,7 @@
 
 					return chats;
 				});
-			};
-			chatStream.onerror = () => {
-				enabled = false;
-			};
+			});
 		}
 	}
 	let box: HTMLInputElement;

@@ -7,32 +7,23 @@
 import type { RequestHandler } from "./$types"
 import q from "$lib/drizzle/queries";
 import { deafen, listen } from "$lib/server/game/emitter";
+import { produce } from "sveltekit-sse";
 
-export const GET: RequestHandler = ({ params }) => {
+export const POST: RequestHandler = ({ params }) => {
   let eventHandler: (game: unknown) => void;
-  const stream = new ReadableStream({
-    start: async (controller) => {
-      // Send initial game state
-      const game = await q.getGame(params.id);
-      controller.enqueue(`data: ${JSON.stringify({
-        type: 'fullUpdate',
-        data: game
-      })}\n\n`)
 
-      eventHandler = (game) => {
-        controller.enqueue(`data: ${JSON.stringify(game)}\n\n`)
-      }
-      listen(params.id, eventHandler)
-    },
-    cancel: () => {
-      if (eventHandler) deafen(params.id, eventHandler);
+  return produce(async ({ emit }) => {
+    // Send initial game state
+    const game = await q.getGame(params.id);
+    emit('message', JSON.stringify({ type: 'fullUpdate', data: game }));
+
+    eventHandler = (game) => {
+      emit('message', JSON.stringify(game))
     }
-  })
-
-  return new Response(stream, {
-    headers: {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache'
+    listen(params.id, eventHandler)
+  }, {
+    stop: () => {
+      deafen(params.id, eventHandler)
     }
   })
 }

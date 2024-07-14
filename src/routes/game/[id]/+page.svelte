@@ -11,6 +11,7 @@
 	import { updateGame } from './updater';
 	import { square } from '$lib/stores';
 	import { fade } from 'svelte/transition';
+	import { source } from 'sveltekit-sse';
 
 	export let data: PageData;
 
@@ -27,13 +28,18 @@
 	// Recieve Game updates from server
 	onMount(async () => {
 		if (!data.game) return;
-		const gameStream = new EventSource(`/game_stream/${data.game.id}`);
-		gameStream.onmessage = (msg) => {
-			const event: EmitterEvent = JSON.parse(msg.data);
+		const stream = source(`/game_stream/${data.game.id}`).select('message');
+		stream.subscribe((msg) => {
+			let event: EmitterEvent | null = null;
+			try {
+				event = JSON.parse(msg);
+			} catch {
+				return;
+			}
+			if (!event) return;
 			console.log(event);
 			store.update((current) => updateGame(current, event));
-		};
-		gameStream.onerror = console.log;
+		});
 	});
 </script>
 

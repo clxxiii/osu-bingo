@@ -9,8 +9,9 @@ import q from "$lib/drizzle/queries";
 import { deafen, listen } from "$lib/server/game/chat_emitter";
 import { error } from "@sveltejs/kit";
 import { StatusCodes } from "$lib/StatusCodes";
+import { produce } from "sveltekit-sse";
 
-export const GET: RequestHandler = async ({ params, locals }) => {
+export const POST: RequestHandler = async ({ params, locals }) => {
   const channel = params.channel;
   const game_id = params.game_id;
 
@@ -22,29 +23,21 @@ export const GET: RequestHandler = async ({ params, locals }) => {
     error(StatusCodes.UNAUTHORIZED)
 
   let eventHandler: (game: unknown) => void;
-  const stream = new ReadableStream({
-    start: async (controller) => {
-      // Send current chats
-      const game = await q.getChatChannel(game_id, channel);
-      controller.enqueue(`data: ${JSON.stringify({
-        type: 'fullUpdate',
-        data: game
-      })}\n\n`)
+  return produce(async ({ emit }) => {
+    // Send current chats
+    const game = await q.getChatChannel(game_id, channel);
+    emit('message', JSON.stringify({
+      type: 'fullUpdate',
+      data: game
+    }))
 
-      eventHandler = (game) => {
-        controller.enqueue(`data: ${JSON.stringify(game)}\n\n`)
-      }
-      listen(game_id, channel, eventHandler)
-    },
-    cancel: () => {
-      if (eventHandler) deafen(game_id, channel, eventHandler);
+    eventHandler = (game) => {
+      emit('message', JSON.stringify(game))
     }
-  })
-
-  return new Response(stream, {
-    headers: {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache'
+    listen(game_id, channel, eventHandler)
+  }, {
+    stop: () => {
+      deafen(game_id, channel, eventHandler);
     }
   })
 }

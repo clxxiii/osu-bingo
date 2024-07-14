@@ -48,6 +48,7 @@
     "drizzle-orm": "^0.31.2",
     "jose": "^5.4.0",
     "lucide-svelte": "^0.395.0",
-    "short-unique-id": "^5.2.0"
+    "short-unique-id": "^5.2.0",
+    "sveltekit-sse": "^0.13.2"
   }
 }
