@@ -4,8 +4,6 @@ services:
   app:
     restart: always
     build: .
-    volumes:
-      - './db:/db'
     env_file:
       - .env
     ports:
