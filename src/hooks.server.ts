@@ -3,6 +3,7 @@ import * as jose from 'jose';
 import { JWT_SECRET } from '$env/static/private';
 import q from '$lib/drizzle/queries';
 import { StatusCodes } from '$lib/StatusCodes';
+import { connect } from '$lib/server/bancho';
 
 // Start Polling Services
 import { tokens, events } from '$lib/server/polling';
@@ -10,6 +11,7 @@ import { setup as watch } from "$lib/server/game/watch"
 tokens.setup()
 events.setup()
 watch()
+connect()
 
 const jwt_secret = new TextEncoder().encode(JWT_SECRET);
 

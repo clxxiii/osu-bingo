@@ -8,9 +8,11 @@ export const client = new BanchoClient({
   'apiKey': BANCHO_KEY
 })
 
-client.connect().then(() => {
-  console.log('Connected to bancho!')
-})
+export const connect = () => {
+  client.connect().then(() => {
+    console.log('Connected to bancho!')
+  })
+}
 
 let sending = false;
 const queue: { msg: string[], id: number }[] = [];
