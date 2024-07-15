@@ -90,7 +90,7 @@ export const fillSquares = async (
 	}
 };
 
-export const getGame = async (game_id: string) => {
+export const getGame = async (game_id: string): Promise<Bingo.Card | null> => {
 	const game = (await db.select().from(BingoGame).where(eq(BingoGame.id, game_id)))[0];
 	if (!game) return null;
 

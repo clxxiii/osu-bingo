@@ -44,7 +44,7 @@
 </script>
 
 <svelte:head>
-	{#if data.game}
+	{#if data.game && data.game.public}
 		<title>
 			Bingo Game: {$store.link_id}
 		</title>

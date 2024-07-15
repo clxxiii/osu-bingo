@@ -20,7 +20,6 @@
 				}
 			}
 
-			red.sort((a, b) => (a.user.global_rank ?? 999999999) - (b.user.global_rank ?? 999999999));
 			users = red;
 		});
 	});

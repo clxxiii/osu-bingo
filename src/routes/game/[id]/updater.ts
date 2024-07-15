@@ -37,11 +37,15 @@ export const updateGame = (game: Bingo.Card, event: EmitterEvent): Bingo.Card =>
     }
 
     if (event.data.type == 'leave') {
-      game.users = game.users.filter(x => x.id != event.data.user.id);
+      const i = game.users.findIndex(x => x.id == event.data.user.id);
+      if (i > -1)
+        game.users.splice(i, 1)
     }
 
     if (event.data.type == 'switch') {
-      game.users = game.users.filter(x => x.id != event.data.user.id);
+      const i = game.users.findIndex(x => x.id == event.data.user.id);
+      if (i > -1)
+        game.users.splice(i, 1)
       game.users.push(event.data.user);
     }
   }

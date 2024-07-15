@@ -1,5 +1,7 @@
 import { BANCHO_USER, BANCHO_PASS, BANCHO_KEY } from '$env/static/private'
 import pkg from "bancho.js";
+import q from "$lib/drizzle/queries"
+import { sendBoard } from './bancho_board';
 const { BanchoClient } = pkg;
 
 export const client = new BanchoClient({
@@ -32,3 +34,13 @@ export const sendMessage = async (msg: string[], id: number) => {
   }
   sending = false;
 }
+
+client.on('PM', async ({ user, message }) => {
+  if (message !== '!board') return;
+  await user.fetchFromAPI();
+  const gameCheck = await q.isInGame(user.id);
+  if (!gameCheck) return;
+  const game = await q.getGame(gameCheck.game_id)
+  if (!game) return;
+  await sendBoard(user.id, game);
+})

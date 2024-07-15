@@ -1,6 +1,6 @@
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { db } from '..';
-import { Session, User } from '../schema';
+import { BingoGame, GameUser, Session, User } from '../schema';
 
 export const setUser = async (user: typeof User.$inferInsert) => {
 	if (user.id == null) {
@@ -38,3 +38,17 @@ export const getUserFromSessionToken = async (token: string) => {
 	//There should only be one
 	return tokens[0].User;
 };
+
+export const isInGame = async (user_id: number) => {
+	return (await db.select({
+		user_id: GameUser.user_id,
+		game_id: BingoGame.id,
+		guid: GameUser.id
+	})
+		.from(GameUser)
+		.innerJoin(BingoGame, eq(GameUser.game_id, BingoGame.id))
+		.where(and(
+			eq(GameUser.user_id, user_id),
+			eq(BingoGame.state, 1)
+		)))[0]
+}

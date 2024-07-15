@@ -74,7 +74,6 @@ export const actions = {
 	},
 	switch_team: async ({ request, params, locals }) => {
 		const form = await request.formData()
-		console.log(form);
 		const linkId = params.id;
 		const team = form.get('team');
 		const guid = form.get('user_id');
