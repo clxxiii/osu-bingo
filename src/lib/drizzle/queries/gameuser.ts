@@ -84,6 +84,21 @@ export const leaveGame = async (game_id: string, user_id: number): Promise<Bingo
 	return { ...gameuser, user }
 };
 
+export const switchTeams = async (guid: string, team: string) => {
+	const gameuser = (
+		await db
+			.update(GameUser)
+			.set({
+				team_name: team
+			})
+			.where(eq(GameUser.id, guid))
+			.returning()
+	)[0]
+	if (!gameuser) return null;
+	const user = (await db.select().from(User).where(and(eq(User.id, gameuser.user_id))))[0]
+	return { ...gameuser, user }
+}
+
 export const getFullUser = async (game_id: string, user_id: number): Promise<Bingo.Card.FullUser | null> => {
 	const gameuser = (await db
 		.select()
@@ -103,6 +118,16 @@ export const setHost = async (game_id: string, user_id: number, host?: boolean):
 	if (!gameuser) return null;
 	const user = (await db.select().from(User).where(and(eq(User.id, gameuser.user_id))))[0]
 	return { ...gameuser, user }
+}
+
+export const isHost = async (game_id: string, user_id: number) => {
+	const gu = await db
+		.select()
+		.from(GameUser)
+		.where(and(eq(GameUser.game_id, game_id), eq(GameUser.user_id, user_id)));
+
+	if (gu.length == 0) return false;
+	return gu[0].host;
 }
 
 export const setInvited = async (game_id: string, user_id: number): Promise<Bingo.Card.FullUser | null> => {

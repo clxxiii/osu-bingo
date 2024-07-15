@@ -39,6 +39,11 @@ export const updateGame = (game: Bingo.Card, event: EmitterEvent): Bingo.Card =>
     if (event.data.type == 'leave') {
       game.users = game.users.filter(x => x.id != event.data.user.id);
     }
+
+    if (event.data.type == 'switch') {
+      game.users = game.users.filter(x => x.id != event.data.user.id);
+      game.users.push(event.data.user);
+    }
   }
 
   return game

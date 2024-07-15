@@ -5,7 +5,7 @@ export type EmitterEvent = GameUserEvent | StateChangeEvent | FullUpdateEvent | 
 export type GameUserEvent = {
   type: 'gameUser'
   data: {
-    type: 'join' | 'leave'
+    type: 'join' | 'leave' | 'switch'
     user: Bingo.Card.FullUser
   }
 }

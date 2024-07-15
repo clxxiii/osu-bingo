@@ -72,6 +72,42 @@ export const actions = {
 			}
 		})
 	},
+	switch_team: async ({ request, params, locals }) => {
+		const form = await request.formData()
+		console.log(form);
+		const linkId = params.id;
+		const team = form.get('team');
+		const guid = form.get('user_id');
+		const actor = locals.user;
+		const game_id = await q.gameExists(linkId);
+
+		if (!actor) error(StatusCodes.UNAUTHORIZED);
+		if (!team || !game_id || typeof team != 'string' || typeof guid != 'string') error(StatusCodes.BAD_REQUEST);
+
+		const is_host = await q.isHost(game_id, actor.id);
+		if (!is_host) {
+			const can_switch = await q.canSwitch(game_id, guid, actor.id);
+			if (!can_switch) error(StatusCodes.UNAUTHORIZED);
+		}
+
+		const fulluser = await q.switchTeams(guid, team);
+		if (fulluser == null) error(StatusCodes.BAD_REQUEST, 'User is not in game')
+
+		sendEvent(game_id, {
+			type: 'gameUser',
+			data: {
+				type: 'switch',
+				user: fulluser
+			}
+		})
+		sendChat(game_id, 'global', {
+			type: 'player',
+			data: {
+				action: 'switch',
+				player: fulluser
+			}
+		})
+	},
 	leave_game: async ({ params, locals }) => {
 		const linkId = params.id;
 		const user = locals.user;

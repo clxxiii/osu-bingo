@@ -214,6 +214,17 @@ export const gameExists = async (game_id: string) => {
 	return null
 }
 
+export const canSwitch = async (game_id: string, guid: string, user_id: number) => {
+	const switchable = (await db.select({ switch: BingoGame.allow_team_switching })
+		.from(BingoGame)
+		.where(eq(BingoGame.id, game_id)))[0].switch;
+	if (!switchable) return false;
+
+	const gu = await db.select({ id: GameUser.id }).from(GameUser).where(and(eq(GameUser.user_id, user_id), eq(GameUser.game_id, game_id)))
+	if (gu.length != 1) return false;
+	return gu[0].id == guid;
+}
+
 type Settings = {
 	public?: boolean
 	allow_team_switching?: boolean

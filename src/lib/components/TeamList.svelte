@@ -6,6 +6,8 @@
 
 	export let gameStore: Writable<Bingo.Card>;
 	export let team: string;
+	export let user: Bingo.User | undefined;
+	export let host: boolean = false;
 
 	let users: Bingo.Card.FullUser[] = [];
 
@@ -37,7 +39,12 @@
 		</h1>
 		<div class="p-2 overflow-y-scroll">
 			{#each users as gameuser}
-				<TeamListUser {gameuser} />
+				<TeamListUser
+					{gameuser}
+					movable={host ||
+						(gameuser.user_id == user?.id && ($gameStore.allow_team_switching ?? false))}
+					kickable={host}
+				/>
 			{/each}
 		</div>
 	</div>

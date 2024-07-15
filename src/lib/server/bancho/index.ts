@@ -9,6 +9,8 @@ export const client = new BanchoClient({
 })
 
 export const connect = () => {
+  if (client.isConnected()) return;
+
   client.connect().then(() => {
     console.log('Connected to bancho!')
   })

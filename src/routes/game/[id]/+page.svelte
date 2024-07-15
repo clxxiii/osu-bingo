@@ -62,13 +62,13 @@
 			class="row-start-2 flex gap-x-4 items-center justify-center rounded-xl p-4 gap-y-2 row-end-3 col-start-1 col-end-2 bg-[rgba(0,0,0,0.5)]"
 		>
 			{#if $store.state == 0}
-				<TeamList team="BLUE" gameStore={store} />
+				<TeamList team="BLUE" gameStore={store} host={data.is_host} user={data.user} />
 			{/if}
-			{#if $store.state == 1}
+			{#if $store.state == 1 || $store.state == 2}
 				<BingoCard {store} />
 			{/if}
 			{#if $store.state == 0}
-				<TeamList team="RED" gameStore={store} />
+				<TeamList team="RED" gameStore={store} host={data.is_host} user={data.user} />
 			{/if}
 		</article>
 		<article class=" w-[500px] pl-4 relative row-start-1 row-end-3 col-start-2 col-end-3">
