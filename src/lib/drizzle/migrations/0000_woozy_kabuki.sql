@@ -68,6 +68,15 @@ CREATE TABLE `Map` (
 	`available` integer NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE `MapInPool` (
+	`id` text PRIMARY KEY NOT NULL,
+	`pool_id` text,
+	`map_id` integer,
+	`` text,
+	FOREIGN KEY (`pool_id`) REFERENCES `Mappool`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`map_id`) REFERENCES `Map`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
 CREATE TABLE `MapStats` (
 	`map_id` integer NOT NULL,
 	`mod_string` text DEFAULT '' NOT NULL,
@@ -80,6 +89,11 @@ CREATE TABLE `MapStats` (
 	`hp` real NOT NULL,
 	PRIMARY KEY(`map_id`, `mod_string`),
 	FOREIGN KEY (`map_id`) REFERENCES `Map`(`id`) ON UPDATE cascade ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE TABLE `Mappool` (
+	`id` text PRIMARY KEY NOT NULL,
+	`name` text
 );
 --> statement-breakpoint
 CREATE TABLE `OauthToken` (
@@ -129,6 +143,7 @@ CREATE TABLE `Session` (
 CREATE TABLE `Template` (
 	`id` text PRIMARY KEY NOT NULL,
 	`user_id` integer NOT NULL,
+	`name` text,
 	`data` text NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `User`(`id`) ON UPDATE no action ON DELETE no action
 );

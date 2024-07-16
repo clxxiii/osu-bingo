@@ -1,4 +1,4 @@
-import { OauthToken, User, Map, MapStats } from "$lib/drizzle/schema"
+import { OauthToken, User, Map, MapStats, Mappool, MapInPool, Template } from "$lib/drizzle/schema"
 import { and, count, eq } from "drizzle-orm"
 
 import { createClient } from '@libsql/client';
@@ -9,57 +9,116 @@ import type { Osu } from "$lib/osu";
 const sqlite = createClient({ url: 'file:./db/dev.db' });
 export const db = drizzle(sqlite);
 
-const POPULAR_CUTOFF = 300
-const TOTAL = 10_000 // Change this when starting from a new date (adding newer maps)
-
-// Next time you run this script, set the `earlier` property to the current date, 
-// to only fetch maps that weren't ranked when this script ran.
-// Current Date: 2024-07-12T06:01:36.957Z
+const POPULAR_CUTOFF = 1_000;
+const RANDOM_CUTOFF = 10_000;
 
 const current = new Date();
 const earliest = new Date("2007-10-06"); // Date of the first osu map (disco prince)
 
-const token = await db
-  .select({ token: OauthToken.access_token })
-  .from(OauthToken)
-  .innerJoin(User, eq(User.id, OauthToken.user_id))
-
-
 const run = async () => {
-  let count = await getCount();
+  let most_played = (await db.select().from(Mappool).where(eq(Mappool.name, `MPL_MOST_PLAYED`)))[0];
+  if (!most_played) {
+    console.log('Making Most Played Playlist')
+    most_played = (await db.insert(Mappool).values({
+      name: 'MPL_MOST_PLAYED'
+    }).returning())[0]
+  }
+  let random = (await db.select().from(Mappool).where(eq(Mappool.name, `MPL_RANDOM`)))[0];
+  if (!random) {
+    console.log('Making Random Playlist')
+    random = (await db.insert(Mappool).values({
+      name: 'MPL_RANDOM'
+    }).returning())[0]
+  }
+  // Get public template and make it if needed
+  let public_template = (await db
+    .select()
+    .from(Template)
+    .where(eq(Template.id, 'tmt_public')))[0]
+  if (!public_template) {
+    console.log('Making Public Template')
+    const template: Template = {
+      setup: {
+        claim_condition: 'fc',
+        reclaim_condition: 'score',
+        board: '5x5'
+      },
+      maps: [{
+        chance: 0.9,
+        mappool_id: random.id
+      },
+      {
+        chance: 0.1,
+        mappool_id: most_played.id
+      }
+      ],
+      event: [
+        {
+          seconds_after_start: 1800,
+          text: 'changeclaim_rank_s'
+        },
+        {
+          seconds_after_start: 3000,
+          text: 'changeclaim_rank_a'
+        },
+        {
+          seconds_after_start: 3600,
+          text: 'final_call'
+        }
+      ]
+    }
+    public_template = (await db
+      .insert(Template)
+      .values({
+        owner_id: 10962678,
+        data: JSON.stringify(template)
+      })
+      .returning())[0]
+  }
+
+  const token = await db
+    .select({ token: OauthToken.access_token })
+    .from(OauthToken)
+    .innerJoin(User, eq(User.id, OauthToken.user_id))
+
+  if (token.length == 0) {
+    console.log("Could not find token to seed new maps!")
+    console.log("Run the frontend and log in once first so I have a token to use.")
+    return;
+  }
+
   console.log('Seeding Database with new maps!')
 
-  // Top 3000 popular maps
-  if (count == 0) {
-
-    console.log("Fetching popular maps...")
-    let maps = await getPopularMaps(token[0].token)
-    while (count < POPULAR_CUTOFF) {
-      await addMaps(maps.beatmapsets);
-      count = await getCount()
-      if (count >= POPULAR_CUTOFF) {
-        console.log("Finished popular maps.")
-        break;
-      } else if (!maps.cursor_string) {
-        console.log('Ran out of popular maps');
-        break;
-      }
-      console.log("Continuing with cursor string...")
-      maps = await getPopularMaps(token[0].token, maps.cursor_string)
+  // Fill popular maps playlist
+  let count = await getCount(most_played.id);
+  console.log("Fetching popular maps...")
+  let maps = await getPopularMaps(token[0].token)
+  while (count < POPULAR_CUTOFF) {
+    console.log(`Fetched ${count} / ${POPULAR_CUTOFF}`)
+    await addMaps(maps.beatmapsets, most_played.id);
+    count = await getCount(most_played.id)
+    if (count >= POPULAR_CUTOFF) {
+      console.log("Finished popular maps.")
+      break;
+    } else if (!maps.cursor_string) {
+      console.log('Ran out of popular maps');
+      break;
     }
-  } else {
-    console.log("Database already has maps, skipping popular map seeding!")
+    console.log("Continuing with cursor string...")
+    maps = await getPopularMaps(token[0].token, maps.cursor_string)
   }
 
   // Random maps
-  while (count < TOTAL) {
+  count = await getCount(random.id);
+  while (count < RANDOM_CUTOFF) {
+    console.log(`Fetched ${count} / ${RANDOM_CUTOFF}`)
     const date = randomDate();
     console.log("Fetching latest maps as of " + date.toISOString())
     const maps = await getBeatmaps(date.valueOf() / 1000, token[0].token);
-    await addMaps(maps.beatmapsets);
-    count = await getCount()
-    if (count >= TOTAL) {
-      console.log("Finished popular maps.")
+    await addMaps(maps.beatmapsets, random.id);
+    count = await getCount(random.id)
+    if (count >= RANDOM_CUTOFF) {
+      console.log("Finished random maps.")
       break;
     }
 
@@ -73,10 +132,13 @@ const run = async () => {
   console.log(`Current Date: ${current.toISOString()}`)
 }
 
-const getCount = async () => {
+const getCount = async (playlist: string) => {
   const mapCount = (await db
     .select({ count: count() })
-    .from(Map))[0]
+    .from(Map)
+    .innerJoin(MapInPool, eq(MapInPool.map_id, Map.id))
+    .where(eq(MapInPool.pool_id, playlist))
+  )[0]
 
   return mapCount.count;
 }
@@ -118,7 +180,7 @@ const getPopularMaps = async (access_token: string, cursor_string?: string): Pro
   return await beatmapSets.json();
 }
 
-const addMap = async (map: Osu.BeatmapExtended, set: Osu.Beatmapset, mods?: string) => {
+const addMap = async (map: Osu.BeatmapExtended, set: Osu.Beatmapset, playlist: string, mods?: string) => {
   const obj: typeof Map.$inferInsert = {
     id: map.id,
     beatmapset_id: map.beatmapset_id,
@@ -168,6 +230,11 @@ const addMap = async (map: Osu.BeatmapExtended, set: Osu.Beatmapset, mods?: stri
       .where(and(eq(MapStats.map_id, map.id), eq(MapStats.mod_string, mods ?? '')));
   }
 
+  await db.insert(MapInPool).values({
+    'pool_id': playlist,
+    'map_id': obj.id
+  })
+
   return db
     .select()
     .from(Map)
@@ -175,7 +242,7 @@ const addMap = async (map: Osu.BeatmapExtended, set: Osu.Beatmapset, mods?: stri
     .innerJoin(MapStats, eq(MapStats.map_id, map.id));
 };
 
-const addMaps = async (sets: Osu.Beatmapset[]) => {
+const addMaps = async (sets: Osu.Beatmapset[], playlist: string) => {
   const localCount = sets
     .map(x => x.beatmaps?.length ?? 0)
     .reduce((sum, x) => sum += x)
@@ -183,7 +250,7 @@ const addMaps = async (sets: Osu.Beatmapset[]) => {
   for (const set of sets) {
     if (set.beatmaps) {
       for (const map of set.beatmaps) {
-        await addMap((map as Osu.BeatmapExtended), set)
+        await addMap((map as Osu.BeatmapExtended), set, playlist)
       }
     }
   }

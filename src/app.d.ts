@@ -66,6 +66,30 @@ declare global {
 			hosts: User[],
 		};
 	}
+	type Template = {
+		setup: {
+			claim_condition: string,
+			reclaim_condition: string,
+			board: string | Template.Board
+		}
+		maps: Template.Mappool[];
+		event: Template.Event[];
+	}
+	namespace Template {
+		type Event = {
+			text: string,
+			seconds_after_start: number
+		}
+		type Mappool = {
+			mappool_id: string,
+			// chance to get picked. All chances are summed, then a 'wheel is spun'. (recommended all values sum to 1 for clarity)
+			chance: number
+		}
+		type Board = {
+			squares: number[][], // coordinates of squares
+			lines: number[][] // location of lines
+		}
+	}
 }
 
 export { };

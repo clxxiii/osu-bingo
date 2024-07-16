@@ -6,6 +6,8 @@ import {
 	Chat,
 	GameUser,
 	Map,
+	MapInPool,
+	Mappool,
 	MapStats,
 	OauthToken,
 	Score,
@@ -54,8 +56,18 @@ export const EventRelations = relations(TimeEvent, ({ one }) => ({
 	game: one(BingoGame, { fields: [TimeEvent.game_id], references: [BingoGame.id] })
 }));
 
+export const MappoolRelations = relations(Mappool, ({ many }) => ({
+	maps: many(MapInPool)
+}))
+
+export const MapInPoolRelations = relations(MapInPool, ({ one }) => ({
+	pool: one(Mappool, { fields: [MapInPool.pool_id], references: [Mappool.id] }),
+	map: one(Map, { fields: [MapInPool.map_id], references: [Map.id] })
+}));
+
 export const MapRelations = relations(Map, ({ many }) => ({
 	in_squares: many(BingoSquare),
+	in_pools: many(MapInPool),
 	stats: many(MapStats)
 }));
 

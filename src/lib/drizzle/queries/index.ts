@@ -8,6 +8,7 @@ import * as score from './score';
 import * as square from './square';
 import * as chat from './chat';
 import * as map from './map'
+import * as template from './template'
 
 export default {
 	...session,
@@ -19,5 +20,6 @@ export default {
 	...score,
 	...square,
 	...chat,
-	...map
+	...map,
+	...template
 };

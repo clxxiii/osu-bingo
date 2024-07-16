@@ -180,6 +180,22 @@ export const TimeEvent = sqliteTable('TimeEvent', {
 });
 
 /**
+ * Represents multiple maps that come from a similar source (popular maps, random, handpicked etc.)
+ */
+export const Mappool = sqliteTable('Mappool', {
+	id: text('id').primaryKey().$defaultFn(() => `mpl_${randomUUID()}`),
+	name: text('name')
+})
+
+export const MapInPool = sqliteTable('MapInPool', {
+	id: text('id').primaryKey().$defaultFn(() => `mip_${randomUUID()}`),
+	pool_id: text('pool_id').references(() => Mappool.id),
+	map_id: integer('map_id').references(() => Map.id),
+
+	required_mods: text('') // For tournament mappools and such
+})
+
+/**
  * Represents a trimmed-down version of a osu! map
  */
 export const Map = sqliteTable('Map', {
@@ -301,6 +317,7 @@ export const Chat = sqliteTable(
 export const Template = sqliteTable('Template', {
 	id: text('id').primaryKey().$defaultFn(() => `tmt_${randomUUID()}`),
 	owner_id: integer('user_id').notNull().references(() => User.id),
+	name: text('name'),
 
 	data: text('data').notNull(),
 })

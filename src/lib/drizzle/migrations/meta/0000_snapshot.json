@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "1d2246f0-27cd-496a-b843-4e8e36d5c843",
+  "id": "31ff4497-e85c-42ae-bdf8-c9c82aca9d93",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "BingoGame": {
@@ -495,6 +495,70 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
+    "MapInPool": {
+      "name": "MapInPool",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "pool_id": {
+          "name": "pool_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "map_id": {
+          "name": "map_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "": {
+          "name": "",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "MapInPool_pool_id_Mappool_id_fk": {
+          "name": "MapInPool_pool_id_Mappool_id_fk",
+          "tableFrom": "MapInPool",
+          "tableTo": "Mappool",
+          "columnsFrom": [
+            "pool_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "MapInPool_map_id_Map_id_fk": {
+          "name": "MapInPool_map_id_Map_id_fk",
+          "tableFrom": "MapInPool",
+          "tableTo": "Map",
+          "columnsFrom": [
+            "map_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "MapStats": {
       "name": "MapStats",
       "columns": {
@@ -597,6 +661,29 @@
           "name": "MapStats_map_id_mod_string_pk"
         }
       },
+      "uniqueConstraints": {}
+    },
+    "Mappool": {
+      "name": "Mappool",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
     "OauthToken": {
@@ -939,6 +1026,13 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "data": {

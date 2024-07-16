@@ -1,9 +1,24 @@
+<script>
+	import { Plus } from 'lucide-svelte';
+</script>
+
 <svelte:head>
 	<title>My Templates</title>
 </svelte:head>
 
 <div class="m-auto mt-10 w-full max-w-[700px]">
-	<h1 class="text-3xl">Templates</h1>
-	Customize the rules of the game to make your own version!
+	<div class="flex items-center justify-between">
+		<div>
+			<h1 class="text-3xl">Templates</h1>
+			Customize the rules of the game to make your own version!
+		</div>
+		<a
+			href="/templates/new"
+			class="flex m-2 px-2 py-1 rounded bg-green-500 text-zinc-200 font-bold font-rounded"
+		>
+			<Plus />
+			New
+		</a>
+	</div>
 	<hr class="border-zinc-700 my-2" />
 </div>
