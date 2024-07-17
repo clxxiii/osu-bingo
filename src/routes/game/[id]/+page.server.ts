@@ -183,5 +183,57 @@ export const actions = {
 		if (!is_host) error(StatusCodes.UNAUTHORIZED)
 
 		await startGame(game_id);
+	},
+	change_settings: async ({ params, locals, request }) => {
+		const form = await request.formData()
+		const linkId = params.id;
+		const actor = locals.user;
+		const game_id = await q.gameExists(linkId);
+
+		if (!actor) error(StatusCodes.UNAUTHORIZED);
+		if (!game_id) error(StatusCodes.BAD_REQUEST);
+
+		const is_host = await q.isHost(game_id, actor.id);
+		if (!is_host) error(StatusCodes.UNAUTHORIZED);
+
+		const game = await q.getGame(game_id);
+		if (!game) error(StatusCodes.BAD_REQUEST);
+
+		// Literally anything would fix this, ZOD, tRPC, etc.
+		// but I'm lazy and want less dependencies, so we're rolling with it.
+		const min_sr = form.get('min_sr');
+		if (min_sr && typeof min_sr == 'number') game.min_sr = min_sr;
+		const max_sr = form.get('max_sr');
+		if (max_sr && typeof max_sr == 'number') game.max_sr = max_sr;
+
+		const min_length = form.get('min_length');
+		if (min_length && typeof min_length == 'number') game.min_length = min_length;
+		const max_length = form.get('max_length');
+		if (max_length && typeof max_length == 'number') game.max_length = max_length;
+
+		const min_rank = form.get('min_rank');
+		if (min_rank && typeof min_rank == 'number') game.min_rank = min_rank;
+		const max_rank = form.get('max_rank');
+		if (max_rank && typeof max_rank == 'number') game.max_rank = max_rank;
+
+
+		const is_public = form.get('public') === 'true';
+		if (typeof is_public == 'boolean') game.public = is_public
+
+		const settings: Bingo.SettingsUpdate = {
+			min_sr: game.min_sr ?? undefined,
+			max_sr: game.max_sr ?? undefined,
+			min_length: game.min_length ?? undefined,
+			max_length: game.max_length ?? undefined,
+			min_rank: game.min_rank ?? undefined,
+			max_rank: game.max_rank ?? undefined,
+			public: game.public ?? undefined
+		};
+
+		await q.updateGameSettings(game_id, settings);
+		sendEvent(game_id, {
+			type: 'fullUpdate',
+			data: game
+		})
 	}
 }

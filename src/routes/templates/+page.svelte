@@ -14,7 +14,7 @@
 		</div>
 		<a
 			href="/templates/new"
-			class="flex m-2 px-2 py-1 rounded bg-green-500 text-zinc-200 font-bold font-rounded"
+			class="flex m-2 px-2 py-1 rounded transition bg-green-500 hover:bg-green-600 active:bg-green-700 text-zinc-200 font-bold font-rounded"
 		>
 			<Plus />
 			New

@@ -40,6 +40,20 @@ declare global {
 		type TimeEvent = typeof TimeEvent.$inferSelect;
 		type User = typeof User.$inferSelect;
 
+		type SettingsUpdate = {
+			public?: boolean
+			allow_team_switching?: boolean
+			claim_condition?: string
+			tiebreaker?: string
+			template_id?: string
+			min_sr?: number
+			max_sr?: number
+			min_length?: number
+			max_length?: number
+			min_rank?: number
+			max_rank?: number
+		}
+
 		namespace Card {
 			type FullSquare = BingoSquare & {
 				data: FullMap;

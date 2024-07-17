@@ -12,8 +12,11 @@
 	import { square } from '$lib/stores';
 	import { fade } from 'svelte/transition';
 	import { source } from 'sveltekit-sse';
+	import { Settings, X } from 'lucide-svelte';
+	import HostSettings from '$lib/components/HostSettings.svelte';
 
 	export let data: PageData;
+	export let hostSettingsOpen = true;
 
 	const store = writable<Bingo.Card>();
 	if (data.game) store.set(data.game);
@@ -59,7 +62,7 @@
 			<Announcer {currentTeam} gameStore={store} user={data.user} isHost={data.is_host} />
 		</article>
 		<article
-			class="row-start-2 flex gap-x-4 items-center justify-center rounded-xl p-4 gap-y-2 row-end-3 col-start-1 col-end-2 bg-[rgba(0,0,0,0.5)]"
+			class="row-start-2 relative flex gap-x-4 items-center justify-center rounded-xl p-4 gap-y-2 row-end-3 col-start-1 col-end-2 bg-[rgba(0,0,0,0.5)]"
 		>
 			{#if $store.state == 0}
 				<TeamList team="BLUE" gameStore={store} host={data.is_host} user={data.user} />
@@ -69,6 +72,20 @@
 			{/if}
 			{#if $store.state == 0}
 				<TeamList team="RED" gameStore={store} host={data.is_host} user={data.user} />
+			{/if}
+			{#if data.is_host && $store.state == 0}
+				<div class="absolute top-0 right-0 p-2 z-10">
+					<button on:click={() => (hostSettingsOpen = !hostSettingsOpen)}>
+						{#if hostSettingsOpen}
+							<X class="size-8" />
+						{:else}
+							<Settings class="size-8" />
+						{/if}
+					</button>
+				</div>
+				{#if hostSettingsOpen}
+					<HostSettings {store} />
+				{/if}
 			{/if}
 		</article>
 		<article class=" w-[500px] pl-4 relative row-start-1 row-end-3 col-start-2 col-end-3">

@@ -225,20 +225,7 @@ export const canSwitch = async (game_id: string, guid: string, user_id: number) 
 	return gu[0].id == guid;
 }
 
-type Settings = {
-	public?: boolean
-	allow_team_switching?: boolean
-	claim_condition?: string
-	tiebreaker?: string
-	template_id?: string
-	min_sr?: number
-	max_sr?: number
-	min_length?: number
-	max_length?: number
-	min_rank?: number
-	max_rank?: number
-}
-export const updateGameSettings = async (game_id: string, settings: Settings) => {
+export const updateGameSettings = async (game_id: string, settings: Bingo.SettingsUpdate) => {
 	const q = (await db
 		.update(BingoGame)
 		.set(settings)
