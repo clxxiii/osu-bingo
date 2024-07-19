@@ -16,7 +16,8 @@ export const newTemplate = async (user_id: number) => {
     .returning())[0]
 }
 
-export const getTemplate = async (id: string) => {
+export const getTemplate = async (id: string | null) => {
+  if (!id) id = 'tmt_default';
   return (await db.select().from(Template).where(eq(Template.id, id)))[0]
 }
 

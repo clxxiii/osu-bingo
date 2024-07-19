@@ -9,6 +9,7 @@ import * as square from './square';
 import * as chat from './chat';
 import * as map from './map'
 import * as template from './template'
+import * as mappool from './mappool'
 
 export default {
 	...session,
@@ -21,5 +22,6 @@ export default {
 	...square,
 	...chat,
 	...map,
-	...template
+	...template,
+	...mappool
 };

@@ -1,4 +1,4 @@
-import { and, eq, gte, lte, not, or, sql } from 'drizzle-orm';
+import { and, eq, not, or } from 'drizzle-orm';
 import { db } from '..';
 import {
 	BingoGame,
@@ -10,7 +10,7 @@ import {
 	TimeEvent,
 	User
 } from '../schema';
-import type { Osu } from '$lib/osu';
+import { getTemplate } from './template';
 
 export const newGame = async () => {
 	const randomLetter = () => {
@@ -37,57 +37,6 @@ export const newGame = async () => {
 			})
 			.returning()
 	)[0];
-};
-
-export const fillSquares = async (
-	game_id: string,
-	mode?: Osu.Ruleset
-) => {
-
-	const settings = (await db.select({
-		max_sr: BingoGame.max_sr,
-		min_sr: BingoGame.min_sr,
-		max_length: BingoGame.max_length,
-		min_length: BingoGame.min_length,
-	})
-		.from(BingoGame).where(eq(BingoGame.id, game_id)))[0]
-	if (!settings) return;
-
-	// Add restrictions for finding maps
-	const restrictions = []
-	if (mode)
-		restrictions.push(eq(Map.gamemode, mode))
-	if (settings.max_sr)
-		restrictions.push(lte(MapStats.star_rating, settings.max_sr))
-	if (settings.min_sr)
-		restrictions.push(gte(MapStats.star_rating, settings.min_sr))
-	if (settings.max_length)
-		restrictions.push(lte(MapStats.length, settings.max_length))
-	if (settings.min_length)
-		restrictions.push(gte(MapStats.length, settings.min_length))
-
-
-	const beatmaps = await db
-		.select({ id: Map.id })
-		.from(Map)
-		.innerJoin(MapStats, eq(Map.id, MapStats.map_id))
-		.where(and(...restrictions))
-		.limit(25)
-		.orderBy(sql`RANDOM()`)
-
-
-	for (let y = 0; y < 5; y++) {
-		for (let x = 0; x < 5; x++) {
-			const beatmap = beatmaps[y * 5 + x];
-
-			await db.insert(BingoSquare).values({
-				game_id,
-				map_id: beatmap.id,
-				x_pos: x,
-				y_pos: y
-			});
-		}
-	}
 };
 
 export const getGame = async (game_id: string): Promise<Bingo.Card | null> => {
@@ -118,9 +67,9 @@ export const getGame = async (game_id: string): Promise<Bingo.Card | null> => {
 		))).map(x => x.user)
 
 	const events = await db.select().from(TimeEvent).where(eq(TimeEvent.game_id, game_id));
+	const template = await getTemplate(game.template_id);
 
-
-	if (game.state == 0) return { ...game, users, events, squares: null, hosts };
+	if (game.state == 0) return { ...game, users, events, squares: null, hosts, template };
 
 	const squares: Bingo.Card.FullSquare[] = [];
 	const dbSquares = await db.select().from(BingoSquare).where(eq(BingoSquare.game_id, game_id));
@@ -159,7 +108,8 @@ export const getGame = async (game_id: string): Promise<Bingo.Card | null> => {
 		});
 	}
 
-	return { ...game, users, events, squares, hosts };
+
+	return { ...game, users, events, squares, hosts, template };
 };
 
 export const gameLinkToId = async (link: string) => {

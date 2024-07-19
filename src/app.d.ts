@@ -13,8 +13,11 @@ import type {
 	Session,
 	TimeEvent,
 	User,
+	Template as TemplateType,
+	Mappool,
 	User
 } from '$lib/drizzle/schema';
+import type { Osu } from '$lib/osu';
 
 // for information about these interfaces
 declare global {
@@ -38,12 +41,15 @@ declare global {
 		type Score = typeof Score.$inferSelect;
 		type Session = typeof Session.$inferSelect;
 		type TimeEvent = typeof TimeEvent.$inferSelect;
+		type DBTemplate = typeof TemplateType.$inferSelect;
+		type Mappool = typeof Mappool.$inferSelect;
 		type User = typeof User.$inferSelect;
 
 		type SettingsUpdate = {
 			public?: boolean
 			allow_team_switching?: boolean
 			claim_condition?: string
+			start_time?: Date
 			tiebreaker?: string
 			template_id?: string
 			min_sr?: number
@@ -78,6 +84,7 @@ declare global {
 			events: TimeEvent[];
 			users: Card.FullUser[];
 			hosts: User[],
+			template: DBTemplate
 		};
 	}
 	type Template = {
@@ -98,6 +105,7 @@ declare global {
 			mappool_id: string,
 			// chance to get picked. All chances are summed, then a 'wheel is spun'. (recommended all values sum to 1 for clarity)
 			chance: number
+			mode: Osu.Ruleset
 		}
 		type Board = {
 			squares: number[][], // coordinates of squares

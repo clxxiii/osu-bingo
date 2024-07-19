@@ -45,11 +45,13 @@ const run = async () => {
       },
       maps: [{
         chance: 0.9,
-        mappool_id: random.id
+        mappool_id: random.id,
+        mode: 'osu'
       },
       {
         chance: 0.1,
-        mappool_id: most_played.id
+        mappool_id: most_played.id,
+        mode: 'osu'
       }
       ],
       event: [
@@ -70,6 +72,7 @@ const run = async () => {
     public_template = (await db
       .insert(Template)
       .values({
+        id: 'tmt_default',
         owner_id: 10962678,
         data: JSON.stringify(template)
       })

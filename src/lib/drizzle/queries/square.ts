@@ -8,3 +8,7 @@ export const setClaimer = async (square_id: string, game_user_id: string) => {
     .set({ claimed_by_id: game_user_id })
     .where(eq(BingoSquare.id, square_id))
 }
+
+export const newSquare = async (square: (typeof BingoSquare.$inferInsert)) => {
+  return (await db.insert(BingoSquare).values(square).returning())[0]
+}

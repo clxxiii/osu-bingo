@@ -1,10 +1,25 @@
+import boards from "./default_boards"
+
+const default_lines = [
+  // horizontal lines
+  [0, 1, 2, 3, 4],
+  [5, 6, 7, 8, 9],
+  [10, 11, 12, 13, 14],
+  [15, 16, 17, 18, 19],
+  [20, 21, 22, 23, 24],
+  // vertical lines
+  [0, 5, 10, 15, 20],
+  [1, 6, 11, 16, 21],
+  [2, 7, 12, 17, 22],
+  [3, 8, 13, 18, 23],
+  [4, 9, 14, 19, 24],
+  // diagonal lines
+  [0, 6, 12, 18, 24],
+  [4, 8, 12, 16, 20]
+]
+
 /**
  * Checks if a bingo board is a bingo
- * 
- * This function currently assumes that the board
- * is a 5x5 square. The database has functionality to
- * have custom boards, so eventually, this should
- * support that as well.
  */
 export const checkWin = (game: Bingo.Card) => {
   if (!game.squares) return;
@@ -18,7 +33,17 @@ export const checkWin = (game: Bingo.Card) => {
     const index = (square.y_pos * 5) + (square.x_pos);
     board[index] = square.claimed_by?.team_name ?? null;
   }
-  return bingoCheck(board);
+
+  // Get lines from template
+  let template: Template;
+  try {
+    template = JSON.parse(game.template.data)
+  } catch {
+    return bingoCheck(board);
+  }
+  const { lines } = (typeof template.setup.board == 'string') ? boards[template.setup.board] : template.setup.board;
+
+  return bingoCheck(board, lines);
 }
 
 /**
@@ -31,25 +56,8 @@ export const checkWin = (game: Bingo.Card) => {
  * [15][16][17][18][19]
  * [20][21][22][23][24]
  */
-export const bingoCheck = (board: (string | null)[]) => {
-
-  const lines = [
-    // Horizontal Lines
-    [0, 1, 2, 3, 4],
-    [5, 6, 7, 8, 9],
-    [10, 11, 12, 13, 14],
-    [15, 16, 17, 18, 19],
-    [20, 21, 22, 23, 24],
-    // Vertical Lines
-    [0, 5, 10, 15, 20],
-    [1, 6, 11, 16, 21],
-    [2, 7, 12, 17, 22],
-    [3, 8, 13, 18, 23],
-    [4, 9, 14, 19, 24],
-    // Diagonal Lines
-    [0, 6, 12, 18, 24],
-    [4, 8, 12, 16, 20]
-  ]
+export const bingoCheck = (board: (string | null)[], lines?: number[][]) => {
+  lines = lines ?? default_lines;
 
   for (const line of lines) {
     let check: string | null = board[line[0]];
