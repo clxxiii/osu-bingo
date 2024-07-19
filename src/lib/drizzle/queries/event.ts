@@ -21,3 +21,14 @@ export const setFulfilled = async (id: string) => {
     .set({ fulfilled: true })
     .where(eq(TimeEvent.id, id))
 }
+
+export const setEvent = async (game_id: string, action: string, time: Date) => {
+  return (await db
+    .insert(TimeEvent)
+    .values({
+      fulfilled: false,
+      action,
+      game_id,
+      time
+    }).returning())[0]
+}

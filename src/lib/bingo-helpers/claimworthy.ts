@@ -15,51 +15,91 @@
 
 import type { Osu } from "$lib/osu";
 
-const evaluators: { [key: string]: (score: Osu.LazerScore, value: string) => boolean } = {
-  'fc': (score) => score.is_perfect_combo,
-  'rank': (score, value) => {
-    const hierarchy = ['SSH', 'SS', 'SH', 'S', 'A', 'B', 'C', 'D', 'F'];
-    const scoreRank = hierarchy.indexOf(score.rank.toUpperCase() ?? "F");
-    const testRank = hierarchy.indexOf(value.toUpperCase() ?? "F");
+type Evaluator = {
+  display_string: (value: string) => string,
+  evaluate: (score: Osu.LazerScore, value: string) => boolean
+}
 
-    return scoreRank <= testRank;
+const evaluators: { [key: string]: Evaluator } = {
+  'fc': {
+    display_string: () => "Get an FC",
+    evaluate: (score) => score.is_perfect_combo,
   },
-  'pp': (score, value) => {
-    const pp = score.pp ?? 0;
-    const target = parseFloat(value);
+  'rank': {
+    display_string: (value) => `Get an ${value.toUpperCase()} rank`,
+    evaluate: (score, value) => {
+      const hierarchy = ['SSH', 'SS', 'SH', 'S', 'A', 'B', 'C', 'D', 'F'];
+      const scoreRank = hierarchy.indexOf(score.rank.toUpperCase() ?? "F");
+      const testRank = hierarchy.indexOf(value.toUpperCase() ?? "F");
 
-    return pp > target;
+      return scoreRank <= testRank;
+    }
   },
-  'miss': (score, value) => {
-    const miss = score.statistics.miss ?? 0;
-    const target = parseInt(value);
+  'pp': {
+    display_string: (value) => `Set a score worth ${parseFloat(value).toLocaleString()} pp`,
+    evaluate: (score, value) => {
+      const pp = score.pp ?? 0;
+      const target = parseFloat(value);
 
-    return miss < target;
+      return pp > target;
+    }
   },
-  'combo': (score, value) => {
-    const combo = score.max_combo
-    const target = parseInt(value);
+  'miss': {
+    display_string: (value) => `Get less than ${parseInt(value).toLocaleString()} misses`,
+    evaluate: (score, value) => {
+      const miss = score.statistics.miss ?? 0;
+      const target = parseInt(value);
 
-    return combo > target;
+      return miss < target;
+    }
   },
-  'score': (score, value) => {
-    const total_score = score.total_score
-    const target = parseInt(value);
+  'combo': {
+    display_string: (value) => `Get more than ${parseInt(value).toLocaleString()} combo`,
+    evaluate: (score, value) => {
+      const combo = score.max_combo
+      const target = parseInt(value);
 
-    return total_score > target;
+      return combo > target;
+    }
   },
-  'pass': (score) => {
-    if (!score.passed) return false;
-    return !score.mods.map((x) => x.acronym).includes('NF')
+  'score': {
+    display_string: (value) => `Score more than ${parseInt(value).toLocaleString()}`,
+    evaluate: (score, value) => {
+      const total_score = score.total_score
+      const target = parseInt(value);
+
+      return total_score > target;
+    }
   },
-  'any': () => true
+  'pass': {
+    display_string: () => "Pass the map",
+    evaluate: (score) => {
+      if (!score.passed) return false;
+      return !score.mods.map((x) => x.acronym).includes('NF')
+    }
+  },
+  'any': {
+    display_string: () => "Set any score",
+    evaluate: () => true
+  }
 }
 
 export const isClaimworthy = (score: Osu.LazerScore, claim_condition: string) => {
-  const [type, value] = claim_condition.split("_");
+  const [type] = claim_condition.split("_");
+  const value = claim_condition.split("_").slice(1).join("_");
 
   let evaluator = evaluators[type];
   if (!evaluator) evaluator = evaluator['fc']
 
-  return evaluator(score, value);
+  return evaluator.evaluate(score, value);
+}
+
+export const getMeaning = (claim_condition: string) => {
+  const [type] = claim_condition.split("_");
+  const value = claim_condition.split("_").slice(1).join("_");
+
+  let evaluator = evaluators[type];
+  if (!evaluator) evaluator = evaluator['fc']
+
+  return evaluator.display_string(value);
 }

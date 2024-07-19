@@ -55,11 +55,11 @@ const run = async () => {
       event: [
         {
           seconds_after_start: 1800,
-          text: 'changeclaim_rank_s'
+          text: 'claimchange_rank_s'
         },
         {
           seconds_after_start: 3000,
-          text: 'changeclaim_rank_a'
+          text: 'claimchange_rank_a'
         },
         {
           seconds_after_start: 3600,

@@ -31,7 +31,7 @@ export const interval = async () => {
 
     setTimeout(() => {
       scheduledEvents.delete(event.id);
-      eventHandler(event)
+      eventHandler.evaluate(event)
     }, relativeTime < 0 ? 0 : relativeTime)
     scheduledEvents.set(event.id, true)
     console.log(`Scheduled ${event.action} event for game ${event.game_id} (in ${relativeTime / 1000}s)`)
