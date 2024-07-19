@@ -19,9 +19,10 @@ export const interval = async () => {
   for (const event of events) {
     if (scheduledEvents.has(event.id)) continue;
 
-    const eventHandler = handlers[event.action];
+    const action = event.action.split("_")[0];
+    const eventHandler = handlers[action];
     if (!eventHandler) {
-      console.log(`Invalid event action "${event.action}".`);
+      console.log(`Invalid event action "${action}".`);
       await q.setFulfilled(event.id);
       continue;
     }
