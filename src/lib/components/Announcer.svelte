@@ -1,115 +1,21 @@
 <script lang="ts">
 	import { type Writable } from 'svelte/store';
+	import AnnouncerPreGame from './AnnouncerPreGame.svelte';
+	import AnnouncerPostGame from './AnnouncerPostGame.svelte';
+	import AnnouncerGame from './AnnouncerGame.svelte';
 
 	export let gameStore: Writable<Bingo.Card>;
 	export let user: Bingo.User | undefined;
 	export let isHost: boolean;
 	export let currentTeam: string | undefined;
-
-	let text: string;
-	let gameId: string;
-
-	// Takes an announcement and replaces [X] with a
-	// countdown to the specified date.
-	let interval: Timer;
-	const startTimer = (template: string, time: Date) => {
-		if (typeof time == 'string') {
-			time = new Date(time);
-		}
-
-		const updateText = () => {
-			const difference = new Date(time.valueOf() - new Date().valueOf());
-			const mins = difference.getMinutes();
-			const secs = difference.getSeconds();
-
-			text = template.replaceAll('[X]', `${mins}:${secs < 10 ? '0' + secs : secs}`);
-		};
-
-		updateText();
-		interval = setInterval(updateText, 1000);
-	};
-
-	let buttonType = '';
-	const update = (game: Bingo.Card) => {
-		if (interval) clearInterval(interval);
-		gameId = game.id;
-
-		// Before Game
-		if (game.state == 0) {
-			// User in game
-			if (user && !game.users.map((x) => x.user_id).includes(user.id)) {
-				buttonType = 'JOIN';
-				text = 'This game has not started';
-				return;
-			}
-			// Start Timer
-			buttonType = 'LEAVE';
-			const timer = game.events.find((x) => x.action == 'start');
-			if (timer) {
-				startTimer('The game will start in [X]', timer.time);
-				return;
-			}
-			text = 'The game will start when the host starts it';
-			return;
-		}
-
-		if (game.state == 1) {
-			text = 'Get an FC to claim a square';
-			return;
-		}
-		text = '';
-	};
-
-	const leave = async () => {
-		await fetch(`?/leave_game`, {
-			method: 'POST',
-			body: new FormData()
-		});
-	};
-
-	const join = async () => {
-		const data = new FormData();
-		data.set('team', 'RED');
-		await fetch(`?/join_game`, {
-			body: data,
-			method: 'POST'
-		});
-	};
-	const start = async () => {
-		const data = new FormData();
-		await fetch(`?/start_game`, {
-			body: data,
-			method: 'POST'
-		});
-	};
-
-	gameStore.subscribe((value) => update(value));
-
-	const sendBoard = () => {
-		fetch('?/send_board', {
-			body: new FormData(),
-			method: 'POST'
-		});
-	};
 </script>
 
-<div
-	data-team={currentTeam}
-	class="data-[team=BLUE]:bg-blue-700 transition data-[team=RED]:bg-amber-700 size-full mb-4 h-32 px-4 font-rounded font-bold flex items-center justify-center rounded-xl bg-zinc-800"
->
-	{text}
+<div class="size-full mb-4 h-32 font-rounded font-bold rounded-xl bg-zinc-800">
 	{#if $gameStore.state == 0}
-		{#if buttonType == 'JOIN'}
-			<button on:click={join} class="bg-green-600 p-1 rounded-full text-sm px-2 ml-2">JOIN</button>
-		{:else if buttonType == 'LEAVE'}
-			<button on:click={leave} class="bg-amber-600 p-1 rounded-full text-sm px-2 ml-2">
-				LEAVE
-			</button>
-		{/if}
-		{#if isHost}
-			<button on:click={start} class="bg-green-600 p-1 rounded-full text-sm px-2 ml-2">
-				START</button
-			>
-		{/if}
+		<AnnouncerPreGame {gameStore} {user} {isHost} {currentTeam} />
+	{:else if $gameStore.state == 1}
+		<AnnouncerGame {gameStore} />
+	{:else if $gameStore.state == 2}
+		<AnnouncerPostGame {gameStore} />
 	{/if}
 </div>
