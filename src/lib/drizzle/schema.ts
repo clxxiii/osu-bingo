@@ -32,6 +32,7 @@ export const BingoGame = sqliteTable('BingoGame', {
 	// Settings
 	// 0: Before starting, 1: In game, 2: Finished
 	state: integer('state').default(0).notNull(),
+	winning_team: text('winning_team'),
 
 	// Square Filling Settings
 	min_sr: real('min_sr'),

@@ -3,6 +3,7 @@ CREATE TABLE `BingoGame` (
 	`link_id` text,
 	`start_time` integer,
 	`state` integer DEFAULT 0 NOT NULL,
+	`winning_team` text,
 	`min_sr` real,
 	`max_sr` real,
 	`min_length` real,

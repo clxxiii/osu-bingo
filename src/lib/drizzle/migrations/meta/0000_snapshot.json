@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "31ff4497-e85c-42ae-bdf8-c9c82aca9d93",
+  "id": "d404bead-0ed7-44dc-aeeb-02b7bf230694",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "BingoGame": {
@@ -35,6 +35,13 @@
           "notNull": true,
           "autoincrement": false,
           "default": 0
+        },
+        "winning_team": {
+          "name": "winning_team",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         },
         "min_sr": {
           "name": "min_sr",
