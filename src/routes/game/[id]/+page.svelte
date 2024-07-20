@@ -65,13 +65,17 @@
 			class="row-start-2 relative flex gap-x-4 items-center justify-center rounded-xl p-4 gap-y-2 row-end-3 col-start-1 col-end-2 bg-[rgba(0,0,0,0.5)]"
 		>
 			{#if $store.state == 0}
-				<TeamList team="BLUE" gameStore={store} host={data.is_host} user={data.user} />
+				<div class="h-[500px] w-[300px]">
+					<TeamList team="BLUE" gameStore={store} host={data.is_host} user={data.user} />
+				</div>
 			{/if}
 			{#if $store.state == 1 || $store.state == 2}
 				<BingoCard {store} />
 			{/if}
 			{#if $store.state == 0}
-				<TeamList team="RED" gameStore={store} host={data.is_host} user={data.user} />
+				<div class="h-[500px] w-[300px]">
+					<TeamList team="RED" gameStore={store} host={data.is_host} user={data.user} />
+				</div>
 			{/if}
 			{#if data.is_host && $store.state == 0}
 				<div class="absolute top-0 right-0 p-2 z-10">
@@ -90,10 +94,17 @@
 		</article>
 		<article class=" w-[500px] pl-4 relative row-start-1 row-end-3 col-start-2 col-end-3">
 			{#key currentTeam}
-				<Chatbox
-					game_id={$store.id}
-					channel={$store.state == 1 ? currentTeam?.toLowerCase() : 'global'}
-				/>
+				{#if currentTeam || $store.state == 0 || $store.state == 2}
+					<Chatbox
+						game_id={$store.id}
+						channel={$store.state == 1 ? currentTeam?.toLowerCase() : 'global'}
+					/>
+				{:else if $store.state == 1}
+					<div class="h-full rounded-lg bg-zinc-800 p-4 gap-y-4 grid grid-rows-2">
+						<TeamList team="RED" gameStore={store} host={data.is_host} user={data.user} />
+						<TeamList team="BLUE" gameStore={store} host={data.is_host} user={data.user} />
+					</div>
+				{/if}
 			{/key}
 		</article>
 		{#if $square}

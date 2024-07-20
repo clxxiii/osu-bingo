@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Writable } from 'svelte/store';
 	import BingoSquare from './BingoSquare.svelte';
-	import { scale, slide } from 'svelte/transition';
+	import { scale } from 'svelte/transition';
 	import { square } from '$lib/stores';
 
 	export let store: Writable<Bingo.Card>;

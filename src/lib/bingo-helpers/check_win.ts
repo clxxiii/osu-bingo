@@ -22,7 +22,7 @@ const default_lines = [
  * Checks if a bingo board is a bingo
  */
 export const checkWin = (game: Bingo.Card) => {
-  if (!game.squares) return;
+  if (!game.squares) return null;
 
   // Arrange the board into a 2D array.
   const yMax = Math.max(...game.squares.map((x) => x.y_pos));
@@ -49,12 +49,6 @@ export const checkWin = (game: Bingo.Card) => {
 /**
  * Checks if a board has bingo on it using
  * pre-defined lines.
- * 
- * [00][01][02][03][04]
- * [05][06][07][08][09]
- * [10][11][12][13][14]
- * [15][16][17][18][19]
- * [20][21][22][23][24]
  */
 export const bingoCheck = (board: (string | null)[], lines?: number[][]) => {
   lines = lines ?? default_lines;

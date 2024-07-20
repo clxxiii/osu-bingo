@@ -18,7 +18,6 @@
 			method: 'POST'
 		});
 	};
-	export let kickable: boolean;
 
 	export let gameuser: Bingo.Card.FullUser;
 </script>

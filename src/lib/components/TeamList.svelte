@@ -25,10 +25,10 @@
 	});
 </script>
 
-<div transition:slide={{ axis: 'x' }} class="p-4 bg-zinc-900 flex gap-4 rounded-lg">
+<div transition:slide={{ axis: 'x' }} class="p-4 h-full w-full bg-zinc-900 flex gap-4 rounded-lg">
 	<div
 		data-team={team}
-		class="relative h-[500px] w-[300px] data-[team=BLUE]:border-blue-700 data-[team=RED]:border-amber-700 border-2 rounded-xl"
+		class="relative h-full w-full data-[team=BLUE]:border-blue-700 data-[team=RED]:border-amber-700 border-2 rounded-xl"
 	>
 		<h1
 			data-team={team}
@@ -42,7 +42,6 @@
 					{gameuser}
 					movable={host ||
 						(gameuser.user_id == user?.id && ($gameStore.allow_team_switching ?? false))}
-					kickable={host}
 				/>
 			{/each}
 		</div>
