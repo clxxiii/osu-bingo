@@ -12,7 +12,6 @@ export const startGame = async (game_id: string) => {
   if (!game) return;
 
   const template: Template = JSON.parse(game.template.data);
-  console.log(template);
 
   // Set initial settings
   const now = Date.now();
@@ -39,13 +38,15 @@ export const startGame = async (game_id: string) => {
     })
   }
   if (counts.map(x => x.maps).reduce((a, b) => a + b) < squareCount) {
-    counts.sort((a, b) => b.maps - a.maps)
+    counts.sort((a, b) => a.maps - b.maps)
     counts[0].maps += (squareCount - counts.map(x => x.maps).reduce((a, b) => a + b));
   }
 
   // Fetch maps in all the pools
   const maps = [];
   for (const pool of counts) {
+    if (pool.maps == 0) continue;
+
     const picks = await q.getRandomMaps(pool.id, pool.maps, game.min_sr, game.max_sr, game.min_length, game.max_length, pool.mode);
     maps.push(...picks);
   }
