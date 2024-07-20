@@ -14,7 +14,7 @@
 	{#if $gameStore.state == 0}
 		<AnnouncerPreGame {gameStore} {user} {isHost} {currentTeam} />
 	{:else if $gameStore.state == 1}
-		<AnnouncerGame {gameStore} />
+		<AnnouncerGame {gameStore} {currentTeam} {user} />
 	{:else if $gameStore.state == 2}
 		<AnnouncerPostGame {gameStore} />
 	{/if}

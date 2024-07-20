@@ -99,7 +99,7 @@ export const getMeaning = (claim_condition: string) => {
   const value = claim_condition.split("_").slice(1).join("_");
 
   let evaluator = evaluators[type];
-  if (!evaluator) evaluator = evaluator['fc']
+  if (!evaluator) evaluator = evaluators['fc']
 
   return evaluator.display_string(value);
 }

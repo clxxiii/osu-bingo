@@ -9,7 +9,7 @@ import { claimchange } from "./game/rulechange";
 import { startGame } from "./game/start";
 
 export type EventHandler = {
-  display_string: (event: Bingo.TimeEvent) => string,
+  display_string: (action: string) => string,
   evaluate: (event: Bingo.TimeEvent) => Promise<void>
 }
 
@@ -22,7 +22,7 @@ const events: { [key: string]: EventHandler } = {
     }
   },
   'claimchange': {
-    display_string: (event) => `Change claim condition: ${getClaimMeaning(event.action.split("_").slice(1).join("_"))}`,
+    display_string: (action) => `Change claim condition: ${getClaimMeaning(action.split("_").slice(1).join("_"))}`,
     evaluate: async ({ game_id, id, action }) => {
       await q.setFulfilled(id);
       const rule = action.split("_").slice(1).join("_");
@@ -31,10 +31,11 @@ const events: { [key: string]: EventHandler } = {
   }
 }
 
-export const getMeaning = (event: Bingo.TimeEvent) => {
-  const action = event.action.split("_")[0];
-  const eventHandler = events[action];
-  return eventHandler.display_string(event);
+export const getMeaning = (action: string) => {
+  const term = action.split("_")[0];
+  const eventHandler = events[term];
+  if (!eventHandler) return action;
+  return eventHandler.display_string(action);
 }
 
 
