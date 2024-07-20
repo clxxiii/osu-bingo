@@ -22,6 +22,7 @@ export type StateChangeEvent = {
   type: 'state'
   data: {
     state: number
+    winner?: string
     card?: Bingo.Card | null
   }
 }

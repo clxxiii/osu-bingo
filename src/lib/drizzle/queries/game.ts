@@ -130,10 +130,10 @@ export const getGameFromLinkId = async (link: string) => {
 	return await getGame(game_id);
 };
 
-export const setGameState = async (game_id: string, state: number) => {
+export const setGameState = async (game_id: string, state: number, winning_team?: string) => {
 	await db
 		.update(BingoGame)
-		.set({ state })
+		.set({ state, winning_team })
 		.where(eq(BingoGame.id, game_id))
 
 	return state;

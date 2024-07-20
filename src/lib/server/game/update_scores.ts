@@ -66,11 +66,15 @@ export const updateScores = async (game_id: string) => {
 
   const updates: { score: Bingo.Card.FullScore, square: Bingo.Card.FullSquare, claim: boolean }[] = []
   let win = false;
+  let winner = '';
   for (const score of scores) {
     const event = await processScore(score, game);
     if (event) {
       updates.push(event)
-      win = (win || event.win)
+      if (event.win) {
+        win = true;
+        winner = event.winner
+      }
     }
   }
   if (updates.length > 0) {
@@ -91,7 +95,8 @@ export const updateScores = async (game_id: string) => {
     sendEvent(game_id, {
       type: 'state',
       data: {
-        state: 2
+        state: 2,
+        winner
       }
     })
   }
@@ -125,7 +130,8 @@ const processScore = async (score: Osu.LazerScore, game: Bingo.Card) => {
     score: newScore,
     square,
     claim: false,
-    win: false
+    win: false,
+    winner: ''
   }
   if (game.state == 1 && claimworthy && scoreBeatsBest(square, newScore, 'score')) {
     update.claim = true;
@@ -135,9 +141,10 @@ const processScore = async (score: Osu.LazerScore, game: Bingo.Card) => {
     if (!winCheck) return update;
     const win = checkWin(winCheck);
     if (win) {
-      q.setGameState(game.id, 2);
+      q.setGameState(game.id, 2, win.winner.toUpperCase());
       removeGame(game.id);
       update.win = true;
+      update.winner = win.winner.toUpperCase();
     }
   }
   return update;

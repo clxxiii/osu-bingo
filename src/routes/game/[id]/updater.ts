@@ -9,6 +9,7 @@ export const updateGame = (game: Bingo.Card, event: EmitterEvent): Bingo.Card =>
 
   if (isStateUpdate(event)) {
     game.state = event.data.state;
+    if (event.data.winner) game.winning_team = event.data.winner ?? null
     if (event.data.card) {
       game = event.data.card;
     }

@@ -14,6 +14,7 @@
 	import { source } from 'sveltekit-sse';
 	import { Settings, X } from 'lucide-svelte';
 	import HostSettings from '$lib/components/HostSettings.svelte';
+	import WinConfetti from '$lib/components/WinConfetti.svelte';
 
 	export let data: PageData;
 	export let hostSettingsOpen = true;
@@ -22,9 +23,10 @@
 	if (data.game) store.set(data.game);
 
 	let currentTeam: string | undefined;
+	let winner: string | null = null;
 	store.subscribe((game) => {
 		if (!game) return;
-
+		winner = game.winning_team;
 		currentTeam = game.users.find((x) => x.user_id == data?.user?.id)?.team_name;
 	});
 
@@ -116,6 +118,10 @@
 			</article>
 		{/if}
 	</section>
+
+	{#if winner}
+		<WinConfetti team={winner} />
+	{/if}
 {:else}
 	You haven't been invited to this private game
 {/if}
