@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { ArrowRightLeft, Crown, SquareArrowOutUpRight } from 'lucide-svelte';
 	import { fly } from 'svelte/transition';
+	import DeveloperBadge from './DeveloperBadge.svelte';
 
 	export let movable: boolean;
 	const move = async (ev: MouseEvent) => {
@@ -30,7 +31,7 @@
 	href="https://osu.ppy.sh/u/{gameuser.user_id}"
 >
 	<img src={gameuser.user.avatar_url} class="size-6 rounded-full" alt="" />
-	<span class="h-6 text-left w-full col-start-2 col-end-3 flex items-center">
+	<span class="h-6 text-left mr-1 w-full col-start-2 col-end-3 flex items-center">
 		{gameuser.user.username}
 		{#if gameuser.host}
 			<span class="p-1">
@@ -50,6 +51,7 @@
 				#{gameuser.user.global_rank.toLocaleString()}
 			</span>
 		{/if}
+		<DeveloperBadge id={gameuser.user_id} />
 		{#if movable}
 			<button
 				on:click={move}
