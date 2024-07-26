@@ -31,16 +31,18 @@
 >
 	<img src={gameuser.user.avatar_url} class="size-6 rounded-full" alt="" />
 	<span class="h-6 text-left mr-1 w-full col-start-2 col-end-3 flex items-center">
-		{gameuser.user.username}
+		<div class="w-full overflow-hidden whitespace-nowrap flex items-center">
+			{gameuser.user.username}
+			<SquareArrowOutUpRight
+				class="ml-1 text-transparent transition group-hover:text-zinc-400"
+				size={12}
+			/>
+		</div>
 		{#if gameuser.host}
 			<span class="p-1">
 				<Crown class="text-yellow-600 size-4" />
 			</span>
 		{/if}
-		<SquareArrowOutUpRight
-			class="ml-1 text-transparent transition group-hover:text-zinc-400"
-			size={12}
-		/>
 	</span>
 	<span
 		class="h-6 col-start-3 col-end-4 text-xs italic font-rounded text-zinc-600 flex items-center"

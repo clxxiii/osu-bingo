@@ -67,7 +67,7 @@
 			class="row-start-2 relative flex gap-x-4 items-center justify-center rounded-xl p-4 gap-y-2 row-end-3 col-start-1 col-end-2 bg-[rgba(0,0,0,0.5)]"
 		>
 			{#if $store.state == 0}
-				<div class="h-[500px] w-[300px]">
+				<div class="h-[500px] w-[350px]">
 					<TeamList team="BLUE" gameStore={store} host={data.is_host} user={data.user} />
 				</div>
 			{/if}
@@ -75,7 +75,7 @@
 				<BingoCard {store} />
 			{/if}
 			{#if $store.state == 0}
-				<div class="h-[500px] w-[300px]">
+				<div class="h-[500px] w-[350px]">
 					<TeamList team="RED" gameStore={store} host={data.is_host} user={data.user} />
 				</div>
 			{/if}
