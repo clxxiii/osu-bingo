@@ -1,3 +1,3 @@
 import { writable } from "svelte/store";
 
-export const square = writable<Bingo.Card.FullSquare | null>(null)
+export const square = writable<number | null>(null)

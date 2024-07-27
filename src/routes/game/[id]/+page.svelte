@@ -98,7 +98,7 @@
 				transition:fade={{ duration: 150 }}
 				class="pl-4 relative row-start-1 row-end-3 col-start-2 col-end-3"
 			>
-				<SquareSidebar tiebreaker={data.game.tiebreaker} />
+				<SquareSidebar gameStore={store} tiebreaker={data.game.tiebreaker} />
 			</article>
 		{/if}
 	</section>

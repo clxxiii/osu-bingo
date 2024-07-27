@@ -18,7 +18,9 @@
 	const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 	const click = (s: Bingo.Card.FullSquare) => {
-		$square = s;
+		const index = $store.squares?.findIndex((x) => x.id == s.id);
+		if (!index) return;
+		$square = index;
 	};
 </script>
 

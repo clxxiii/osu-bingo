@@ -72,7 +72,11 @@ export const getGame = async (game_id: string): Promise<Bingo.Card | null> => {
 	if (game.state == 0) return { ...game, users, events, squares: null, hosts, template };
 
 	const squares: Bingo.Card.FullSquare[] = [];
-	const dbSquares = await db.select().from(BingoSquare).where(eq(BingoSquare.game_id, game_id));
+	const dbSquares = await db
+		.select()
+		.from(BingoSquare)
+		.where(eq(BingoSquare.game_id, game_id))
+		.orderBy(BingoSquare.y_pos, BingoSquare.x_pos);
 	for (const square of dbSquares) {
 		const map = (
 			await db
