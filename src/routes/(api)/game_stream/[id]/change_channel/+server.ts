@@ -1,5 +1,5 @@
 import { error } from "@sveltejs/kit";
-import type { RequestHandler } from "./[user_id]/$types";
+import type { RequestHandler } from "./$types";
 import { StatusCodes } from "$lib/StatusCodes";
 import { changeChannel } from "$lib/server/game/emitter";
 import q from "$lib/drizzle/queries";

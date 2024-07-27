@@ -4,17 +4,14 @@
 	import Chatbox from '$lib/components/Chatbox.svelte';
 	import SquareSidebar from '$lib/components/SquareSidebar.svelte';
 	import TeamList from '$lib/components/TeamList.svelte';
-	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
-	import type { EmitterEvent } from '$lib/events';
-	import { listen, updateGame } from './updater';
+	import { listen } from './updater';
 	import { square } from '$lib/stores';
 	import { fade } from 'svelte/transition';
-	import { source } from 'sveltekit-sse';
 	import { Settings, X } from 'lucide-svelte';
 	import HostSettings from '$lib/components/HostSettings.svelte';
 	import WinConfetti from '$lib/components/WinConfetti.svelte';
-	import { game as store } from './updater';
+	import { game as store, connected } from './updater';
 
 	export let data: PageData;
 	export let hostSettingsOpen = true;
@@ -29,11 +26,10 @@
 		currentTeam = game.users.find((x) => x.user_id == data?.user?.id)?.team_name;
 	});
 
+	// Recieve Game updates from server
 	if (data.game) {
 		listen(data.game.id, data?.user?.id);
 	}
-
-	// Recieve Game updates from server
 </script>
 
 <svelte:head>
@@ -87,7 +83,7 @@
 				{#if currentTeam || $store.state == 0 || $store.state == 2}
 					<Chatbox
 						channel={$store.state == 1 ? currentTeam?.toLowerCase() : 'global'}
-						enabled={currentTeam != undefined}
+						enabled={currentTeam != undefined || data.is_host}
 					/>
 				{:else if $store.state == 1}
 					<div class="h-full rounded-lg bg-zinc-800 p-4 gap-y-4 grid grid-rows-2">
@@ -112,6 +108,16 @@
 	{/if}
 {:else}
 	You haven't been invited to this private game
+{/if}
+{#if !$connected}
+	<div
+		transition:fade
+		class="fixed z-30 top-0 left-0 w-screen flex justify-center items-center h-screen bg-black/50 backdrop-blur-md"
+	>
+		You lost connection to the game, attempting to reconnect.
+		<br />
+		If waiting doesn't do anything, a refresh might fix it!
+	</div>
 {/if}
 
 <style>

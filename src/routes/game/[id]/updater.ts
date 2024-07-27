@@ -19,7 +19,15 @@ export const listen = async (game_id: string, user_id?: number) => {
   if (user_id) {
     params.set('user_id', `${user_id}`)
   }
-  const stream = source(`/game_stream/${game_id}?${params.toString()}`)
+  const stream = source(`/game_stream/${game_id}?${params.toString()}`, {
+    close: ({ connect }) => {
+      connected.set(false)
+      setTimeout(() => {
+        connect();
+        connected.set(true);
+      }, 2000)
+    }
+  })
   stream.select('message').subscribe((msg) => {
     let event: EmitterEvent | null = null;
     try {
@@ -35,10 +43,7 @@ export const listen = async (game_id: string, user_id?: number) => {
       fetch(`/game_stream/${game_id}/change_channel`)
     }
   });
-  close = () => {
-    stream.close()
-    connected.set(false);
-  }
+  close = () => stream.close()
   connected.set(true);
 }
 
