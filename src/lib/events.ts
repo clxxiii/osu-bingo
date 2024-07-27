@@ -28,6 +28,7 @@ export type StateChangeEvent = {
 export type Init = {
   type: 'init',
   data: {
+    id: string,
     card: Bingo.Card
     chats: Bingo.Card.FullChat[]
   }

@@ -31,7 +31,7 @@ export const logger = winston.createLogger({
 
 if (process.env.NODE_ENV !== 'production') {
   logger.add(new winston.transports.Console({
-    level: 'info',
+    level: 'http',
     format: winston.format.combine(
       winston.format.colorize({
         colors: {

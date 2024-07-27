@@ -11,37 +11,39 @@ import { produce } from "sveltekit-sse";
 import { StatusCodes } from "$lib/StatusCodes";
 import { error } from "@sveltejs/kit";
 
-export const POST: RequestHandler = async ({ params, url, locals }) => {
-  const channel = url.searchParams.get('channel');
+export const POST: RequestHandler = async ({ params, locals }) => {
   let handlerId: string;
 
   // Send initial game state
   const game = await q.getGame(params.id);
   if (!game) error(StatusCodes.NOT_FOUND);
 
-  if (channel) {
+  let channel = 'GLOBAL';
+  if (locals.user) {
     if (!locals.user) error(StatusCodes.UNAUTHORIZED);
     const gameUser = await q.getFullUser(game.id, locals.user.id)
     if (!gameUser) error(StatusCodes.UNAUTHORIZED);
 
-    if (channel.toUpperCase() != 'GLOBAL' && channel.toUpperCase() != gameUser.team_name.toUpperCase())
-      error(StatusCodes.UNAUTHORIZED)
+    channel = gameUser.team_name.toUpperCase();
   }
 
   return produce(async ({ emit }) => {
     const chats = await q.getChatChannel(game.id, channel ?? 'global');
+
+    handlerId = await listen(params.id,
+      (event) => {
+        emit('message', JSON.stringify(event))
+      },
+      locals.user?.id
+    )
+
     emit('message', JSON.stringify({
       type: 'init', data: {
+        id: handlerId,
         card: game,
         chats,
       }
     }));
-
-    handlerId = listen(params.id,
-      (event) => {
-        emit('message', JSON.stringify(event))
-      }
-    )
   }, {
     stop: () => {
       deafen(handlerId)

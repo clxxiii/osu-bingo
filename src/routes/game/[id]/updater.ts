@@ -6,17 +6,18 @@ import { type ChatMessage, type EmitterEvent, isInit, isFullUpdate, isStateUpdat
 import { source } from "sveltekit-sse";
 
 let close: (() => void) | null = null;
+
 export const connected = writable<boolean>(false);
 export const game = writable<Bingo.Card>()
 export const chats = writable<(ChatMessage | GameUserEvent)[]>([]);
 
-export const listen = (game_id: string, channel?: string) => {
+export const listen = async (game_id: string, user_id?: number) => {
   if (close) close()
   close = null;
 
   const params = new URLSearchParams()
-  if (channel) {
-    params.set('channel', channel)
+  if (user_id) {
+    params.set('user_id', `${user_id}`)
   }
   const stream = source(`/game_stream/${game_id}?${params.toString()}`)
   stream.select('message').subscribe((msg) => {
@@ -29,6 +30,10 @@ export const listen = (game_id: string, channel?: string) => {
     if (!event) return;
     console.log(event);
     updateGame(event);
+    // Update channel if needed
+    if (isStateUpdate(event)) {
+      fetch(`/game_stream/${game_id}/change_channel`)
+    }
   });
   close = () => {
     stream.close()

@@ -29,7 +29,9 @@
 		currentTeam = game.users.find((x) => x.user_id == data?.user?.id)?.team_name;
 	});
 
-	if (data.game) listen(data.game.id, currentTeam);
+	if (data.game) {
+		listen(data.game.id, data?.user?.id);
+	}
 
 	// Recieve Game updates from server
 </script>

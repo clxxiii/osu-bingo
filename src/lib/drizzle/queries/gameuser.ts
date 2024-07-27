@@ -161,3 +161,5 @@ export const isInvited = async (game_id: string, user_id: number): Promise<boole
 	if (gu.length == 0) return false;
 	return true;
 }
+
+export const getGameUser = async (guid: string) => (await db.select().from(GameUser).where(eq(GameUser.id, guid)))[0]
