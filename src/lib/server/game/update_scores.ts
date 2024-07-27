@@ -11,15 +11,21 @@ import { isClaimworthy } from "$lib/bingo-helpers/claimworthy";
 import { removeGame } from "./watch";
 import { sendEvent } from "./emitter";
 import { sendEvent as sendChat } from "./chat_emitter";
+import { logger } from "$lib/logger";
 
 const updating = new Set<string>();
 
 export const updateScores = async (game_id: string) => {
   if (updating.has(game_id)) return;
+  logger.debug(`Checking for new user scores for game ${game_id}`)
 
   updating.add(game_id);
   const game = await q.getGame(game_id);
-  if (!game) return;
+  if (!game) {
+    logger.warn(`Cannot find game ${game_id}`)
+    removeGame(game_id);
+    return;
+  };
   if (game.state != 1 || !game.squares) return;
 
 
@@ -32,14 +38,14 @@ export const updateScores = async (game_id: string) => {
 
     // If there's no token to use, we can't get scores
     if (!token) {
-      console.log(`Failed to fetch scores for ${gameuser.user.username}`)
+      logger.warn(`Failed to fetch scores for ${gameuser.user.username}`)
       continue;
     }
 
     const scoreList = await getRecentScores(gameuser.user_id, token.access_token);
 
     if (!scoreList) {
-      console.log(`Failed to fetch scores for ${gameuser.user.username}`)
+      logger.warn(`Failed to fetch scores for ${gameuser.user.username}`)
       continue;
     }
 
@@ -116,7 +122,7 @@ const processScore = async (score: Osu.LazerScore, game: Bingo.Card) => {
   // Score has already been processed
   const scoreMap = scores.map(x => x.score);
   if (scoreMap.includes(score.total_score)) return
-  console.log(`Processing Score: ${score.user.username} on ${score.beatmapset?.title}: (${score.total_score})`)
+  logger.info(`Processing Score: ${score.user.username} on ${score.beatmapset?.title}: (${score.total_score})`)
 
 
   // Add score to database

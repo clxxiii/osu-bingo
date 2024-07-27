@@ -6,7 +6,6 @@
 	export let store: Writable<Bingo.Card>;
 
 	const changeVisibility = async (is_public: boolean) => {
-		console.log(is_public);
 		const body = new FormData();
 		body.set('public', `${is_public}`);
 		await fetch('?/change_settings', {

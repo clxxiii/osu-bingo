@@ -6,6 +6,7 @@ import { getMe, refreshOAuthToken } from "../osu";
 import q from "$lib/drizzle/queries";
 import { PUBLIC_OSU_CLIENT_ID } from "$env/static/public";
 import { OSU_CLIENT_SECRET } from "$env/static/private";
+import { logger } from "$lib/logger";
 
 const POLLING_INTERVAL_MS = 60 * 1000;
 
@@ -71,6 +72,6 @@ const interval = async () => {
         level_progress: user.statistics.level.progress
       });
 
-    console.log(`Successfully updated user info for ${user.id} (${user.username}: #${user?.statistics?.global_rank?.toLocaleString()})`)
+    logger.info(`Successfully updated user info for ${user.id} (${user.username}: #${user?.statistics?.global_rank?.toLocaleString()})`)
   }
 }

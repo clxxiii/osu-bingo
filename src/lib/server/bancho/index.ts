@@ -2,6 +2,7 @@ import { BANCHO_USER, BANCHO_PASS, BANCHO_KEY } from '$env/static/private'
 import pkg from "bancho.js";
 import q from "$lib/drizzle/queries"
 import { sendBoard } from './bancho_board';
+import { logger } from '$lib/logger';
 const { BanchoClient } = pkg;
 
 export const client = new BanchoClient({
@@ -14,7 +15,7 @@ export const connect = () => {
   if (client.isConnected()) return;
 
   client.connect().then(() => {
-    console.log('Connected to bancho!')
+    logger.info('Connected to bancho!')
   })
 }
 

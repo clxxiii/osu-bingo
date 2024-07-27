@@ -2,7 +2,6 @@ import q from "$lib/drizzle/queries"
 import { sendEvent } from "./emitter";
 
 export const claimchange = async (game_id: string, rule: string) => {
-  console.log({ game_id, rule })
   const settings = {
     claim_condition: rule
   }

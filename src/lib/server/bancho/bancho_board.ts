@@ -27,7 +27,6 @@ const banchoBoard = (card: Bingo.Card): string[][] | null => {
 
   for (let i = 0; i < card.squares.length; i++) {
     const square = card.squares[i]
-    // console.log({ y: square.y_pos, output: output[square.y_pos] })
     output[square.y_pos][square.x_pos] = linkify(square)
   }
   return output;

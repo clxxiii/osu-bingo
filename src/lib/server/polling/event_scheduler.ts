@@ -1,4 +1,5 @@
 import q from "$lib/drizzle/queries";
+import { logger } from "$lib/logger";
 import handlers from "../event_handler"
 
 const POLLING_INTERVAL_MS = 5 * 1000;
@@ -22,7 +23,7 @@ export const interval = async () => {
     const action = event.action.split("_")[0];
     const eventHandler = handlers[action];
     if (!eventHandler) {
-      console.log(`Invalid event action "${action}".`);
+      logger.warn(`Invalid event action "${action}".`);
       await q.setFulfilled(event.id);
       continue;
     }
@@ -34,7 +35,7 @@ export const interval = async () => {
       eventHandler.evaluate(event)
     }, relativeTime < 0 ? 0 : relativeTime)
     scheduledEvents.set(event.id, true)
-    console.log(`Scheduled ${event.action} event for game ${event.game_id} (in ${relativeTime / 1000}s)`)
+    logger.info(`Scheduled ${event.action} event for game ${event.game_id} (in ${relativeTime / 1000}s)`)
   }
 
 }

@@ -24,8 +24,8 @@
 		fallDistance="50vh"
 		infinite
 		delay={[100, 2500]}
-		duration="5000"
-		amount="100"
+		duration={5000}
+		amount={100}
 	/>
 
 	<!-- Cannons -->

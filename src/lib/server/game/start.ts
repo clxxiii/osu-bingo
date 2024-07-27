@@ -6,8 +6,11 @@ import q from "$lib/drizzle/queries"
 import { sendEvent } from "./emitter";
 import { addGame } from "./watch";
 import boards from "$lib/bingo-helpers/default_boards"
+import { logger } from "$lib/logger";
 
 export const startGame = async (game_id: string) => {
+  logger.info(`Starting game ${game_id}!`);
+
   const game = await q.getGame(game_id);
   if (!game) return;
 

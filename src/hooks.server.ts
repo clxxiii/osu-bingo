@@ -8,6 +8,7 @@ import { connect } from '$lib/server/bancho';
 // Start Polling Services
 import { tokens, events } from '$lib/server/polling';
 import { setup as watch } from "$lib/server/game/watch"
+import { logger } from '$lib/logger';
 tokens.setup()
 events.setup()
 watch()
@@ -45,7 +46,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 			event.locals.user = user;
 		} catch (error) {
-			console.log(error);
+			logger.error(error)
 			event.cookies.delete('osu_bingo_token', { path: '/' });
 		}
 	}

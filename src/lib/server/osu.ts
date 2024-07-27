@@ -1,3 +1,4 @@
+import { logger } from '$lib/logger';
 import type { Osu } from '../osu';
 
 const BASE_URL = 'https://osu.ppy.sh/api/v2';
@@ -83,6 +84,7 @@ export const refreshOAuthToken = async (token: Bingo.OauthToken,
 	client_id: string,
 	client_secret: string,
 ): Promise<Osu.AuthorizationCodeTokenResponse | null> => {
+	logger.info(`Updating osu oauth token of ${token.user_id}`)
 	const refreshBody = {
 		client_id,
 		client_secret,
