@@ -6,20 +6,19 @@
 	import TeamList from '$lib/components/TeamList.svelte';
 	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
-	import { writable } from 'svelte/store';
-	import type { EmitterEvent } from '$lib/server/game/emitter';
-	import { updateGame } from './updater';
+	import type { EmitterEvent } from '$lib/events';
+	import { listen, updateGame } from './updater';
 	import { square } from '$lib/stores';
 	import { fade } from 'svelte/transition';
 	import { source } from 'sveltekit-sse';
 	import { Settings, X } from 'lucide-svelte';
 	import HostSettings from '$lib/components/HostSettings.svelte';
 	import WinConfetti from '$lib/components/WinConfetti.svelte';
+	import { game as store } from './updater';
 
 	export let data: PageData;
 	export let hostSettingsOpen = true;
 
-	const store = writable<Bingo.Card>();
 	if (data.game) store.set(data.game);
 
 	let currentTeam: string | undefined;
@@ -30,22 +29,9 @@
 		currentTeam = game.users.find((x) => x.user_id == data?.user?.id)?.team_name;
 	});
 
+	if (data.game) listen(data.game.id, currentTeam);
+
 	// Recieve Game updates from server
-	onMount(async () => {
-		if (!data.game) return;
-		const stream = source(`/game_stream/${data.game.id}`).select('message');
-		stream.subscribe((msg) => {
-			let event: EmitterEvent | null = null;
-			try {
-				event = JSON.parse(msg);
-			} catch {
-				return;
-			}
-			if (!event) return;
-			console.log(event);
-			store.update((current) => updateGame(current, event));
-		});
-	});
 </script>
 
 <svelte:head>
@@ -98,8 +84,8 @@
 			{#key currentTeam}
 				{#if currentTeam || $store.state == 0 || $store.state == 2}
 					<Chatbox
-						game_id={$store.id}
 						channel={$store.state == 1 ? currentTeam?.toLowerCase() : 'global'}
+						enabled={currentTeam != undefined}
 					/>
 				{:else if $store.state == 1}
 					<div class="h-full rounded-lg bg-zinc-800 p-4 gap-y-4 grid grid-rows-2">

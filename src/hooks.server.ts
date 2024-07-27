@@ -50,6 +50,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 			event.cookies.delete('osu_bingo_token', { path: '/' });
 		}
 	}
+	logger.http(`[${event.locals.user?.username ?? 'UNKNOWN'}]: ${event.url}`)
 
 	return await resolve(event);
 };

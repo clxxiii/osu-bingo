@@ -10,7 +10,6 @@ import { checkWin } from "$lib/bingo-helpers/check_win";
 import { isClaimworthy } from "$lib/bingo-helpers/claimworthy";
 import { removeGame } from "./watch";
 import { sendEvent } from "./emitter";
-import { sendEvent as sendChat } from "./chat_emitter";
 import { logger } from "$lib/logger";
 
 const updating = new Set<string>();
@@ -88,14 +87,6 @@ export const updateScores = async (game_id: string) => {
       type: 'square',
       data: updates
     })
-    sendChat(game_id, 'red', {
-      type: 'score',
-      data: updates
-    })
-    sendChat(game_id, 'blue', {
-      type: 'score',
-      data: updates
-    })
   }
   if (win) {
     sendEvent(game_id, {
@@ -122,7 +113,7 @@ const processScore = async (score: Osu.LazerScore, game: Bingo.Card) => {
   // Score has already been processed
   const scoreMap = scores.map(x => x.score);
   if (scoreMap.includes(score.total_score)) return
-  logger.info(`Processing Score: ${score.user.username} on ${score.beatmapset?.title}: (${score.total_score})`)
+  logger.info(`Processing Score: ${score.user.username} on ${score.beatmapset?.title}: (${score.total_score})`, score)
 
 
   // Add score to database

@@ -1,25 +1,16 @@
 <script lang="ts">
 	import { MessageSquareText } from 'lucide-svelte';
 	import ChatMessage from './ChatMessage.svelte';
-	import type { ChatEvent, FullUpdate } from '$lib/server/game/chat_emitter';
-	import { browser } from '$app/environment';
-	import { writable } from 'svelte/store';
-	import { source } from 'sveltekit-sse';
+	import { chats } from '../../routes/game/[id]/updater';
 
 	export let channel = 'global';
-	export let game_id: string;
 
-	let chats = writable<ChatEvent[]>([]);
 	let chatLength = 0;
 	const scroll = (node: HTMLDivElement, chatLength: number) => {
 		const scroll = () => scrollToBottom(node);
 		scroll();
 
 		return { update: scroll };
-	};
-
-	const isFullUpdate = (event: ChatEvent): event is FullUpdate => {
-		return event.type == 'fullUpdate';
 	};
 
 	const scrollToBottom = (node: HTMLDivElement) => {
@@ -29,30 +20,8 @@
 		});
 	};
 
-	let enabled: boolean;
+	export let enabled: boolean = false;
 
-	$: {
-		if (browser) {
-			const stream = source(`/chat_stream/${game_id}/${channel}`).select('message');
-			stream.subscribe((msg) => {
-				enabled = true;
-				let event: ChatEvent | null = null;
-				try {
-					event = JSON.parse(msg);
-				} catch {
-					return;
-				}
-				if (!event) return;
-				chats.update((chats) => {
-					if (isFullUpdate(event)) chats = event.data.map((x) => ({ type: 'chat', data: x }));
-					else chats.push(event);
-					chatLength = chats.length;
-
-					return chats;
-				});
-			});
-		}
-	}
 	let box: HTMLInputElement;
 	const keydown = async (ev: KeyboardEvent) => {
 		if (ev.key != 'Enter') return;

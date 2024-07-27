@@ -26,11 +26,10 @@ const interval = async () => {
     // Rate limit (make 1 request per second)
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
-    console.log(`Updating osu oauth token of ${old.user_id}`)
     const token = await refreshOAuthToken(old, PUBLIC_OSU_CLIENT_ID, OSU_CLIENT_SECRET);
 
     if (token == null) {
-      console.log(`Failed to update token, deleting...`)
+      logger.info(`Failed to update token, deleting...`)
       q.deleteToken(old.id);
       continue;
     }

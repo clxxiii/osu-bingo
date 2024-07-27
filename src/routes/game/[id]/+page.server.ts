@@ -3,7 +3,6 @@ import q from '$lib/drizzle/queries';
 import { error, redirect } from '@sveltejs/kit';
 import { StatusCodes } from '$lib/StatusCodes';
 import { sendEvent } from '$lib/server/game/emitter';
-import { sendEvent as sendChat } from "$lib/server/game/chat_emitter"
 import { sendBoard } from '$lib/server/bancho/bancho_board';
 import { startGame } from '$lib/server/game/start';
 
@@ -64,13 +63,6 @@ export const actions = {
 				user: fulluser
 			}
 		})
-		sendChat(game_id, 'global', {
-			type: 'player',
-			data: {
-				action: 'join',
-				player: fulluser
-			}
-		})
 	},
 	switch_team: async ({ request, params, locals }) => {
 		const form = await request.formData()
@@ -99,13 +91,6 @@ export const actions = {
 				user: fulluser
 			}
 		})
-		sendChat(game_id, 'global', {
-			type: 'player',
-			data: {
-				action: 'switch',
-				player: fulluser
-			}
-		})
 	},
 	leave_game: async ({ params, locals }) => {
 		const linkId = params.id;
@@ -125,13 +110,6 @@ export const actions = {
 				user: fulluser
 			}
 		})
-		sendChat(game_id, 'global', {
-			type: 'player',
-			data: {
-				action: 'leave',
-				player: fulluser
-			}
-		})
 	},
 	chat: async ({ params, request, locals }) => {
 		const user = locals.user;
@@ -148,11 +126,11 @@ export const actions = {
 		if (!message || typeof message != 'string') error(StatusCodes.BAD_REQUEST)
 		if (!channel || typeof channel != 'string') error(StatusCodes.BAD_REQUEST)
 
-		const chat = await q.sendChat(user.id, game_id, message, channel)
-		if (!chat) error(StatusCodes.BAD_REQUEST, "Gameuser is invalid")
-		sendChat(game_id, channel, {
+		const msg = await q.sendChat(user.id, game_id, message, channel)
+		if (!msg) error(StatusCodes.BAD_REQUEST, "Gameuser is invalid")
+		sendEvent(game_id, {
 			type: 'chat',
-			data: chat
+			data: msg
 		})
 	},
 	send_board: async ({ params, locals }) => {

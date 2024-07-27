@@ -45,6 +45,8 @@
   "type": "module",
   "dependencies": {
     "@libsql/client": "^0.6.2",
+    "@logtail/node": "^0.4.21",
+    "@logtail/winston": "^0.4.21",
     "bancho.js": "^0.11.6",
     "drizzle-orm": "^0.31.2",
     "jose": "^5.4.0",

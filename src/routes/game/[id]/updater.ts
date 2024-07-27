@@ -1,71 +1,100 @@
 /**
- * Takes some update event from the game stream and returns an updated game
+ * All of the stores for keeping UI up to date.
  */
+import { writable } from "svelte/store";
+import { type ChatMessage, type EmitterEvent, isInit, isFullUpdate, isStateUpdate, isSquareUpdate, isGameUserUpdate, isChatMessage, type GameUserEvent } from "$lib/events";
+import { source } from "sveltekit-sse";
 
-import type { EmitterEvent, FullUpdateEvent, GameUserEvent, SquareUpdateEvent, StateChangeEvent } from "$lib/server/game/emitter";
+let close: (() => void) | null = null;
+export const connected = writable<boolean>(false);
+export const game = writable<Bingo.Card>()
+export const chats = writable<(ChatMessage | GameUserEvent)[]>([]);
 
-export const updateGame = (game: Bingo.Card, event: EmitterEvent): Bingo.Card => {
-  if (isFullUpdate(event)) return event.data;
+export const listen = (game_id: string, channel?: string) => {
+  if (close) close()
+  close = null;
 
-  if (isStateUpdate(event)) {
-    game.state = event.data.state;
-    if (event.data.winner) game.winning_team = event.data.winner ?? null
-    if (event.data.card) {
-      game = event.data.card;
-    }
-    return game;
+  const params = new URLSearchParams()
+  if (channel) {
+    params.set('channel', channel)
   }
+  const stream = source(`/game_stream/${game_id}?${params.toString()}`)
+  stream.select('message').subscribe((msg) => {
+    let event: EmitterEvent | null = null;
+    try {
+      event = JSON.parse(msg);
+    } catch {
+      return;
+    }
+    if (!event) return;
+    console.log(event);
+    updateGame(event);
+  });
+  close = () => {
+    stream.close()
+    connected.set(false);
+  }
+  connected.set(true);
+}
 
-  if (isSquareUpdate(event)) {
-    if (!game.squares) return game;
+export const updateGame = (event: EmitterEvent) => {
+  game.update((card) => {
+    if (isInit(event)) return event.data.card;
 
-    for (const score of event.data) {
-      const square = game.squares.find(x => x.id == score.score.square_id)
-      if (!square) continue;
-      const index = game.squares.indexOf(square);
+    if (isFullUpdate(event)) return event.data;
 
-      game.squares[index].scores.push(score.score);
-      if (score.claim) {
-        game.squares[index].claimed_by_id = score.score.game_user_id
-        game.squares[index].claimed_by = score.score.user
+    if (isStateUpdate(event)) {
+      card.state = event.data.state;
+      if (event.data.winner) card.winning_team = event.data.winner ?? null
+      if (event.data.card) {
+        card = event.data.card;
+      }
+      return card;
+    }
+
+    if (isSquareUpdate(event)) {
+      if (!card.squares) return card;
+
+      for (const score of event.data) {
+        const square = card.squares.find(x => x.id == score.score.square_id)
+        if (!square) continue;
+        const index = card.squares.indexOf(square);
+
+        card.squares[index].scores.push(score.score);
+        if (score.claim) {
+          card.squares[index].claimed_by_id = score.score.game_user_id
+          card.squares[index].claimed_by = score.score.user
+        }
       }
     }
-  }
 
-  if (isGameUserUpdate(event)) {
-    if (event.data.type == 'join') {
-      game.users.push(event.data.user);
+    if (isGameUserUpdate(event)) {
+      if (event.data.type == 'join') {
+        card.users.push(event.data.user);
+      }
+
+      if (event.data.type == 'leave') {
+        const i = card.users.findIndex(x => x.id == event.data.user.id);
+        if (i > -1)
+          card.users.splice(i, 1)
+      }
+
+      if (event.data.type == 'switch') {
+        const i = card.users.findIndex(x => x.id == event.data.user.id);
+        if (i > -1)
+          card.users.splice(i, 1)
+        card.users.push(event.data.user);
+      }
     }
 
-    if (event.data.type == 'leave') {
-      const i = game.users.findIndex(x => x.id == event.data.user.id);
-      if (i > -1)
-        game.users.splice(i, 1)
-    }
+    return card
+  })
+  chats.update(chats => {
+    if (isInit(event)) return event.data.chats.map(data => ({ type: 'chat', data }))
+    if (isChatMessage(event)) chats.push(event)
+    if (isGameUserUpdate(event)) chats.push(event)
 
-    if (event.data.type == 'switch') {
-      const i = game.users.findIndex(x => x.id == event.data.user.id);
-      if (i > -1)
-        game.users.splice(i, 1)
-      game.users.push(event.data.user);
-    }
-  }
+    return chats;
+  })
 
-  return game
-}
-
-const isFullUpdate = (event: EmitterEvent): event is FullUpdateEvent => {
-  return event.type == 'fullUpdate';
-}
-
-const isGameUserUpdate = (event: EmitterEvent): event is GameUserEvent => {
-  return event.type == 'gameUser';
-}
-
-const isSquareUpdate = (event: EmitterEvent): event is SquareUpdateEvent => {
-  return event.type == 'square';
-}
-
-const isStateUpdate = (event: EmitterEvent): event is StateChangeEvent => {
-  return event.type == 'state';
 }
