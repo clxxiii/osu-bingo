@@ -6,6 +6,9 @@
 	export let square: Bingo.Card.FullSquare;
 	export let store: Writable<Bingo.Card>;
 
+	export let blinking = false;
+	export let bouncing = false;
+
 	onMount(() => {
 		store.subscribe((card) => {
 			if (!card.squares) return;
@@ -30,7 +33,8 @@
 
 <button
 	style="--url: url({square.data.square_url})"
-	class="block group transition bg-black relative square z-0 w-full h-full overflow-hidden rounded"
+	data-animation={blinking ? 'blinking' : bouncing ? 'bouncing' : ''}
+	class="block group data-[animation=blinking]:animate-pulse data-[animation=bouncing]:animate-bounce transition bg-black relative square z-0 w-full h-full overflow-hidden rounded"
 	on:click={click}
 >
 	<div class="background absolute top-0 size-full -z-10 transition">
