@@ -26,7 +26,7 @@ const evaluators: { [key: string]: Evaluator } = {
     evaluate: (score) => score.is_perfect_combo,
   },
   'rank': {
-    display_string: (value) => `Get an ${value.toUpperCase()} rank`,
+    display_string: (value) => `Get an ${value.toUpperCase()} rank or higher`,
     evaluate: (score, value) => {
       const hierarchy = ['SSH', 'SS', 'SH', 'S', 'A', 'B', 'C', 'D', 'F'];
       const scoreRank = hierarchy.indexOf(score.rank.toUpperCase() ?? "F");
