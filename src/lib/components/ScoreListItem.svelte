@@ -6,10 +6,11 @@
 	export let sort: string;
 </script>
 
-<div
+<a
 	data-claimer={score.important ? score.user.team_name : ''}
 	data-pass={score.grade != 'F'}
 	class="flex justify-between data-[pass=false]:opacity-60 data-[claimer=RED]:bg-amber-600 data-[claimer=BLUE]:bg-blue-600 hover:shadow-lg mb-2 w-full p-2 h-14 hover:bg-zinc-700 transition rounded"
+	href="https://osu.ppy.sh/scores/{score.score_id}"
 >
 	<div class="flex">
 		<span class="font-rounded flex items-center w-3 mr-2 justify-center">{index + 1}</span>
@@ -48,5 +49,5 @@
 		</div>
 		<ScoreGrade grade={score.grade} />
 	</div>
-</div>
+</a>
 <!-- {JSON.stringify(score)} -->
