@@ -16,12 +16,12 @@ const updating = new Set<string>();
 
 export const updateScores = async (game_id: string) => {
   if (updating.has(game_id)) return;
-  logger.debug(`Checking for new user scores for game ${game_id}`)
+  logger.debug(`Checking for new user scores for game ${game_id}`, { type: 'checking_scores' })
 
   updating.add(game_id);
   const game = await q.getGame(game_id);
   if (!game) {
-    logger.warn(`Cannot find game ${game_id}`)
+    logger.warn(`Cannot find game ${game_id}`, { type: 'missing_game' })
     removeGame(game_id);
     return;
   };
@@ -37,14 +37,14 @@ export const updateScores = async (game_id: string) => {
 
     // If there's no token to use, we can't get scores
     if (!token) {
-      logger.warn(`Failed to fetch scores for ${gameuser.user.username}`)
+      logger.warn(`Failed to fetch scores for ${gameuser.user.username}`, { type: 'fetch_user_scores_failed' })
       continue;
     }
 
     const scoreList = await getRecentScores(gameuser.user_id, token.access_token);
 
     if (!scoreList) {
-      logger.warn(`Failed to fetch scores for ${gameuser.user.username}`)
+      logger.warn(`Failed to fetch scores for ${gameuser.user.username}`, { type: 'fetch_user_scores_failed' })
       continue;
     }
 
@@ -113,7 +113,7 @@ const processScore = async (score: Osu.LazerScore, game: Bingo.Card) => {
   // Score has already been processed
   const scoreMap = scores.map(x => x.score);
   if (scoreMap.includes(score.total_score)) return
-  logger.info(`Processing Score: ${score.user.username} on ${score.beatmapset?.title}: (${score.total_score})`, score)
+  logger.info(`Processing Score: ${score.user.username} on ${score.beatmapset?.title}: (${score.total_score})`, { ...score, type: 'process_score' })
 
 
   // Add score to database

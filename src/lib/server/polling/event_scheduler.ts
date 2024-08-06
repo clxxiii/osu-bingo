@@ -23,7 +23,7 @@ export const interval = async () => {
     const action = event.action.split("_")[0];
     const eventHandler = handlers[action];
     if (!eventHandler) {
-      logger.warn(`Invalid event action "${action}".`);
+      logger.warn(`Invalid event action "${action}".`, { type: 'invalid_event' });
       await q.setFulfilled(event.id);
       continue;
     }
@@ -35,7 +35,7 @@ export const interval = async () => {
       eventHandler.evaluate(event)
     }, relativeTime < 0 ? 0 : relativeTime)
     scheduledEvents.set(event.id, true)
-    logger.info(`Scheduled ${event.action} event for game ${event.game_id} (in ${relativeTime / 1000}s)`)
+    logger.info(`Scheduled ${event.action} event for game ${event.game_id} (in ${relativeTime / 1000}s)`, { type: 'scheduled_event' })
   }
 
 }

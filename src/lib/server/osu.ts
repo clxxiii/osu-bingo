@@ -84,7 +84,7 @@ export const refreshOAuthToken = async (token: Bingo.OauthToken,
 	client_id: string,
 	client_secret: string,
 ): Promise<Osu.AuthorizationCodeTokenResponse | null> => {
-	logger.info(`Updating osu oauth token of ${token.user_id}`)
+	logger.info(`Updating osu oauth token of ${token.user_id}`, { type: 'token_update' })
 	const refreshBody = {
 		client_id,
 		client_secret,
@@ -124,6 +124,7 @@ export const getRecentScores = async (user_id: number, access_token: string) => 
 	});
 	const response: Osu.LazerScore[] = await scores.json();
 	if (scores.ok) {
+		logger.debug(`[${user_id}]: Successfully fetched scores`, { type: 'fetch_user_scores', user_id })
 		return response;
 	}
 	return null;

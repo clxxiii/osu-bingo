@@ -27,14 +27,14 @@ export const setup = async () => {
 }
 
 export const addGame = (id: string) => {
-  logger.info("Started watching game " + id + " for new scores")
+  logger.info("Started watching game " + id + " for new scores", { type: 'start_watch' })
   watchedGames.set(id, setInterval(() => {
     updateScores(id)
   }, POLLING_INTERVAL_MS))
 }
 
 export const removeGame = (id: string) => {
-  logger.info("Stopped watching game " + id);
+  logger.info("Stopped watching game " + id, { type: 'stop_watch' });
   clearInterval(watchedGames.get(id));
   watchedGames.delete(id);
 }

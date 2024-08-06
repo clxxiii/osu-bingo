@@ -23,7 +23,8 @@ export const logger = winston.createLogger({
   },
   transports: [
     new winston.transports.File({
-      filename: 'app.log'
+      filename: 'app.log',
+      level: 'debug'
     }),
     new LogtailTransport(logtail)
   ]

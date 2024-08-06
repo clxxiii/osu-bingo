@@ -35,7 +35,8 @@ export const listen = async (game_id: string, fn: Fn, user_id?: number) => {
   })
   logger.info(`[+] Total Listeners: ${listeners.size}`, {
     game_id,
-    channel
+    channel,
+    type: 'listener_added'
   })
   return id;
 }
@@ -45,7 +46,8 @@ export const deafen = (id: string) => {
   if (listener) listeners.delete(id);
   logger.info(`[-] Total Listeners: ${listeners.size}`, {
     game_id: listener?.game_id,
-    channel: listener?.channel
+    channel: listener?.channel,
+    type: 'listener_removed'
   })
 }
 
@@ -56,14 +58,14 @@ export const changeChannel = (user_id: number, channel: string) => {
 
     if (listener.user_id == user_id) {
       listener.channel = channel;
-      logger.info(`Updated listener channel ${id}`, listener);
+      logger.info(`Updated listener channel ${id}`, { ...listener, type: 'listener_channel_switch' });
     }
     listeners.set(id, listener);
   }
 }
 
 export const sendEvent = (game_id: string, event: EmitterEvent) => {
-  logger.info(`New ${event.type} event in ${game_id}`, event);
+  logger.info(`New ${event.type} event in ${game_id}`, { ...event, type: 'sent_event' });
   for (const listener of listeners.values()) {
     if (game_id != listener.game_id) continue;
     if (isChatMessage(event) && listener.channel?.toUpperCase() != event.data.channel.toUpperCase()) continue;

@@ -29,7 +29,7 @@ const interval = async () => {
     const token = await refreshOAuthToken(old, PUBLIC_OSU_CLIENT_ID, OSU_CLIENT_SECRET);
 
     if (token == null) {
-      logger.info(`Failed to update token, deleting...`)
+      logger.info(`Failed to update token, deleting...`, { type: 'token_update_failed' })
       q.deleteToken(old.id);
       continue;
     }
@@ -71,6 +71,6 @@ const interval = async () => {
         level_progress: user.statistics.level.progress
       });
 
-    logger.info(`Successfully updated user info for ${user.id} (${user.username}: #${user?.statistics?.global_rank?.toLocaleString()})`)
+    logger.info(`Successfully updated user info for ${user.id} (${user.username}: #${user?.statistics?.global_rank?.toLocaleString()})`, { type: 'token_update' })
   }
 }

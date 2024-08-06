@@ -46,11 +46,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 			event.locals.user = user;
 		} catch (error) {
-			logger.error(error)
+			logger.error(error, { type: 'invalid_session' })
 			event.cookies.delete('osu_bingo_token', { path: '/' });
 		}
 	}
-	logger.http(`[${event.locals.user?.username ?? 'UNKNOWN'}]: ${event.url}`)
+	logger.http(`[${event.locals.user?.username ?? 'UNKNOWN'}]: ${event.url}`, { type: 'http_log' })
 
 	return await resolve(event);
 };
