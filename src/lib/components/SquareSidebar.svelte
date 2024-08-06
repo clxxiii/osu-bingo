@@ -2,9 +2,9 @@
 	import { fly } from 'svelte/transition';
 	import { X } from 'lucide-svelte';
 	import MapCard from './MapCard.svelte';
-	import ScoreListItem from './ScoreListItem.svelte';
 	import { square as store } from '$lib/stores';
 	import type { Writable } from 'svelte/store';
+	import ScoreList from './ScoreList.svelte';
 
 	export let tiebreaker: string;
 	export let gameStore: Writable<Bingo.Card>;
@@ -74,13 +74,7 @@
 					<MapCard map={square.data} />
 				</div>
 
-				<div class="w-full absolute top-56 p-2 pt-4">
-					<h2 class="text-xl font-bold font-rounded">Scores</h2>
-					<hr class="border-zinc-600 mb-2" />
-					{#each square.scores as score, index}
-						<ScoreListItem {score} {index} sort={tiebreaker} />
-					{/each}
-				</div>
+				<ScoreList scores={square.scores} {tiebreaker} />
 			</div>
 		{:else}
 			<div in:fly={{ x: 100, duration: 300 }} out:fly={{ x: -100, duration: 150 }}>
@@ -88,13 +82,7 @@
 					<MapCard map={square.data} />
 				</div>
 
-				<div class="w-full absolute top-56 p-2 pt-4">
-					<h2 class="text-xl font-bold font-rounded">Scores</h2>
-					<hr class="border-zinc-600 mb-2" />
-					{#each square.scores as score, index}
-						<ScoreListItem {score} {index} sort={tiebreaker} />
-					{/each}
-				</div>
+				<ScoreList scores={square.scores} {tiebreaker} />
 			</div>
 		{/if}
 	</div>
