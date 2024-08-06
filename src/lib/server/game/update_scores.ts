@@ -33,19 +33,27 @@ export const updateScores = async (game_id: string) => {
   for (const gameuser of game.users) {
     // a wee bit of ratelimiting
     await new Promise(resolve => setTimeout(resolve, 100))
-    const token = await q.getToken(gameuser.user_id);
+    let token = await q.getToken(gameuser.user_id);
 
     // If there's no token to use, we can't get scores
     if (!token) {
-      logger.warn(`Failed to fetch scores for ${gameuser.user.username}`, { type: 'fetch_user_scores_failed' })
       continue;
     }
 
-    const scoreList = await getRecentScores(gameuser.user_id, token.access_token);
+    let scoreList = await getRecentScores(gameuser.user_id, token.access_token);
 
     if (!scoreList) {
-      logger.warn(`Failed to fetch scores for ${gameuser.user.username}`, { type: 'fetch_user_scores_failed' })
-      continue;
+      logger.info(`Invalid token for ${gameuser.user.username}, trying a refresh`, { type: 'invalid_token_fetch' })
+      const update = await q.updateUser(token);
+      if (!update) {
+        logger.warn(`Failed to fetch scores for ${gameuser.user.username}`, { type: 'fetch_user_scores_failed' })
+        continue;
+      }
+      token = update;
+      scoreList = await getRecentScores(gameuser.user_id, token.access_token);
+      if (!scoreList) {
+        continue;
+      }
     }
 
     for (const score of scoreList) {

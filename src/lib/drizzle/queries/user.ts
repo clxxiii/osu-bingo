@@ -1,6 +1,11 @@
 import { and, eq } from 'drizzle-orm';
 import { db } from '..';
 import { BingoGame, GameUser, Session, User } from '../schema';
+import { PUBLIC_OSU_CLIENT_ID } from '$env/static/public';
+import { OSU_CLIENT_SECRET } from '$env/static/private';
+import { getMe, refreshOAuthToken } from '$lib/server/osu';
+import { logger } from '$lib/logger';
+import { deleteToken, getToken, setToken } from './token';
 
 export const setUser = async (user: typeof User.$inferInsert) => {
 	if (user.id == null) {
@@ -51,4 +56,57 @@ export const isInGame = async (user_id: number) => {
 			eq(GameUser.user_id, user_id),
 			eq(BingoGame.state, 1)
 		)))[0]
+}
+
+export const updateUser = async (token: Bingo.OauthToken) => {
+	const response = await refreshOAuthToken(token, PUBLIC_OSU_CLIENT_ID, OSU_CLIENT_SECRET);
+
+	if (response == null) {
+		logger.info(`Failed to update token, deleting...`, { type: 'token_update_failed' })
+		deleteToken(token.id);
+		return;
+	}
+
+	// Replace token in database
+	setToken({
+		access_token: response.access_token,
+		refresh_token: response.refresh_token,
+		expires_at: new Date(Date.now() + response.expires_in * 1000),
+		service: 'osu',
+		token_type: response.token_type,
+		user_id: token.user_id
+	})
+
+	// Update user data
+	const user = await getMe(response.access_token);
+
+	if (user.statistics) {
+		await setUser({
+			id: user.id,
+
+			username: user.username,
+			country_code: user.country_code,
+			country_name: user.country?.name ?? user.country_code,
+
+			cover_url: user.cover?.url ?? '',
+			avatar_url: user.avatar_url,
+
+			pp: user.statistics.pp,
+
+			global_rank: user.statistics.global_rank,
+			country_rank: user.statistics.country_rank,
+
+			total_score: user.statistics.total_score,
+			ranked_score: user.statistics.ranked_score,
+			hit_accuracy: user.statistics.hit_accuracy,
+			play_count: user.statistics.play_count,
+			level: user.statistics.level.current,
+			level_progress: user.statistics.level.progress
+		});
+
+		logger.info(`Successfully updated user info for ${user.id} (${user.username}: #${user?.statistics?.global_rank?.toLocaleString()})`, { type: 'token_update' })
+		return getToken(user.id, "osu");
+	} else {
+		logger.info(`Failed trying to update user info for token ${token.id} (${token.user_id})`, { type: 'token_update_failed' })
+	}
 }
