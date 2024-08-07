@@ -1,5 +1,6 @@
 <script lang="ts">
 	import ScoreGrade from './ScoreGrade.svelte';
+	import ScoreListItemStatistic from './ScoreListItemStatistic.svelte';
 
 	export let score: Bingo.Card.FullScore;
 	export let index: number;
@@ -10,11 +11,13 @@
 	<a
 		data-claimer={score.important ? score.user.team_name : ''}
 		data-pass={score.grade != 'F'}
-		class="flex justify-between data-[pass=false]:opacity-60 data-[claimer=RED]:bg-amber-600 data-[claimer=BLUE]:bg-blue-600 hover:shadow-lg mb-2 w-full p-2 h-14 hover:bg-zinc-700 transition rounded"
+		target="_blank"
+		rel="noopener noreferrer"
+		class="flex justify-between data-[pass=false]:opacity-60 group/item data-[claimer=RED]:bg-amber-600 data-[claimer=BLUE]:bg-blue-600 hover:shadow-lg mb-2 w-full p-2 h-14 hover:bg-zinc-700 transition rounded"
 		href="https://osu.ppy.sh/scores/{score.score_id}"
 	>
 		<div class="flex">
-			<span class="font-rounded flex items-center w-3 mr-2 justify-center">{index + 1}</span>
+			<!-- <span class="font-rounded flex items-center w-3 mr-2 justify-center">{index + 1}</span> -->
 			<div class="grid gap-x-1">
 				<img
 					class="row-start-1 row-end-3 col-start-1 col-end-2 h-10 rounded-full"
@@ -39,17 +42,14 @@
 			{#if score.mods != ''}
 				<div>+{score.mods}</div>
 			{/if}
-			<div class="text-2xl font-rounded font-bold">
+			<div
+				class="h-full grid grid-rows-[repeat(2,_minmax(0,_min-content))] gap-x-1 grid-cols-[repeat(4,_minmax(0,_min-content))]"
+			>
 				{#if score.grade != 'F'}
-					{#if sort == 'score'}
-						{score.score.toLocaleString()}
-					{:else if sort == 'accuracy'}
-						{(score.accuracy * 100).toFixed(2)}%
-					{:else if sort == 'combo'}
-						{score.max_combo.toLocaleString()}x
-					{:else if sort == 'pp'}
-						{Math.round(score.pp ?? 0).toLocaleString()}pp
-					{/if}
+					<ScoreListItemStatistic stat="score" {score} {sort} />
+					<ScoreListItemStatistic stat="combo" {score} {sort} />
+					<ScoreListItemStatistic stat="accuracy" {score} {sort} />
+					<ScoreListItemStatistic stat="pp" {score} {sort} />
 				{:else}
 					{((score.percentage ?? 0) * 100).toFixed(1)}%
 				{/if}

@@ -52,11 +52,11 @@
 {#if square != null}
 	<div
 		bind:this={sidebar}
-		class="group bg-zinc-800 overflow-hidden relative transition rounded-xl size-full"
+		class="group/sidebar bg-zinc-800 overflow-hidden relative transition rounded-xl size-full"
 		data-claimer={square.claimed_by?.team_name ?? 'UNCLAIMED'}
 	>
 		<div
-			class="absolute flex items-center font-rounded text-xl transition h-14 top-0 w-full p-2 bg-gradient-to-b group-data-[claimer=RED]:from-amber-600 group-data-[claimer=UNCLAIMED]:from-zinc-600 group-data-[claimer=BLUE]:from-blue-600 to-zinc-800"
+			class="absolute flex items-center font-rounded text-xl transition h-14 top-0 w-full p-2 bg-gradient-to-b group-data-[claimer=RED]/sidebar:from-amber-600 group-data-[claimer=UNCLAIMED]/sidebar:from-zinc-600 group-data-[claimer=BLUE]/sidebar:from-blue-600 to-zinc-800"
 		>
 			<button
 				on:click={close}
