@@ -68,8 +68,14 @@ export const sendEvent = (game_id: string, event: EmitterEvent) => {
   logger.info(`New ${event.type} event in ${game_id}`, { ...event, type: 'sent_event' });
   for (const listener of listeners.values()) {
     if (game_id != listener.game_id) continue;
-    if (isChatMessage(event) && listener.channel?.toUpperCase() != event.data.channel.toUpperCase()) continue;
-    listener.fn(event)
+    if (!isChatMessage(event)) {
+      listener.fn(event);
+    } else {
+      if (event.data.channel.toUpperCase() == 'GLOBAL') {
+        listener.fn(event);
+      } else if (listener.channel?.toUpperCase() == event.data.channel.toUpperCase())
+        listener.fn(event);
+    }
   }
 }
 
