@@ -44,6 +44,13 @@ export const POST: RequestHandler = async ({ params, locals }) => {
         chats,
       }
     }));
+
+    if (locals.user) {
+      const token = await q.getToken(locals.user.id, 'osu');
+      if (!token) {
+        emit('message', JSON.stringify({ type: 'login_request' }));
+      }
+    }
   }, {
     stop: () => {
       deafen(handlerId)

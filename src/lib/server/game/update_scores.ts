@@ -9,7 +9,7 @@ import { scoreBeatsBest } from "$lib/bingo-helpers/best_score";
 import { checkWin } from "$lib/bingo-helpers/check_win";
 import { isClaimworthy } from "$lib/bingo-helpers/claimworthy";
 import { removeGame } from "./watch";
-import { sendEvent } from "./emitter";
+import { requestLogin, sendEvent } from "./emitter";
 import { logger } from "$lib/logger";
 
 const updating = new Set<string>();
@@ -47,6 +47,7 @@ export const updateScores = async (game_id: string) => {
       const update = await q.updateUser(token);
       if (!update) {
         logger.warn(`Failed to fetch scores for ${gameuser.user.username}`, { type: 'fetch_user_scores_failed' })
+        if (token.user_id) requestLogin(token.user_id);
         continue;
       }
       token = update;
