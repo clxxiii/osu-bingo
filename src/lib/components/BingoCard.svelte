@@ -3,15 +3,22 @@
 	import BingoSquare from './BingoSquare.svelte';
 	import { scale } from 'svelte/transition';
 	import { square } from '$lib/stores';
+	import { checkWin } from '$lib/bingo-helpers/check_win';
 
 	export let store: Writable<Bingo.Card>;
 	let yMax: number;
 	let xMax: number;
 
+	let winningLine: number[] | null = null;
+
 	store.subscribe((card) => {
 		if (card.squares) {
 			yMax = Math.max(...card.squares.map((x) => x.y_pos));
 			xMax = Math.max(...card.squares.map((x) => x.x_pos));
+		}
+		const win = checkWin(card);
+		if (win) {
+			winningLine = win.line;
 		}
 	});
 
@@ -61,13 +68,18 @@
 				{i + 1}
 			</div>
 		{/each}
-		{#each $store.squares as square}
+		{#each $store.squares as square, i}
 			<div
 				class="p-2"
 				style="grid-area: {square.y_pos + 2} / {square.x_pos + 2} / {square.y_pos +
 					3} / {square.x_pos + 3}"
 			>
-				<BingoSquare {store} on:click={() => click(square)} {square} />
+				<BingoSquare
+					{store}
+					on:click={() => click(square)}
+					{square}
+					blinking={winningLine?.includes(i)}
+				/>
 			</div>
 		{/each}
 	{/if}
