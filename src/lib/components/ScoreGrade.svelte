@@ -3,10 +3,10 @@
 </script>
 
 <span class="font-rounded font-black text-3xl">
-	{#if grade == 'SSH'}
-		<span class="text-blue-100">SS</span>
-	{:else if grade == 'SS'}
-		<span class="text-yellow-200">SS</span>
+	{#if grade == 'XH'}
+		<span class="bg-blue-100 p-1 pb-0 rounded text-zinc-700">SS</span>
+	{:else if grade == 'X'}
+		<span class="bg-yellow-200 p-1 pb-0 rounded text-zinc-700">SS</span>
 	{:else if grade == 'SH'}
 		<span class="text-blue-200">S</span>
 	{:else if grade == 'S'}

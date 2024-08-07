@@ -93,7 +93,7 @@
 				{/if}
 			{/key}
 		</article>
-		{#if $square}
+		{#if $square != null}
 			<article
 				transition:fade={{ duration: 150 }}
 				class="pl-4 relative row-start-1 row-end-3 col-start-2 col-end-3"

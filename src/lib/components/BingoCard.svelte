@@ -19,7 +19,7 @@
 
 	const click = (s: Bingo.Card.FullSquare) => {
 		const index = $store.squares?.findIndex((x) => x.id == s.id);
-		if (!index) return;
+		if (index == undefined) return;
 		$square = index;
 	};
 </script>
