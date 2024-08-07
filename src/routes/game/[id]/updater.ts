@@ -2,8 +2,9 @@
  * All of the stores for keeping UI up to date.
  */
 import { writable } from "svelte/store";
-import { type ChatMessage, type EmitterEvent, isInit, isFullUpdate, isStateUpdate, isSquareUpdate, isGameUserUpdate, isChatMessage, type GameUserEvent } from "$lib/events";
+import { type ChatMessage, type EmitterEvent, isInit, isFullUpdate, isStateUpdate, isSquareUpdate, isGameUserUpdate, isChatMessage, type GameUserEvent, isLoginRequest } from "$lib/events";
 import { source } from "sveltekit-sse";
+import { login_request } from "$lib/stores";
 
 let close: (() => void) | null = null;
 
@@ -52,6 +53,8 @@ export const updateGame = (event: EmitterEvent) => {
     if (isInit(event)) return event.data.card;
 
     if (isFullUpdate(event)) return event.data;
+
+    if (isLoginRequest(event)) login_request.set(event.data);
 
     if (isStateUpdate(event)) {
       card.state = event.data.state;

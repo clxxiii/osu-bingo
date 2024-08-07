@@ -48,7 +48,7 @@ export const POST: RequestHandler = async ({ params, locals }) => {
     if (locals.user) {
       const token = await q.getToken(locals.user.id, 'osu');
       if (!token) {
-        emit('message', JSON.stringify({ type: 'login_request' }));
+        emit('message', JSON.stringify({ type: 'login_request', data: true }));
       }
     }
   }, {

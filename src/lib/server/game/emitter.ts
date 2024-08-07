@@ -73,9 +73,9 @@ export const sendEvent = (game_id: string, event: EmitterEvent) => {
   }
 }
 
-export const requestLogin = async (user_id: number) => {
+export const requestLogin = async (user_id: number, state?: boolean) => {
   for (const listener of listeners.values()) {
     if (user_id != listener.user_id) continue;
-    listener.fn({ type: 'login_request' })
+    listener.fn({ type: 'login_request', data: state ?? true })
   }
 }

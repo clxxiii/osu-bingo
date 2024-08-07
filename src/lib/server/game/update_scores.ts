@@ -37,6 +37,7 @@ export const updateScores = async (game_id: string) => {
 
     // If there's no token to use, we can't get scores
     if (!token) {
+      requestLogin(gameuser.user_id);
       continue;
     }
 

@@ -6,12 +6,13 @@
 	import TeamList from '$lib/components/TeamList.svelte';
 	import type { PageData } from './$types';
 	import { listen } from './updater';
-	import { square } from '$lib/stores';
+	import { square, login_request } from '$lib/stores';
 	import { fade } from 'svelte/transition';
 	import { Settings, X } from 'lucide-svelte';
 	import HostSettings from '$lib/components/HostSettings.svelte';
 	import WinConfetti from '$lib/components/WinConfetti.svelte';
 	import { game as store, connected } from './updater';
+	import LoginRequest from '$lib/components/LoginRequest.svelte';
 
 	export let data: PageData;
 	export let hostSettingsOpen = true;
@@ -117,6 +118,14 @@
 		You lost connection to the game, attempting to reconnect.
 		<br />
 		If waiting doesn't do anything, a refresh might fix it!
+	</div>
+{/if}
+{#if $login_request}
+	<div
+		transition:fade
+		class="fixed z-30 top-12 left-0 w-screen flex justify-center items-center h-screen bg-black/50 backdrop-blur-md"
+	>
+		<LoginRequest />
 	</div>
 {/if}
 

@@ -51,7 +51,7 @@ export type ChatMessage = {
 
 export type LoginRequest = {
   type: 'login_request',
-  data?: null
+  data: boolean
 }
 
 export const isGameUserUpdate = (event: EmitterEvent): event is GameUserEvent => event.type == 'gameUser'
