@@ -69,6 +69,8 @@ export const updateGame = (event: EmitterEvent) => {
     return card
   })
   chats.update(chats => {
+    if (isStateUpdate(event))
+      return [];
     if (isChatMessage(event))
       chats.push(event)
       if (isGameUserUpdate(event)) chats.push(event)

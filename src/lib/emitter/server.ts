@@ -208,6 +208,34 @@ export const switchGame =
       return listener;
     }
 
+export const removeGame =
+    (id: string) => {
+      const listener = listeners.get(id);
+      if (!listener)
+        return;
+
+      // Remove old game
+      if (listener.game_id) {
+        const game = games.get(listener.game_id);
+        if (game) {
+          const i = game.indexOf(id);
+          if (i != -1)
+            game.splice(i);
+
+          if (game.length == 0)
+            games.delete(listener.game_id)
+            else games.set(listener.game_id, game)
+        }
+      }
+
+      listener.game_id = undefined;
+      listeners.set(id, listener);
+
+      logger.info(`[~] Switched listener ${id} to no game`,
+                  {listener, type : 'listener_game_switch'})
+      return listener;
+    }
+
 export const switchChannel = (id: string, channel: string) => {
   const listener = listeners.get(id);
   if (!listener)

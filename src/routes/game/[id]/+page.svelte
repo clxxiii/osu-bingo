@@ -11,7 +11,7 @@
 	import HostSettings from '$lib/components/HostSettings.svelte';
 	import WinConfetti from '$lib/components/WinConfetti.svelte';
 	import LoginRequest from '$lib/components/LoginRequest.svelte';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 
 	export let data: PageData;
 	export let hostSettingsOpen = true;
@@ -34,6 +34,12 @@
       fetch(`/game_stream/change_game?id=${$listener}&game_id=${data.game.id}`, { method: 'POST' });
     }
   }
+  })
+
+  onDestroy(() => {
+    if ($listener) {
+      fetch(`/game_stream/change_game?id=${$listener}`, { method: 'POST' });
+    }
   })
 </script>
 
