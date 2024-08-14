@@ -10,7 +10,7 @@
 		isGameUserUpdate,
 		isSquareUpdate,
 		type SquareUpdateEvent
-	} from '$lib/events';
+	} from '$lib/emitter';
 	export let event: ChatMessage | GameUserEvent | SquareUpdateEvent;
 </script>
 

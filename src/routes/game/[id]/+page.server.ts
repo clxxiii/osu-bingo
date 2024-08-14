@@ -2,7 +2,7 @@ import type { PageServerLoad } from './$types';
 import q from '$lib/drizzle/queries';
 import { error, redirect } from '@sveltejs/kit';
 import { StatusCodes } from '$lib/StatusCodes';
-import { sendEvent } from '$lib/server/game/emitter';
+import { sendToGame } from "$lib/emitter/server";
 import { sendBoard } from '$lib/server/bancho/bancho_board';
 import { startGame } from '$lib/server/game/start';
 
@@ -56,7 +56,7 @@ export const actions = {
 		const fulluser = await q.joinGame(game_id, user.id, team);
 		if (fulluser == null) error(StatusCodes.BAD_REQUEST, 'User is already in game')
 
-		sendEvent(game_id, {
+		sendToGame(game_id, {
 			type: 'gameUser',
 			data: {
 				type: 'join',
@@ -84,7 +84,7 @@ export const actions = {
 		const fulluser = await q.switchTeams(guid, team);
 		if (fulluser == null) error(StatusCodes.BAD_REQUEST, 'User is not in game')
 
-		sendEvent(game_id, {
+		sendToGame(game_id, {
 			type: 'gameUser',
 			data: {
 				type: 'switch',
@@ -103,7 +103,7 @@ export const actions = {
 		const fulluser = await q.leaveGame(game_id, user.id);
 		if (fulluser == null) error(StatusCodes.BAD_REQUEST)
 
-		sendEvent(game_id, {
+		sendToGame(game_id, {
 			type: 'gameUser',
 			data: {
 				type: 'leave',
@@ -128,7 +128,7 @@ export const actions = {
 
 		const msg = await q.sendChat(user.id, game_id, message, channel)
 		if (!msg) error(StatusCodes.BAD_REQUEST, "Gameuser is invalid")
-		sendEvent(game_id, {
+		sendToGame(game_id, {
 			type: 'chat',
 			data: msg
 		})
@@ -209,7 +209,7 @@ export const actions = {
 		};
 
 		await q.updateGameSettings(game_id, settings);
-		sendEvent(game_id, {
+		sendToGame(game_id, {
 			type: 'fullUpdate',
 			data: game
 		})

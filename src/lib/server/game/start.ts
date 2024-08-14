@@ -3,10 +3,10 @@
  */
 
 import q from "$lib/drizzle/queries"
-import { sendEvent } from "./emitter";
 import { addGame } from "./watch";
 import boards from "$lib/bingo-helpers/default_boards"
 import { logger } from "$lib/logger";
+import { sendToGame } from "$lib/emitter/server";
 
 export const startGame = async (game_id: string) => {
   logger.info(`Starting game ${game_id}!`, { type: 'game_start' });
@@ -78,7 +78,7 @@ export const startGame = async (game_id: string) => {
   // Update last settings and send game to clients
   await q.setGameState(game.id, 1);
   addGame(game_id);
-  sendEvent(game_id, {
+  sendToGame(game_id, {
     type: 'state',
     data: {
       'state': 1,

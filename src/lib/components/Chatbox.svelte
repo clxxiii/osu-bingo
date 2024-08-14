@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { MessageSquareText } from 'lucide-svelte';
 	import ChatMessage from './ChatMessage.svelte';
-	import { chats } from '../../routes/game/[id]/updater';
+  import { chats } from '$lib/stores';
 
 	export let channel = 'global';
 

@@ -1,5 +1,5 @@
 import q from "$lib/drizzle/queries"
-import { sendEvent } from "./emitter";
+import { sendToGame } from "$lib/emitter/server";
 
 export const claimchange = async (game_id: string, rule: string) => {
   const settings = {
@@ -9,7 +9,7 @@ export const claimchange = async (game_id: string, rule: string) => {
   const game = await q.getGame(game_id);
   if (!game) return;
 
-  sendEvent(game_id, {
+  sendToGame(game_id, {
     type: 'fullUpdate',
     data: game
   })

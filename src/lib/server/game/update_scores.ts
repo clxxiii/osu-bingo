@@ -9,8 +9,8 @@ import { scoreBeatsBest } from "$lib/bingo-helpers/best_score";
 import { checkWin } from "$lib/bingo-helpers/check_win";
 import { isClaimworthy } from "$lib/bingo-helpers/claimworthy";
 import { removeGame } from "./watch";
-import { requestLogin, sendEvent } from "./emitter";
 import { logger } from "$lib/logger";
+import { sendToGame, sendToUser } from "$lib/emitter/server";
 
 const updating = new Set<string>();
 
@@ -37,7 +37,7 @@ export const updateScores = async (game_id: string) => {
 
     // If there's no token to use, we can't get scores
     if (!token) {
-      requestLogin(gameuser.user_id);
+      sendToUser(gameuser.user_id, { type: 'login_request', data: true });
       continue;
     }
 
@@ -48,7 +48,7 @@ export const updateScores = async (game_id: string) => {
       const update = await q.updateUser(token);
       if (!update) {
         logger.warn(`Failed to fetch scores for ${gameuser.user.username}`, { type: 'fetch_user_scores_failed' })
-        if (token.user_id) requestLogin(token.user_id);
+        if (token.user_id) sendToUser(token.user_id, { type: 'login_request', data: true });
         continue;
       }
       token = update;
@@ -93,13 +93,13 @@ export const updateScores = async (game_id: string) => {
     }
   }
   if (updates.length > 0) {
-    sendEvent(game_id, {
+    sendToGame(game_id, {
       type: 'square',
       data: updates
     })
   }
   if (win) {
-    sendEvent(game_id, {
+    sendToGame(game_id, {
       type: 'state',
       data: {
         state: 2,

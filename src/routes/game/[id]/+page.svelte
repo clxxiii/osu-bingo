@@ -5,14 +5,13 @@
 	import SquareSidebar from '$lib/components/SquareSidebar.svelte';
 	import TeamList from '$lib/components/TeamList.svelte';
 	import type { PageData } from './$types';
-	import { listen } from './updater';
-	import { square, login_request } from '$lib/stores';
+	import { game_id, square, login_request, listener, game as store } from '$lib/stores';
 	import { fade } from 'svelte/transition';
 	import { Settings, X } from 'lucide-svelte';
 	import HostSettings from '$lib/components/HostSettings.svelte';
 	import WinConfetti from '$lib/components/WinConfetti.svelte';
-	import { game as store, connected } from './updater';
 	import LoginRequest from '$lib/components/LoginRequest.svelte';
+	import { onMount } from 'svelte';
 
 	export let data: PageData;
 	export let hostSettingsOpen = true;
@@ -28,9 +27,14 @@
 	});
 
 	// Recieve Game updates from server
-	if (data.game) {
-		listen(data.game.id, data?.user?.id);
-	}
+  onMount(() => {
+  if (data.game) {
+    game_id.set(data.game.id);
+    if ($listener) {
+      fetch(`/game_stream/change_game?id=${$listener}&game_id=${data.game.id}`, { method: 'POST' });
+    }
+  }
+  })
 </script>
 
 <svelte:head>
@@ -110,7 +114,7 @@
 {:else}
 	You haven't been invited to this private game
 {/if}
-{#if !$connected}
+{#if !$listener}
 	<div
 		transition:fade
 		class="fixed z-30 top-0 left-0 w-screen flex justify-center items-center h-screen bg-black/50 backdrop-blur-md"
