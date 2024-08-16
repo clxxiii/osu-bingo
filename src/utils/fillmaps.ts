@@ -65,7 +65,7 @@ const run = async () => {
         },
         {
           seconds_after_start: 3600,
-          text: 'final_call'
+          text: 'finalcall'
         }
       ]
     }
