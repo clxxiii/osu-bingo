@@ -7,7 +7,7 @@ import { LogtailTransport } from "@logtail/winston"
 const logtail = new Logtail(LOG_TOKEN)
 
 export const logger = winston.createLogger({
-  level: 'http',
+  level: 'debug',
   format: winston.format.combine(
     winston.format.timestamp(),
     winston.format.json()

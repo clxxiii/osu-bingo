@@ -3,9 +3,11 @@ import { sendToGame } from "$lib/emitter/server";
 import { logger } from "$lib/logger";
 
 /**
- * This event instantly ends the game, and decides the winner based on the following tiebreaker conditions:
+ * This event instantly ends the game, and decides the winner based on the
+ * following tiebreaker conditions:
  * - Counts each claimed square as one point, and whoever has the most points wins.
- * - If that count is a tie, each square is counted as it's claiming score number of points, and that score wins.
+ * - If that count is a tie, each square is counted as it's claiming score
+ *   number of points, and that score wins. 
  */
 export const finalCall = async (game_id: string) => {
   const game = await q.getGame(game_id);
@@ -26,6 +28,19 @@ export const finalCall = async (game_id: string) => {
 
   const count = square_map.keys().map(x => ({ team: x, count: square_map.get(x)?.length ?? 0 })).toArray();
   console.log({ square_map, count });
+
+  // If no claims, tie
+  if (count.length == 0) {
+    logger.info(`Game ${game_id} had no scores set on final call`, game)
+    q.setGameState(game_id, 2);
+    sendToGame(game_id, {
+      type: 'state',
+      data: {
+        state: 2,
+      }
+    })
+    return;
+  }
 
   let total_claimed = 0;
   for (const team of count) {
@@ -55,7 +70,8 @@ export const finalCall = async (game_id: string) => {
   }
 
   /**
-   * If there is a tie in square count, we get the sum of all the squares' claiming scores and the higher sum wins.
+   * If there is a tie in square count, we get the sum of all the squares'
+   * claiming scores and the higher sum wins.
    */
   const score_map: { team: string, sum: number }[] = [];
   for (const team of square_map.keys()) {
