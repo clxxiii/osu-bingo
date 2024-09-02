@@ -2,6 +2,7 @@ import { and, eq } from 'drizzle-orm';
 import { db } from '..';
 import { Map, MapStats } from '../schema';
 import type { Osu } from '$lib/osu';
+import { logger } from '$lib/logger';
 
 export const addMap = async (map: Osu.BeatmapExtended, set: Osu.Beatmapset, mods?: string) => {
 	const obj: typeof Map.$inferInsert = {
@@ -33,36 +34,52 @@ export const addMap = async (map: Osu.BeatmapExtended, set: Osu.Beatmapset, mods
 		mod_string: mods ?? ''
 	};
 
+	logger.silly("Started db request", { "function": "addMap", "obj": "mapObj", "dir": "start" })
 	const mapObj = await db.select({ id: Map.id }).from(Map).where(eq(Map.id, map.id));
+	logger.silly("Finished db request", { "function": "addMap", "obj": "mapObj", "dir": "end" })
 	if (mapObj.length == 0) {
+		logger.silly("Started db request", { "function": "addMap", "obj": "insert", "dir": "start" })
 		await db.insert(Map).values(obj);
+		logger.silly("Finished db request", { "function": "addMap", "obj": "insert", "dir": "end" })
 	} else {
+		logger.silly("Started db request", { "function": "addMap", "obj": "update", "dir": "start" })
 		await db.update(Map).set(obj).where(eq(Map.id, map.id));
+		logger.silly("Finished db request", { "function": "addMap", "obj": "update", "dir": "end" })
 	}
 
+	logger.silly("Started db request", { "function": "addMap", "obj": "statsObj", "dir": "start" })
 	const statsObj = await db
 		.select({ sr: MapStats.star_rating })
 		.from(MapStats)
 		.where(and(eq(MapStats.map_id, map.id), eq(MapStats.mod_string, mods ?? '')));
+	logger.silly("Finished db request", { "function": "addMap", "obj": "statsObj", "dir": "end" })
 	if (statsObj.length == 0) {
+		logger.silly("Started db request", { "function": "addMap", "obj": "insertStats", "dir": "start" })
 		await db.insert(MapStats).values(stats);
+		logger.silly("Finished db request", { "function": "addMap", "obj": "insertStats", "dir": "end" })
 	} else {
+		logger.silly("Started db request", { "function": "addMap", "obj": "updateStats", "dir": "start" })
 		await db
 			.update(MapStats)
 			.set(stats)
 			.where(and(eq(MapStats.map_id, map.id), eq(MapStats.mod_string, mods ?? '')));
+		logger.silly("Finished db request", { "function": "addMap", "obj": "updateStats", "dir": "end" })
 	}
 
-	return db
+	logger.silly("Started db request", { "function": "addMap", "obj": "returnObj", "dir": "start" })
+	const returnObj = await db
 		.select()
 		.from(Map)
 		.where(eq(Map.id, map.id))
 		.innerJoin(MapStats, eq(MapStats.map_id, map.id));
+	logger.silly("Finished db request", { "function": "addMap", "obj": "returnObj", "dir": "end" })
+	return returnObj;
 };
 
 export const getMap = async (id: number, mods?: string): Promise<Bingo.Card.FullMap> => {
 	mods = mods ?? '';
 
+	logger.silly("Started db request", { "function": "getMap", "obj": "map", "dir": "start" })
 	const map = (await db.select()
 		.from(Map)
 		.innerJoin(MapStats, and(
@@ -70,6 +87,7 @@ export const getMap = async (id: number, mods?: string): Promise<Bingo.Card.Full
 			eq(MapStats.mod_string, mods)
 		))
 		.where(eq(Map.id, id)))[0]
+	logger.silly("Finished db request", { "function": "getMap", "obj": "map", "dir": "end" })
 
 
 	return { ...map.Map, stats: map.MapStats }

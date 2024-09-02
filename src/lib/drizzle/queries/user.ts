@@ -12,9 +12,14 @@ export const setUser = async (user: typeof User.$inferInsert) => {
 		return;
 	}
 
+	logger.silly("Started db request", { "function": "setUser", "obj": "userObj", "dir": "start" })
 	const userObj = await db.select({ id: User.id }).from(User).where(eq(User.id, user.id));
+	logger.silly("Finished db request", { "function": "setUser", "obj": "userObj", "dir": "end" })
 	if (userObj.length == 0) {
-		return (await db.insert(User).values(user).returning())[0];
+		logger.silly("Started db request", { "function": "setUser", "obj": "userInsert", "dir": "start" })
+		const userInsert = (await db.insert(User).values(user).returning())[0];
+		logger.silly("Finished db request", { "function": "setUser", "obj": "userInsert", "dir": "end" })
+		return userInsert;
 	}
 
 	const newUser = {
@@ -22,19 +27,27 @@ export const setUser = async (user: typeof User.$inferInsert) => {
 		...user
 	};
 
-	return (await db.update(User).set(newUser).where(eq(User.id, user.id)).returning())[0];
+	logger.silly("Started db request", { "function": "setUser", "obj": "userUpdate", "dir": "start" })
+	const userUpdate = (await db.update(User).set(newUser).where(eq(User.id, user.id)).returning())[0];
+	logger.silly("Finished db request", { "function": "setUser", "obj": "userUpdate", "dir": "end" })
+	return userUpdate;
 };
 
 export const getUser = async (id: number) => {
-	return (await db.select().from(User).where(eq(User.id, id)))[0];
+	logger.silly("Started db request", { "function": "getUser", "obj": "user", "dir": "start" })
+	const user = (await db.select().from(User).where(eq(User.id, id)))[0];
+	logger.silly("Finished db request", { "function": "getUser", "obj": "user", "dir": "end" })
+	return user;
 };
 
 export const getUserFromSessionToken = async (token: string) => {
+	logger.silly("Started db request", { "function": "getUserFromSessionToken", "obj": "tokens", "dir": "start" })
 	const tokens = await db
 		.select()
 		.from(Session)
 		.where(eq(Session.token, token))
 		.innerJoin(User, eq(User.id, Session.user_id));
+	logger.silly("Finished db request", { "function": "getUserFromSessionToken", "obj": "tokens", "dir": "end" })
 
 	// If there is no session with that token, token is invalid.
 	if (tokens.length == 0) {
@@ -45,7 +58,8 @@ export const getUserFromSessionToken = async (token: string) => {
 };
 
 export const isInGame = async (user_id: number) => {
-	return (await db.select({
+	logger.silly("Started db request", { "function": "isInGame", "obj": "gameUser", "dir": "start" })
+	const gameUser = (await db.select({
 		user_id: GameUser.user_id,
 		game_id: BingoGame.id,
 		guid: GameUser.id
@@ -56,6 +70,8 @@ export const isInGame = async (user_id: number) => {
 			eq(GameUser.user_id, user_id),
 			eq(BingoGame.state, 1)
 		)))[0]
+	logger.silly("Finished db request", { "function": "isInGame", "obj": "gameUser", "dir": "end" })
+	return gameUser;
 }
 
 export const updateUser = async (token: Bingo.OauthToken) => {

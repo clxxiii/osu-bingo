@@ -2,17 +2,22 @@ import { and, eq } from "drizzle-orm"
 import { db } from ".."
 import { Score } from "../schema"
 import type { Osu } from "$lib/osu"
+import { logger } from "$lib/logger"
 
 export const getScores = async (user_id: number, square_id: string) => {
-  return (await db.select()
+  logger.silly("Started db request", { "function": "getScores", "obj": "select", "dir": "start" })
+  const select = (await db.select()
     .from(Score)
     .where(and(
       eq(Score.user_id, user_id),
       eq(Score.square_id, square_id)
     )))
+  logger.silly("Finished db request", { "function": "getScores", "obj": "select", "dir": "end" })
+  return select;
 }
 
 export const addScore = async (score: Osu.LazerScore, user: Bingo.Card.FullUser, square_id: string, important?: boolean): Promise<Bingo.Card.FullScore> => {
+  logger.silly("Started db request", { "function": "addScore", "obj": "dbScore", "dir": "start" })
   const dbScore = (await db.insert(Score).values({
     score_id: score.id,
     lazer: !score.mods.map(x => x.acronym).includes('CL'),
@@ -30,6 +35,7 @@ export const addScore = async (score: Osu.LazerScore, user: Bingo.Card.FullUser,
     user_id: score.user_id,
     game_user_id: user.id
   }).returning())[0]
+  logger.silly("Finished db request", { "function": "addScore", "obj": "dbScore", "dir": "end" })
 
   return { ...dbScore, user }
 }

@@ -19,12 +19,13 @@ export const logger = winston.createLogger({
     warn: 1,
     info: 2,
     http: 3,
-    debug: 4
+    debug: 4,
+    silly: 5
   },
   transports: [
     new winston.transports.File({
       filename: 'app.log',
-      level: 'debug'
+      level: 'silly'
     }),
     new LogtailTransport(logtail)
   ]
@@ -40,7 +41,8 @@ if (process.env.NODE_ENV !== 'production') {
           warn: 'bold yellow',
           info: 'bold blue',
           http: 'bold green',
-          debug: 'bold gray'
+          debug: 'bold gray',
+          silly: 'bold pink'
         }
       }),
       winston.format.align(),
