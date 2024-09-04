@@ -2,7 +2,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '..';
 import { Session, User } from '../schema';
 import * as jose from 'jose';
-import { JWT_SECRET } from '$env/static/private';
+import { JWT_SECRET } from '$lib/server/env';
 import { logger } from '$lib/logger';
 
 const jwt_alg = 'HS256';

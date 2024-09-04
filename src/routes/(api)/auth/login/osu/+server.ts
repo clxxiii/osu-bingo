@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { StatusCodes } from '$lib/StatusCodes';
-import { PUBLIC_OSU_CLIENT_ID } from '$env/static/public';
+import { OSU_CLIENT_ID } from '$lib/env';
 import { createAuthUrl } from '$lib/server/osu';
 import { newState } from '../../state';
 
@@ -10,7 +10,7 @@ import { newState } from '../../state';
 export const GET: RequestHandler = ({ url }) => {
 	let from = url.searchParams.get('from');
 	if (!from) from = "/";
-	const redirectUrl = createAuthUrl(PUBLIC_OSU_CLIENT_ID, `${url.origin}/auth/callback/osu`, [
+	const redirectUrl = createAuthUrl(OSU_CLIENT_ID, `${url.origin}/auth/callback/osu`, [
 		'public',
 		'identify'
 	], newState(from));

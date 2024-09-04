@@ -1,6 +1,6 @@
 import { redirect, type Handle } from '@sveltejs/kit';
 import * as jose from 'jose';
-import { JWT_SECRET } from '$env/static/private';
+import { JWT_SECRET } from '$lib/server/env';
 import q from '$lib/drizzle/queries';
 import { StatusCodes } from '$lib/StatusCodes';
 import { connect } from '$lib/server/bancho';

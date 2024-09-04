@@ -1,5 +1,5 @@
 import { createClient } from '@libsql/client';
-import { TURSO_TOKEN, TURSO_URL } from '$env/static/private';
+import { TURSO_TOKEN, TURSO_URL } from '$lib/server/env';
 import { drizzle } from 'drizzle-orm/libsql';
 
 

@@ -1,4 +1,5 @@
-import { BANCHO_USER, BANCHO_PASS, BANCHO_KEY } from '$env/static/private'
+import { BANCHO_PASS, BANCHO_KEY } from '$lib/server/env'
+import { BANCHO_USER } from "$lib/env";
 import pkg from "bancho.js";
 import q from "$lib/drizzle/queries"
 import { sendBoard } from './bancho_board';

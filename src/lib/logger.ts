@@ -1,6 +1,6 @@
 import { Logtail } from "@logtail/node"
 import winston from "winston"
-import { LOG_TOKEN } from "$env/static/private"
+import { LOG_TOKEN } from "$lib/server/env"
 import { LogtailTransport } from "@logtail/winston"
 
 
