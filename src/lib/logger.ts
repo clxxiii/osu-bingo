@@ -4,7 +4,6 @@ import { LOG_TOKEN } from "$lib/server/env"
 import { LogtailTransport } from "@logtail/winston"
 
 
-const logtail = new Logtail(LOG_TOKEN)
 
 export const logger = winston.createLogger({
   level: 'debug',
@@ -27,9 +26,13 @@ export const logger = winston.createLogger({
       filename: 'app.log',
       level: 'silly'
     }),
-    new LogtailTransport(logtail)
   ]
 })
+
+if (LOG_TOKEN != "") {
+  const logtail = new Logtail(LOG_TOKEN)
+  logger.add(new LogtailTransport(logtail));
+}
 
 if (process.env.NODE_ENV !== 'production') {
   logger.add(new winston.transports.Console({

@@ -1,5 +1,3 @@
-console.log(process.env);
-
 export const DATABASE_URL = process.env.DATABASE_URL ?? "";
 export const LOG_TOKEN = process.env.LOG_TOKEN ?? "";
 
