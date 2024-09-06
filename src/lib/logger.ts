@@ -1,8 +1,7 @@
 import { Logtail } from "@logtail/node"
 import winston from "winston"
-import { LOG_TOKEN } from "$lib/server/env"
+import { env } from "$env/dynamic/private"
 import { LogtailTransport } from "@logtail/winston"
-
 
 
 export const logger = winston.createLogger({
@@ -29,9 +28,11 @@ export const logger = winston.createLogger({
   ]
 })
 
-if (LOG_TOKEN != "") {
-  const logtail = new Logtail(LOG_TOKEN)
+if (env.LOG_TOKEN) {
+  const logtail = new Logtail(env.LOG_TOKEN)
   logger.add(new LogtailTransport(logtail));
+} else {
+  logger.warn("Missing logtail token, running without uploading logs...")
 }
 
 if (process.env.NODE_ENV !== 'production') {

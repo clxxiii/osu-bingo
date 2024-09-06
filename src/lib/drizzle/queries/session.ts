@@ -2,11 +2,11 @@ import { eq } from 'drizzle-orm';
 import { db } from '..';
 import { Session, User } from '../schema';
 import * as jose from 'jose';
-import { JWT_SECRET } from '$lib/server/env';
+import { env } from '$env/dynamic/private';
 import { logger } from '$lib/logger';
 
 const jwt_alg = 'HS256';
-const jwt_secret = new TextEncoder().encode(JWT_SECRET);
+const jwt_secret = new TextEncoder().encode(env.JWT_SECRET);
 
 export const createSession = async (user_id: number) => {
 	logger.silly("Started db request", { "function": "createSession", "obj": "userCheck", "dir": "start" })

@@ -1,6 +1,6 @@
 import { redirect, type Handle } from '@sveltejs/kit';
 import * as jose from 'jose';
-import { JWT_SECRET } from '$lib/server/env';
+import { env } from '$env/dynamic/private';
 import q from '$lib/drizzle/queries';
 import { StatusCodes } from '$lib/StatusCodes';
 import { connect } from '$lib/server/bancho';
@@ -14,7 +14,7 @@ events.setup()
 watch()
 connect()
 
-const jwt_secret = new TextEncoder().encode(JWT_SECRET);
+const jwt_secret = new TextEncoder().encode(env.JWT_SECRET);
 
 // Request Handler (Run before every request)
 export const handle: Handle = async ({ event, resolve }) => {
