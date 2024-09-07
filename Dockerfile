@@ -1,11 +1,11 @@
-FROM oven/bun:1 as base
+FROM node:21 as base
 
 WORKDIR /usr/src/app
 
 COPY . .
 
-RUN bun install
+RUN npm install
 
-RUN bun run build
+RUN npm run build
 
-ENTRYPOINT ["bun", "run", "./build"]
+ENTRYPOINT ["node", "./build"]

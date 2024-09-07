@@ -7,23 +7,27 @@ import { sendBoard } from './bancho_board';
 
 const { BanchoClient } = pkg;
 
-export const client = new BanchoClient({
-  'username': env.BANCHO_USER,
-  'password': env.BANCHO_PASS,
-  'apiKey': env.BANCHO_KEY
-})
+export let client: pkg.BanchoClient;
 
-client.on('PM', async ({ user, message }) => {
-  if (message !== '!board')
-    return;
-  await user.fetchFromAPI();
-  const gameCheck = await q.isInGame(user.id);
-  if (!gameCheck)
-    return;
-  const game = await q.getGame(gameCheck.game_id)
-  if (!game) return;
-  await sendBoard(user.id, game);
-})
+if (env.BANCHO_USER && env.BANCHO_PASS) {
+  client = new BanchoClient({
+    'username': env.BANCHO_USER,
+    'password': env.BANCHO_PASS,
+    'apiKey': env.BANCHO_KEY
+  })
+
+  client.on('PM', async ({ user, message }) => {
+    if (message !== '!board')
+      return;
+    await user.fetchFromAPI();
+    const gameCheck = await q.isInGame(user.id);
+    if (!gameCheck)
+      return;
+    const game = await q.getGame(gameCheck.game_id)
+    if (!game) return;
+    await sendBoard(user.id, game);
+  })
+}
 
 export const connect =
   () => {
