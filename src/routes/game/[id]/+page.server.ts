@@ -180,23 +180,23 @@ export const actions = {
 		// Literally anything would fix this, ZOD, tRPC, etc.
 		// but I'm lazy and want less dependencies, so we're rolling with it.
 		const min_sr = form.get('min_sr');
-		if (min_sr && typeof min_sr == 'number') game.min_sr = min_sr;
+		if (min_sr && typeof min_sr == 'string' && !isNaN(parseFloat(min_sr))) game.min_sr = parseFloat(min_sr);
 		const max_sr = form.get('max_sr');
-		if (max_sr && typeof max_sr == 'number') game.max_sr = max_sr;
+		if (max_sr && typeof max_sr == 'string' && !isNaN(parseFloat(max_sr))) game.max_sr = parseFloat(max_sr);
 
 		const min_length = form.get('min_length');
-		if (min_length && typeof min_length == 'number') game.min_length = min_length;
+		if (min_length && typeof min_length == 'string' && !isNaN(parseFloat(min_length))) game.min_length = parseFloat(min_length);
 		const max_length = form.get('max_length');
-		if (max_length && typeof max_length == 'number') game.max_length = max_length;
+		if (max_length && typeof max_length == 'string' && !isNaN(parseFloat(max_length))) game.max_length = parseFloat(max_length);
 
 		const min_rank = form.get('min_rank');
-		if (min_rank && typeof min_rank == 'number') game.min_rank = min_rank;
+		if (min_rank && typeof min_rank == 'string' && !isNaN(parseFloat(min_rank))) game.min_rank = parseFloat(min_rank);
 		const max_rank = form.get('max_rank');
-		if (max_rank && typeof max_rank == 'number') game.max_rank = max_rank;
+		if (max_rank && typeof max_rank == 'string' && !isNaN(parseFloat(max_rank))) game.max_rank = parseFloat(max_rank);
 
 
 		const is_public = form.get('public') === 'true';
-		if (typeof is_public == 'boolean') game.public = is_public
+		if (form.has('public') && typeof is_public == 'boolean') game.public = is_public
 
 		const settings: Bingo.SettingsUpdate = {
 			min_sr: game.min_sr ?? undefined,
