@@ -4,17 +4,16 @@
 	import Header from '$lib/components/Header.svelte';
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
-	import { listener, game_id } from '$lib/stores';
+	import { listener, user } from '$lib/stores';
 	import { isInit, type EmitterEvent } from '$lib/emitter';
 	import { source } from 'sveltekit-sse';
 	import { updateGame } from '$lib/emitter/updater';
 
 	export let data: PageData;
-	const user = data.user;
+	user.set(data.user);
 
 	onMount(async () => {
 		const params = new URLSearchParams();
-		if ($game_id) params.set('game_id', $game_id);
 		const stream = source(`/game_stream?${params.toString()}`, {
 			close: ({ connect }) => {
 				listener.set(null);
@@ -40,7 +39,7 @@
 </script>
 
 <header class="bg-zinc-800 shadow">
-	<Header {user} />
+	<Header />
 </header>
 <main class="relative min-h-full p-4">
 	<slot />

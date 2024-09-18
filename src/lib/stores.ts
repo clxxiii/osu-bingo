@@ -8,7 +8,7 @@ export const login_request = writable<boolean>(false);
 
 export const listener = writable<string | null>(null);
 
-export const game_id = writable<string | null>(null);
+export const user = writable<Bingo.User | undefined>(undefined);
 
 export const game = writable<Bingo.Card>();
 

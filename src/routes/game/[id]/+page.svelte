@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { onDestroy, onMount } from 'svelte';
-	import { game as store, game_id, listener, login_request } from '$lib/stores';
+	import { game as store, listener, login_request } from '$lib/stores';
 	import GameInterface from '$lib/components/GameInterface.svelte';
 	import LoginRequest from '$lib/components/LoginRequest.svelte';
 	import { fade } from 'svelte/transition';
@@ -19,7 +19,6 @@
 	// Recieve Game updates from server
 	onMount(() => {
 		if (data.game_id) {
-			game_id.set(data.game_id);
 			if ($listener) {
 				fetch(`/game_stream/change_game?id=${$listener}&game_id=${data.game_id}`, {
 					method: 'POST'

@@ -2,8 +2,6 @@
 	import NavLink from './NavLink.svelte';
 	import User from './User.svelte';
 	import VR from './VerticalRule.svelte';
-
-	export let user: Bingo.User | undefined;
 </script>
 
 <nav class="relative h-12 w-full flex items-center p-1 overflow-hidden">
@@ -16,6 +14,6 @@
 	<NavLink href="/games">Games</NavLink>
 	<NavLink href="/templates">Templates</NavLink>
 	<div class="absolute right-1">
-		<User {user} />
+		<User />
 	</div>
 </nav>

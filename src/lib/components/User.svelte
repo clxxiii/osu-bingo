@@ -3,10 +3,10 @@
 	import { fly } from 'svelte/transition';
 	import { cubicInOut } from 'svelte/easing';
 	import { tweened, type Tweened } from 'svelte/motion';
+	import { user } from '$lib/stores';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 
-	export let user: Bingo.User | undefined;
 	let width: Tweened<number>;
 
 	let nameplateWidth: number;
@@ -30,7 +30,7 @@
 	});
 </script>
 
-{#if user != undefined && browser}
+{#if $user != undefined && browser}
 	<div
 		data-expand={expanded}
 		style="--w: {$width}px"
@@ -73,12 +73,12 @@
 			>
 				<img
 					class="row-start-1 row-end-3 col-start-1 col-end-2 h-8 rounded-full"
-					src={user.avatar_url}
+					src={$user.avatar_url}
 					alt=""
 				/>
-				<div class="text-left col-start-2 col-end-3 row-start-1 row-end 2">{user.username}</div>
+				<div class="text-left col-start-2 col-end-3 row-start-1 row-end 2">{$user.username}</div>
 				<div class="text-[8px] text-left col-start-2 col-end-3 row-start-2 row-end-3">
-					#{user.global_rank?.toLocaleString()}
+					#{$user.global_rank?.toLocaleString()}
 				</div>
 			</button>
 		{/if}
