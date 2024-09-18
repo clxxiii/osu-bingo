@@ -4,13 +4,14 @@
 import {
   type EmitterEvent,
   isChatMessage,
+  isFullChatUpdate,
   isFullUpdate,
   isGameUserUpdate,
   isLoginRequest,
   isSquareUpdate,
   isStateUpdate
 } from "$lib/emitter";
-import {chats, game, login_request} from "$lib/stores";
+import { chats, game, login_request } from "$lib/stores";
 
 export const updateGame = (event: EmitterEvent) => {
   game.update((card) => {
@@ -24,9 +25,9 @@ export const updateGame = (event: EmitterEvent) => {
       card.state = event.data.state;
       if (event.data.winner)
         card.winning_team = event.data.winner ?? null
-        if (event.data.card) {
-          card = event.data.card;
-        }
+      if (event.data.card) {
+        card = event.data.card;
+      }
       return card;
     }
 
@@ -62,7 +63,7 @@ export const updateGame = (event: EmitterEvent) => {
         const i = card.users.findIndex(x => x.id == event.data.user.id);
         if (i > -1)
           card.users.splice(i, 1)
-          card.users.push(event.data.user);
+        card.users.push(event.data.user);
       }
     }
 
@@ -73,8 +74,9 @@ export const updateGame = (event: EmitterEvent) => {
       return [];
     if (isChatMessage(event))
       chats.push(event)
-      if (isGameUserUpdate(event)) chats.push(event)
-
-      return chats;
+    if (isGameUserUpdate(event)) chats.push(event)
+    if (isFullChatUpdate(event))
+      chats = event.data.map(x => ({ type: 'chat', data: x }))
+    return chats;
   })
 }

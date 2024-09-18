@@ -10,23 +10,24 @@ export const load: PageServerLoad = async ({ params, locals, url }) => {
 	const join = url.searchParams.get('join') == '' ? true : false
 	const code = url.searchParams.get('code');
 
+	const game = await q.gameExists(params.id);
+	if (!game) error(StatusCodes.NOT_FOUND)
+
 	// Auto join game by appending `join` to query string
 	if (join && locals.user) {
 		await q.joinGame(`gam_${params.id}`, locals.user.id);
 		redirect(StatusCodes.TEMPORARY_REDIRECT, `/game/${params.id}`)
 	}
+
+	// If the code matches, give them the invited tag
 	if (code && locals.user) {
-		const game = await q.getGame(`gam_${params.id}`);
 		if (game?.link_id == code) {
 			await q.setInvited(`gam_${params.id}`, locals.user.id)
 			redirect(StatusCodes.TEMPORARY_REDIRECT, `/game/${params.id}`)
 		}
 	}
 
-	const game = await q.getGame(`gam_${params.id}`);
-	if (!game) error(StatusCodes.NOT_FOUND);
-
-	const is_host = game.hosts.find(x => x.id == locals.user?.id) != undefined;
+	const is_host = locals.user ? await q.isHost(game.id, locals.user?.id) : false;
 
 	// Private Games
 	if (!game.public) {
@@ -36,10 +37,10 @@ export const load: PageServerLoad = async ({ params, locals, url }) => {
 
 		if (await q.isInvited(game.id, locals.user?.id)) return { game, is_host }
 
-		return { game: null, is_host }
+		return { game_id: null, is_host }
 	}
 
-	return { game, is_host };
+	return { game_id: game.id, is_host };
 };
 
 export const actions = {
@@ -48,15 +49,15 @@ export const actions = {
 		const linkId = params.id;
 		const team = form.get('team');
 		const user = locals.user;
-		const game_id = await q.gameExists(linkId);
+		const game = await q.gameExists(linkId);
 
 		if (!user) error(StatusCodes.UNAUTHORIZED);
-		if (!team || !game_id || typeof team != 'string') error(StatusCodes.BAD_REQUEST);
+		if (!team || !game || typeof team != 'string') error(StatusCodes.BAD_REQUEST);
 
-		const fulluser = await q.joinGame(game_id, user.id, team);
+		const fulluser = await q.joinGame(game.id, user.id, team);
 		if (fulluser == null) error(StatusCodes.BAD_REQUEST, 'User is already in game')
 
-		sendToGame(game_id, {
+		sendToGame(game.id, {
 			type: 'gameUser',
 			data: {
 				type: 'join',
@@ -70,21 +71,21 @@ export const actions = {
 		const team = form.get('team');
 		const guid = form.get('user_id');
 		const actor = locals.user;
-		const game_id = await q.gameExists(linkId);
+		const game = await q.gameExists(linkId);
 
 		if (!actor) error(StatusCodes.UNAUTHORIZED);
-		if (!team || !game_id || typeof team != 'string' || typeof guid != 'string') error(StatusCodes.BAD_REQUEST);
+		if (!team || !game || typeof team != 'string' || typeof guid != 'string') error(StatusCodes.BAD_REQUEST);
 
-		const is_host = await q.isHost(game_id, actor.id);
+		const is_host = await q.isHost(game.id, actor.id);
 		if (!is_host) {
-			const can_switch = await q.canSwitch(game_id, guid, actor.id);
+			const can_switch = await q.canSwitch(game.id, guid, actor.id);
 			if (!can_switch) error(StatusCodes.UNAUTHORIZED);
 		}
 
 		const fulluser = await q.switchTeams(guid, team);
 		if (fulluser == null) error(StatusCodes.BAD_REQUEST, 'User is not in game')
 
-		sendToGame(game_id, {
+		sendToGame(game.id, {
 			type: 'gameUser',
 			data: {
 				type: 'switch',
@@ -95,15 +96,15 @@ export const actions = {
 	leave_game: async ({ params, locals }) => {
 		const linkId = params.id;
 		const user = locals.user;
-		const game_id = await q.gameExists(linkId);
+		const game = await q.gameExists(linkId);
 
 		if (!user) error(StatusCodes.UNAUTHORIZED);
-		if (!game_id) error(StatusCodes.BAD_REQUEST);
+		if (!game) error(StatusCodes.BAD_REQUEST);
 
-		const fulluser = await q.leaveGame(game_id, user.id);
+		const fulluser = await q.leaveGame(game.id, user.id);
 		if (fulluser == null) error(StatusCodes.BAD_REQUEST)
 
-		sendToGame(game_id, {
+		sendToGame(game.id, {
 			type: 'gameUser',
 			data: {
 				type: 'leave',
@@ -114,10 +115,10 @@ export const actions = {
 	chat: async ({ params, request, locals }) => {
 		const user = locals.user;
 		const linkId = params.id;
-		const game_id = await q.gameExists(linkId);
+		const game = await q.gameExists(linkId);
 
 		if (!user) error(StatusCodes.UNAUTHORIZED);
-		if (!game_id) error(StatusCodes.BAD_REQUEST);
+		if (!game) error(StatusCodes.BAD_REQUEST);
 
 		const body = await request.formData()
 
@@ -126,9 +127,9 @@ export const actions = {
 		if (!message || typeof message != 'string') error(StatusCodes.BAD_REQUEST)
 		if (!channel || typeof channel != 'string') error(StatusCodes.BAD_REQUEST)
 
-		const msg = await q.sendChat(user.id, game_id, message, channel)
+		const msg = await q.sendChat(user.id, game.id, message, channel)
 		if (!msg) error(StatusCodes.BAD_REQUEST, "Gameuser is invalid")
-		sendToGame(game_id, {
+		sendToGame(game.id, {
 			type: 'chat',
 			data: msg
 		})
@@ -136,12 +137,12 @@ export const actions = {
 	send_board: async ({ params, locals }) => {
 		const user = locals.user;
 		const linkId = params.id;
-		const game_id = await q.gameExists(linkId);
+		const game_check = await q.gameExists(linkId);
 
 		if (!user) error(StatusCodes.UNAUTHORIZED);
-		if (!game_id) error(StatusCodes.BAD_REQUEST);
+		if (!game_check) error(StatusCodes.BAD_REQUEST);
 
-		const game = await q.getGame(game_id);
+		const game = await q.getGame(game_check.id);
 		if (!game) error(StatusCodes.BAD_REQUEST);
 
 		sendBoard(user.id, game);
@@ -149,32 +150,32 @@ export const actions = {
 	start_game: async ({ params, locals }) => {
 		const user = locals.user;
 		const linkId = params.id;
-		const game_id = await q.gameExists(linkId);
+		const game_check = await q.gameExists(linkId);
 
 		if (!user) error(StatusCodes.UNAUTHORIZED);
-		if (!game_id) error(StatusCodes.BAD_REQUEST);
+		if (!game_check) error(StatusCodes.BAD_REQUEST);
 
-		const game = await q.getGame(game_id);
+		const game = await q.getGame(game_check.id);
 		if (!game) error(StatusCodes.BAD_REQUEST);
 
 		const is_host = game.hosts.filter(x => x.id == user.id).length != 0
 		if (!is_host) error(StatusCodes.UNAUTHORIZED)
 
-		await startGame(game_id);
+		await startGame(game.id);
 	},
 	change_settings: async ({ params, locals, request }) => {
 		const form = await request.formData()
 		const linkId = params.id;
 		const actor = locals.user;
-		const game_id = await q.gameExists(linkId);
+		const game_check = await q.gameExists(linkId);
 
 		if (!actor) error(StatusCodes.UNAUTHORIZED);
-		if (!game_id) error(StatusCodes.BAD_REQUEST);
+		if (!game_check) error(StatusCodes.BAD_REQUEST);
 
-		const is_host = await q.isHost(game_id, actor.id);
+		const is_host = await q.isHost(game_check.id, actor.id);
 		if (!is_host) error(StatusCodes.UNAUTHORIZED);
 
-		const game = await q.getGame(game_id);
+		const game = await q.getGame(game_check.id);
 		if (!game) error(StatusCodes.BAD_REQUEST);
 
 		// Literally anything would fix this, ZOD, tRPC, etc.
@@ -208,8 +209,8 @@ export const actions = {
 			public: game.public ?? undefined
 		};
 
-		await q.updateGameSettings(game_id, settings);
-		sendToGame(game_id, {
+		await q.updateGameSettings(game.id, settings);
+		sendToGame(game.id, {
 			type: 'fullUpdate',
 			data: game
 		})

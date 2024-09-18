@@ -1,14 +1,14 @@
-import {writable} from "svelte/store";
+import { writable } from "svelte/store";
 
-import type {ChatMessage, GameUserEvent} from "./emitter";
+import type { ChatMessage, GameUserEvent } from "./emitter";
 
-export const square = writable<number|null>(null);
+export const square = writable<number | null>(null);
 
 export const login_request = writable<boolean>(false);
 
-export const listener = writable<string|null>(null);
+export const listener = writable<string | null>(null);
 
-export const game_id = writable<string|null>(null);
+export const game_id = writable<string | null>(null);
 
 export const game = writable<Bingo.Card>();
 

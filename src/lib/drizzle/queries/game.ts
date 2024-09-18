@@ -200,14 +200,14 @@ export const getAllGames = async () => {
 	return query;
 }
 
-export const gameExists = async (game_id: string) => {
+export const gameExists = async (unprefixed_game_id: string) => {
 	logger.silly("Started db request", { "function": "gameExists", "obj": "query", "dir": "start" })
 	const q = await db
 		.select()
 		.from(BingoGame)
-		.where(eq(BingoGame.id, `gam_${game_id}`))
+		.where(eq(BingoGame.id, `gam_${unprefixed_game_id}`))
 	logger.silly("Finished db request", { "function": "gameExists", "obj": "query", "dir": "end" })
-	if (q.length > 0) return `gam_${game_id}`
+	if (q.length > 0) return q[0];
 	return null
 }
 
