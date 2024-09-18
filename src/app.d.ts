@@ -46,19 +46,19 @@ declare global {
 		type User = typeof User.$inferSelect;
 
 		type SettingsUpdate = {
-			public?: boolean
-			allow_team_switching?: boolean
-			claim_condition?: string
-			start_time?: Date
-			tiebreaker?: string
-			template_id?: string
-			min_sr?: number
-			max_sr?: number
-			min_length?: number
-			max_length?: number
-			min_rank?: number
-			max_rank?: number
-		}
+			public?: boolean;
+			allow_team_switching?: boolean;
+			claim_condition?: string;
+			start_time?: Date;
+			tiebreaker?: string;
+			template_id?: string;
+			min_sr?: number;
+			max_sr?: number;
+			min_length?: number;
+			max_length?: number;
+			min_rank?: number;
+			max_rank?: number;
+		};
 
 		namespace Card {
 			type FullSquare = BingoSquare & {
@@ -67,51 +67,51 @@ declare global {
 				scores: FullScore[];
 			};
 			type FullUser = GameUser & {
-				user: User
-			}
+				user: User;
+			};
 			type FullMap = Map & {
 				stats: MapStats;
 			};
 			type FullScore = Score & {
-				user: FullUser
-			}
+				user: FullUser;
+			};
 			type FullChat = Chat & {
-				user: FullUser
-			}
+				user: FullUser;
+			};
 		}
 		type Card = BingoGame & {
 			squares: Card.FullSquare[] | null; // Null if game state is 0 (to hide squares)
 			events: TimeEvent[];
 			users: Card.FullUser[];
-			hosts: User[],
-			template: DBTemplate
+			hosts: User[];
+			template: DBTemplate;
 		};
 	}
 	type Template = {
 		setup: {
-			claim_condition: string,
-			reclaim_condition: string,
-			board: string | Template.Board
-		}
+			claim_condition: string;
+			reclaim_condition: string;
+			board: string | Template.Board;
+		};
 		maps: Template.Mappool[];
 		event: Template.Event[];
-	}
+	};
 	namespace Template {
 		type Event = {
-			text: string,
-			seconds_after_start: number
-		}
+			text: string;
+			seconds_after_start: number;
+		};
 		type Mappool = {
-			mappool_id: string,
+			mappool_id: string;
 			// chance to get picked. All chances are summed, then a 'wheel is spun'. (recommended all values sum to 1 for clarity)
-			chance: number
-			mode: Osu.Ruleset
-		}
+			chance: number;
+			mode: Osu.Ruleset;
+		};
 		type Board = {
-			squares: number[][], // coordinates of squares
-			lines: number[][] // location of lines
-		}
+			squares: number[][]; // coordinates of squares
+			lines: number[][]; // location of lines
+		};
 	}
 }
 
-export { };
+export {};

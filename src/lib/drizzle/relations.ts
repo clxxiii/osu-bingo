@@ -58,7 +58,7 @@ export const EventRelations = relations(TimeEvent, ({ one }) => ({
 
 export const MappoolRelations = relations(Mappool, ({ many }) => ({
 	maps: many(MapInPool)
-}))
+}));
 
 export const MapInPoolRelations = relations(MapInPool, ({ one }) => ({
 	pool: one(Mappool, { fields: [MapInPool.pool_id], references: [Mappool.id] }),
@@ -91,4 +91,4 @@ export const ChatRelations = relations(Chat, ({ one }) => ({
 export const TemplateRelations = relations(Template, ({ many, one }) => ({
 	games: many(BingoGame),
 	owner: one(User, { fields: [Template.owner_id], references: [User.id] })
-}))
+}));

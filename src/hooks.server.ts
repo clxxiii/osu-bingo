@@ -7,12 +7,12 @@ import { connect } from '$lib/server/bancho';
 
 // Start Polling Services
 import { tokens, events } from '$lib/server/polling';
-import { setup as watch } from "$lib/server/game/watch"
+import { setup as watch } from '$lib/server/game/watch';
 import { logger } from '$lib/logger';
-tokens.setup()
-events.setup()
-watch()
-connect()
+tokens.setup();
+events.setup();
+watch();
+connect();
 
 const jwt_secret = new TextEncoder().encode(env.JWT_SECRET);
 
@@ -46,11 +46,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 			event.locals.user = user;
 		} catch (error) {
-			logger.error(error, { type: 'invalid_session' })
+			logger.error(error, { type: 'invalid_session' });
 			event.cookies.delete('osu_bingo_token', { path: '/' });
 		}
 	}
-	logger.http(`[${event.locals.user?.username ?? 'UNKNOWN'}]: ${event.url}`, { type: 'http_log' })
+	logger.http(`[${event.locals.user?.username ?? 'UNKNOWN'}]: ${event.url}`, { type: 'http_log' });
 
 	return await resolve(event);
 };

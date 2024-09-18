@@ -80,26 +80,27 @@ export const getBeatmaps = async (min_sr: number, max_sr: number, access_token: 
 	return beatmapsets;
 };
 
-export const refreshOAuthToken = async (token: Bingo.OauthToken,
+export const refreshOAuthToken = async (
+	token: Bingo.OauthToken,
 	client_id: string,
-	client_secret: string,
+	client_secret: string
 ): Promise<Osu.AuthorizationCodeTokenResponse | null> => {
-	logger.info(`Updating osu oauth token of ${token.user_id}`, { type: 'token_update' })
+	logger.info(`Updating osu oauth token of ${token.user_id}`, { type: 'token_update' });
 	const refreshBody = {
 		client_id,
 		client_secret,
 		grant_type: 'refresh_token',
 		refresh_token: token.refresh_token
-	}
+	};
 
 	const refreshReq = await fetch(TOKEN_URL, {
 		method: 'POST',
 		body: JSON.stringify(refreshBody),
 		headers: {
 			'Content-Type': 'application/json',
-			'Accept': 'application/json'
+			Accept: 'application/json'
 		}
-	})
+	});
 
 	const updatedToken = await refreshReq.json();
 
@@ -108,11 +109,11 @@ export const refreshOAuthToken = async (token: Bingo.OauthToken,
 		return updatedToken;
 	}
 	return null;
-}
+};
 
 export const getRecentScores = async (user_id: number, access_token: string) => {
-	const params = new URLSearchParams()
-	params.set("include_fails", '1')
+	const params = new URLSearchParams();
+	params.set('include_fails', '1');
 
 	const scores = await fetch(`${BASE_URL}/users/${user_id}/scores/recent?${params.toString()}`, {
 		headers: {
@@ -124,8 +125,11 @@ export const getRecentScores = async (user_id: number, access_token: string) => 
 	});
 	const response: Osu.LazerScore[] = await scores.json();
 	if (scores.ok) {
-		logger.debug(`[${user_id}]: Successfully fetched scores`, { type: 'fetch_user_scores', user_id })
+		logger.debug(`[${user_id}]: Successfully fetched scores`, {
+			type: 'fetch_user_scores',
+			user_id
+		});
 		return response;
 	}
 	return null;
-}
+};

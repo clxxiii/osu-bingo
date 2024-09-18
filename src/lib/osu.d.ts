@@ -206,38 +206,38 @@ export namespace Osu {
 			country: number;
 		};
 	}
-	type Grade = 'SSH' | 'SS' | 'SH' | 'S' | 'A' | 'B' | 'C' | 'D' | 'F'
+	type Grade = 'SSH' | 'SS' | 'SH' | 'S' | 'A' | 'B' | 'C' | 'D' | 'F';
 	type ModAbbr =
-		'NF' |
-		'EZ' |
-		'TD' |
-		'HD' |
-		'HR' |
-		'SD' |
-		'DT' |
-		'RX' |
-		'HT' |
-		'NC' |
-		'FL' |
-		'AT' |
-		'SO' |
-		'AP' |
-		'PF' |
-		'K4' |
-		'K5' |
-		'K6' |
-		'K7' |
-		'K8' |
-		'FI' |
-		'RD' |
-		'CN' |
-		'TP' |
-		'KC' |
-		'K1' |
-		'K3' |
-		'K2' |
-		'MI' |
-		'CL'
+		| 'NF'
+		| 'EZ'
+		| 'TD'
+		| 'HD'
+		| 'HR'
+		| 'SD'
+		| 'DT'
+		| 'RX'
+		| 'HT'
+		| 'NC'
+		| 'FL'
+		| 'AT'
+		| 'SO'
+		| 'AP'
+		| 'PF'
+		| 'K4'
+		| 'K5'
+		| 'K6'
+		| 'K7'
+		| 'K8'
+		| 'FI'
+		| 'RD'
+		| 'CN'
+		| 'TP'
+		| 'KC'
+		| 'K1'
+		| 'K3'
+		| 'K2'
+		| 'MI'
+		| 'CL';
 
 	interface Beatmapset {
 		artist: string;
@@ -304,90 +304,90 @@ export namespace Osu {
 		max_combo: number;
 	}
 	interface Score {
-		accuracy: number
-		best_id?: number
-		created_at?: string
-		id: number
-		max_combo: number
-		mode: Ruleset
-		mode_int: number
-		mods: ModAbbr[]
-		passed: boolean
-		perfect: boolean
-		pp: number | null
-		rank?: string
-		replay: boolean
-		score: number
-		statistics: LegacyStatistics
-		type: string
-		user_id: number
-		beatmap?: BeatmapExtended
-		beatmapset?: Beatmapset
-		user: User
+		accuracy: number;
+		best_id?: number;
+		created_at?: string;
+		id: number;
+		max_combo: number;
+		mode: Ruleset;
+		mode_int: number;
+		mods: ModAbbr[];
+		passed: boolean;
+		perfect: boolean;
+		pp: number | null;
+		rank?: string;
+		replay: boolean;
+		score: number;
+		statistics: LegacyStatistics;
+		type: string;
+		user_id: number;
+		beatmap?: BeatmapExtended;
+		beatmapset?: Beatmapset;
+		user: User;
 	}
 
 	interface LegacyStatistics {
-		count_100: number
-		count_300: number
-		count_50: number
-		count_geki: number
-		count_katu: number
-		count_miss: number
+		count_100: number;
+		count_300: number;
+		count_50: number;
+		count_geki: number;
+		count_katu: number;
+		count_miss: number;
 	}
 
 	interface LazerScore {
-		ranked: boolean
-		preserve: boolean
-		maximum_statistics?: ScoreStatistics
-		mods: { acronym: ModAbbr }[]
-		statistics: ScoreStatistics
-		beatmap_id: number
-		best_id?: number
-		id: number
-		rank: Grade
-		type: string
-		user_id: number
-		accuracy: number
-		build_id?: number
-		ended_at: string
-		has_replay: boolean
-		is_perfect_combo: boolean
-		legacy_perect: boolean
-		legacy_score_id: number | null
-		legacy_total_score: number // 0 if set on lazer
-		max_combo: number
-		passed: boolean
-		playlist_item_id?: number
-		pp: number | null
-		room_id?: number
-		ruleset_id: number
-		total_score: number
-		replay: boolean
+		ranked: boolean;
+		preserve: boolean;
+		maximum_statistics?: ScoreStatistics;
+		mods: { acronym: ModAbbr }[];
+		statistics: ScoreStatistics;
+		beatmap_id: number;
+		best_id?: number;
+		id: number;
+		rank: Grade;
+		type: string;
+		user_id: number;
+		accuracy: number;
+		build_id?: number;
+		ended_at: string;
+		has_replay: boolean;
+		is_perfect_combo: boolean;
+		legacy_perect: boolean;
+		legacy_score_id: number | null;
+		legacy_total_score: number; // 0 if set on lazer
+		max_combo: number;
+		passed: boolean;
+		playlist_item_id?: number;
+		pp: number | null;
+		room_id?: number;
+		ruleset_id: number;
+		total_score: number;
+		replay: boolean;
 
-		beatmap?: BeatmapExtended
-		beatmapset?: Beatmapset
-		user: User
+		beatmap?: BeatmapExtended;
+		beatmapset?: Beatmapset;
+		user: User;
 	}
 
 	interface ScoreStatistics {
-		great?: number // 300
-		ok?: number    // 100
-		meh?: number   // 50
-		miss?: number  // miss
+		great?: number; // 300
+		ok?: number; // 100
+		meh?: number; // 50
+		miss?: number; // miss
 
 		// Slider ticks
-		large_tick_hit?: number
-		large_tick_miss?: number
+		large_tick_hit?: number;
+		large_tick_miss?: number;
 		// Slider ends
-		slider_tail_hit?: number
+		slider_tail_hit?: number;
 
 		// Spinners
-		large_bonus?: number
-		small_bonus?: number
+		large_bonus?: number;
+		small_bonus?: number;
 
 		// literally no idea
-		legacy_combo_increase?: number
-		ignore_hit?: number
-		ignore_miss?: number
+		legacy_combo_increase?: number;
+		ignore_hit?: number;
+		ignore_miss?: number;
 	}
 }

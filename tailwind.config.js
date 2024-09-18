@@ -10,12 +10,12 @@ export default {
 				mono: ['CutiveMono', 'monospace']
 			},
 			animation: {
-				'warning': 'warning 1s ease infinite'
+				warning: 'warning 1s ease infinite'
 			},
 			keyframes: {
 				warning: {
-					'0%, 100%': { 'color': '#d5c9df'},
-					'50%': { 'color': '#923622'}
+					'0%, 100%': { color: '#d5c9df' },
+					'50%': { color: '#923622' }
 				}
 			},
 			colors: {

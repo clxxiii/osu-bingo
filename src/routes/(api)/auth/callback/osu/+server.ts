@@ -12,7 +12,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	if (code == null || stateId == null) {
 		redirect(StatusCodes.TEMPORARY_REDIRECT, '/');
 	}
-	const state = getState(stateId)
+	const state = getState(stateId);
 	if (!state) {
 		redirect(StatusCodes.TEMPORARY_REDIRECT, '/');
 	}

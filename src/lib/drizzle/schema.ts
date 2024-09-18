@@ -5,16 +5,9 @@
  * - All relations are specified in `./relations.ts`
  */
 
-import {
-	integer,
-	primaryKey,
-	real,
-	sqliteTable,
-	text,
-	unique
-} from 'drizzle-orm/sqlite-core';
+import { integer, primaryKey, real, sqliteTable, text, unique } from 'drizzle-orm/sqlite-core';
 import ShortUniqueId from 'short-unique-id';
-const { randomUUID } = new ShortUniqueId({ length: 12, dictionary: 'alpha' })
+const { randomUUID } = new ShortUniqueId({ length: 12, dictionary: 'alpha' });
 
 /**
  * Represents a game of Bingo
@@ -23,7 +16,9 @@ const { randomUUID } = new ShortUniqueId({ length: 12, dictionary: 'alpha' })
  * multiple scores.
  */
 export const BingoGame = sqliteTable('BingoGame', {
-	id: text('id').primaryKey().$defaultFn(() => `gam_${randomUUID()}`),
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => `gam_${randomUUID()}`),
 	link_id: text('link_id'), // Four letters, similar to Jackbox
 
 	// Don't bother processing scores before this date:
@@ -59,7 +54,9 @@ export const BingoGame = sqliteTable('BingoGame', {
 });
 
 export const BingoSquare = sqliteTable('BingoSquare', {
-	id: text('id').primaryKey().$defaultFn(() => `sqr_${randomUUID()}`),
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => `sqr_${randomUUID()}`),
 
 	// References
 	game_id: text('game_id')
@@ -80,21 +77,20 @@ export const BingoSquare = sqliteTable('BingoSquare', {
 /**
  * Linker table between a game and a user
  */
-export const GameUser = sqliteTable(
-	'GameUser',
-	{
-		id: text('id').primaryKey().$defaultFn(() => `gmu_${randomUUID()}`),
-		game_id: text('game_id')
-			.notNull()
-			.references(() => BingoGame.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
-		user_id: integer('user_id')
-			.notNull()
-			.references(() => User.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+export const GameUser = sqliteTable('GameUser', {
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => `gmu_${randomUUID()}`),
+	game_id: text('game_id')
+		.notNull()
+		.references(() => BingoGame.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+	user_id: integer('user_id')
+		.notNull()
+		.references(() => User.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
 
-		team_name: text('team_name').notNull(),
-		host: integer('host', { mode: 'boolean' }).notNull().default(false)
-	}
-);
+	team_name: text('team_name').notNull(),
+	host: integer('host', { mode: 'boolean' }).notNull().default(false)
+});
 
 /**
  * Represents an osu! user
@@ -131,7 +127,9 @@ export const User = sqliteTable('User', {
  * Represents an Oauth token for a user,
  */
 export const OauthToken = sqliteTable('OauthToken', {
-	id: text('id').primaryKey().$defaultFn(() => `tkn_${randomUUID()}`),
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => `tkn_${randomUUID()}`),
 	service: text('service').notNull(),
 	access_token: text('access_token').unique().notNull(),
 	expires_at: integer('expires_at', { mode: 'timestamp' }).notNull(),
@@ -148,7 +146,9 @@ export const OauthToken = sqliteTable('OauthToken', {
  * Represents a user's login session.
  */
 export const Session = sqliteTable('Session', {
-	id: text('id').primaryKey().$defaultFn(() => `ses_${randomUUID()}`),
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => `ses_${randomUUID()}`),
 	user_id: integer('user_id')
 		.notNull()
 		.references(() => User.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
@@ -169,7 +169,9 @@ export const Session = sqliteTable('Session', {
  *
  */
 export const TimeEvent = sqliteTable('TimeEvent', {
-	id: text('id').primaryKey().$defaultFn(() => `evt_${randomUUID()}`),
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => `evt_${randomUUID()}`),
 	time: integer('time', { mode: 'timestamp' }).notNull(),
 	action: text('action').notNull(), // Some string that represents what to do
 	// when the time hits
@@ -184,17 +186,21 @@ export const TimeEvent = sqliteTable('TimeEvent', {
  * Represents multiple maps that come from a similar source (popular maps, random, handpicked etc.)
  */
 export const Mappool = sqliteTable('Mappool', {
-	id: text('id').primaryKey().$defaultFn(() => `mpl_${randomUUID()}`),
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => `mpl_${randomUUID()}`),
 	name: text('name')
-})
+});
 
 export const MapInPool = sqliteTable('MapInPool', {
-	id: text('id').primaryKey().$defaultFn(() => `mip_${randomUUID()}`),
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => `mip_${randomUUID()}`),
 	pool_id: text('pool_id').references(() => Mappool.id),
 	map_id: integer('map_id').references(() => Map.id),
 
 	required_mods: text('') // For tournament mappools and such
-})
+});
 
 /**
  * Represents a trimmed-down version of a osu! map
@@ -260,65 +266,71 @@ export const MapStats = sqliteTable(
  *
  * Contains references to a team score (for a team's score)
  */
-export const Score = sqliteTable(
-	'Score',
-	{
-		id: text('id').primaryKey().$defaultFn(() => `scr_${randomUUID()}`),
-		score_id: integer('score_id'), // https://osu.ppy.sh/s/[score_id]
-		user_id: integer('user_id').notNull(),
+export const Score = sqliteTable('Score', {
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => `scr_${randomUUID()}`),
+	score_id: integer('score_id'), // https://osu.ppy.sh/s/[score_id]
+	user_id: integer('user_id').notNull(),
 
-		date: integer('date', { mode: 'timestamp' }).notNull(),
-		percentage: real('percentage'), // If you fail, how far through the map you are.
+	date: integer('date', { mode: 'timestamp' }).notNull(),
+	percentage: real('percentage'), // If you fail, how far through the map you are.
 
-		is_fc: integer('is_fc', { mode: 'boolean' }).notNull().default(false),
-		score: real('score').notNull(),
-		pp: real('pp'),
-		grade: text('grade').notNull(),
-		accuracy: real('accuracy').notNull(),
-		max_combo: integer('max_combo').notNull(),
-		mods: text('mods').default(''),
-		lazer: integer('lazer', { mode: 'boolean' }).notNull(),
+	is_fc: integer('is_fc', { mode: 'boolean' }).notNull().default(false),
+	score: real('score').notNull(),
+	pp: real('pp'),
+	grade: text('grade').notNull(),
+	accuracy: real('accuracy').notNull(),
+	max_combo: integer('max_combo').notNull(),
+	mods: text('mods').default(''),
+	lazer: integer('lazer', { mode: 'boolean' }).notNull(),
 
-		important: integer('important', {
-			mode: 'boolean'
-		}).default(false), // Whether this score appears as a notification
+	important: integer('important', {
+		mode: 'boolean'
+	}).default(false), // Whether this score appears as a notification
 
-		square_id: text('square_id')
-			.notNull()
-			.references(() => BingoSquare.id, {
-				onDelete: 'cascade',
-				onUpdate: 'cascade'
-			}),
-		game_user_id: text('game_user_id').notNull().references(() => GameUser.id)
-	}
-);
+	square_id: text('square_id')
+		.notNull()
+		.references(() => BingoSquare.id, {
+			onDelete: 'cascade',
+			onUpdate: 'cascade'
+		}),
+	game_user_id: text('game_user_id')
+		.notNull()
+		.references(() => GameUser.id)
+});
 
 /**
  * A chat message in a lobby
  */
-export const Chat = sqliteTable(
-	'Chat',
-	{
-		id: text('id').primaryKey().$defaultFn(() => `cht_${randomUUID()}`),
+export const Chat = sqliteTable('Chat', {
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => `cht_${randomUUID()}`),
 
-		time: integer('time', { mode: 'timestamp' })
-			.$defaultFn(() => new Date())
-			.notNull(),
-		text: text('text'),
+	time: integer('time', { mode: 'timestamp' })
+		.$defaultFn(() => new Date())
+		.notNull(),
+	text: text('text'),
 
-		channel: text('channel').notNull().default('GLOBAL'), // 'GLOBAL' or team name ('RED' or 'BLUE')
+	channel: text('channel').notNull().default('GLOBAL'), // 'GLOBAL' or team name ('RED' or 'BLUE')
 
-		game_id: text('game_id')
-			.notNull()
-			.references(() => BingoGame.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
-		user_id: integer('user_id').notNull().references(() => User.id)
-	}
-);
+	game_id: text('game_id')
+		.notNull()
+		.references(() => BingoGame.id, { onDelete: 'cascade', onUpdate: 'cascade' }),
+	user_id: integer('user_id')
+		.notNull()
+		.references(() => User.id)
+});
 
 export const Template = sqliteTable('Template', {
-	id: text('id').primaryKey().$defaultFn(() => `tmt_${randomUUID()}`),
-	owner_id: integer('user_id').notNull().references(() => User.id),
+	id: text('id')
+		.primaryKey()
+		.$defaultFn(() => `tmt_${randomUUID()}`),
+	owner_id: integer('user_id')
+		.notNull()
+		.references(() => User.id),
 	name: text('name'),
 
-	data: text('data').notNull(),
-})
+	data: text('data').notNull()
+});

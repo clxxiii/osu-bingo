@@ -1,4 +1,4 @@
-import * as tokens from "./tokens"
-import * as events from "./event_scheduler"
+import * as tokens from './tokens';
+import * as events from './event_scheduler';
 
-export { tokens, events }
+export { tokens, events };

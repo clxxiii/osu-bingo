@@ -4,23 +4,23 @@
  * when the server restarts anyway.
  */
 
-import ShortUniqueId from 'short-unique-id'
-const { randomUUID } = new ShortUniqueId({ length: 4, dictionary: 'alpha_upper' })
+import ShortUniqueId from 'short-unique-id';
+const { randomUUID } = new ShortUniqueId({ length: 4, dictionary: 'alpha_upper' });
 
 type State = {
-  from: string // href to return to
-}
-const state = new Map<string, State>;
+	from: string; // href to return to
+};
+const state = new Map<string, State>();
 
 export const newState = (from: string): string => {
-  const id = randomUUID();
-  state.set(id, { from });
-  return id;
-}
+	const id = randomUUID();
+	state.set(id, { from });
+	return id;
+};
 
 export const getState = (id: string): State | null => {
-  const s = state.get(id)
-  if (!s) return null
-  state.delete(id);
-  return s;
-}
+	const s = state.get(id);
+	if (!s) return null;
+	state.delete(id);
+	return s;
+};

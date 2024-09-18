@@ -1,6 +1,6 @@
-import { writable } from "svelte/store";
+import { writable } from 'svelte/store';
 
-import type { ChatMessage, GameUserEvent } from "./emitter";
+import type { ChatMessage, GameUserEvent } from './emitter';
 
 export const square = writable<number | null>(null);
 
