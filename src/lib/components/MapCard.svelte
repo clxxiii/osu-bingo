@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { Clock, Star } from 'lucide-svelte';
 	import MapStat from './MapStat.svelte';
+	import { fly } from 'svelte/transition';
+	import { browser } from '$app/environment';
 
 	export let map: Bingo.Card.FullMap;
 
@@ -10,6 +12,18 @@
 	};
 
 	const timeString = `${Math.floor(map.stats.length / 60)}:${seconds(map.stats.length)}`;
+
+	let showCopy: boolean;
+	const copy = () => {
+		showCopy = true;
+		setTimeout(() => (showCopy = false), 1);
+
+		const id = `${map.id}`;
+
+		if (browser) {
+			navigator.clipboard.writeText(id);
+		}
+	};
 </script>
 
 <div class="grid top bg-zinc-900">
@@ -36,10 +50,20 @@
 	<div
 		class="mt-2 p-2 w-full row-start-3 row-end-4 col-start-1 col-end-3 bg-zinc-700 flex justify-around"
 	>
-		<a
-			class="font-rounded block bg-pink-800 rounded w-40 text-center font-bold hover:bg-pink-700 active:bg-pink-900 transition"
-			href="osu://dl/{map.beatmapset_id}">osu!Direct</a
+		<button
+			on:click={copy}
+			class="font-rounded relative block bg-pink-800 rounded w-40 text-center font-bold hover:bg-pink-700 active:bg-pink-900 transition"
 		>
+			{#if showCopy}
+				<div
+					out:fly={{ y: -20, duration: 500 }}
+					class="absolute w-full text-center text-green-400 text-s"
+				>
+					Copied
+				</div>
+			{/if}
+			Copy Map ID
+		</button>
 		<a
 			class="font-rounded block bg-pink-800 rounded w-40 text-center font-bold hover:bg-pink-700 active:bg-pink-900 transition"
 			target="_blank"
