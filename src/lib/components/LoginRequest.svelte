@@ -12,13 +12,13 @@
 
 <div
 	transition:fly={{ delay: 500, y: 50, duration: 300 }}
-	class="bg-zinc-800/80 sm:w-[400px] sm:max-h-[200px] p-6 sm:rounded-xl sm:shadow-xl w-full h-full"
+	class="h-full w-full bg-zinc-800/80 p-6 sm:max-h-[200px] sm:w-[400px] sm:rounded-xl sm:shadow-xl"
 >
-	<h1 class="font-rounded font-bold text-2xl">Login Request</h1>
-	<hr class="my-1 border-zinc-900 border-2 rounded" />
+	<h1 class="font-rounded text-2xl font-bold">Login Request</h1>
+	<hr class="my-1 rounded border-2 border-zinc-900" />
 	<p class="pb-4">We can't fetch scores from you! Please try logging in again</p>
 	<button
-		class="font-rounded px-10 hover:bg-pink-900 transition active:bg-pink-950 font-bold bg-pink-800 border-pink-200 rounded-full p-1 w-full"
+		class="w-full rounded-full border-pink-200 bg-pink-800 p-1 px-10 font-rounded font-bold transition hover:bg-pink-900 active:bg-pink-950"
 		on:click={login}>Log in</button
 	>
 </div>

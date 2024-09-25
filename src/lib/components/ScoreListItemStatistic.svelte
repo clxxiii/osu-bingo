@@ -6,7 +6,7 @@
 
 <div
 	data-important={sort == stat}
-	class="data-[important=true]:text-xl data-[important=true]:col-start-1 data-[important=true]:row-start-1 data-[important=true]:col-end-4 row-start-2 flex data-[important=true]:justify-end text-xs data-[important=true]:font-rounded h-full data-[important=true]:font-bold"
+	class="row-start-2 flex h-full text-xs data-[important=true]:col-start-1 data-[important=true]:col-end-4 data-[important=true]:row-start-1 data-[important=true]:justify-end data-[important=true]:font-rounded data-[important=true]:text-xl data-[important=true]:font-bold"
 >
 	{#if stat == 'score'}
 		{score.score.toLocaleString()}

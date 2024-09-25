@@ -17,12 +17,12 @@
 	};
 </script>
 
-<div class="flex justify-between p-2 items-center h-full">
+<div class="flex h-full items-center justify-between p-2">
 	<AnnouncerTeam {currentTeam} buttons={true} {user} />
 	<div>
 		Waiting for the host to start the game!
 		{#if isHost}
-			<button on:click={start} class="bg-green-600 p-1 rounded-full text-sm px-2"> START</button>
+			<button on:click={start} class="rounded-full bg-green-600 p-1 px-2 text-sm"> START</button>
 		{/if}
 	</div>
 	<AnnouncerInvite linkCode={$gameStore.link_id} hidden={!$gameStore.public} />

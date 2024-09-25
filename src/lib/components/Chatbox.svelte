@@ -43,16 +43,16 @@
 </script>
 
 <div
-	class="bg-zinc-800 relative rounded-xl size-full grid grid-rows-[3rem_calc(100%-3rem-4.5rem)_4.5rem]"
+	class="relative grid size-full grid-rows-[3rem_calc(100%-3rem-4.5rem)_4.5rem] rounded-xl bg-zinc-800"
 >
 	<h1
 		data-channel={channel}
-		class="items-center data-[channel=blue]:bg-blue-700 data-[channel=red]:bg-amber-700 h-12 capitalize rounded-t-xl flex bg-zinc-800 gap-x-1 w-full text-2xl font-rounded shadow font-bold p-2"
+		class="flex h-12 w-full items-center gap-x-1 rounded-t-xl bg-zinc-800 p-2 font-rounded text-2xl font-bold capitalize shadow data-[channel=blue]:bg-blue-700 data-[channel=red]:bg-amber-700"
 	>
 		<MessageSquareText size={36} /> <span>{channel} Chat</span>
 	</h1>
 	<div use:scroll={chatLength} class="overflow-y-scroll">
-		<div class="flex flex-col justify-end items-center overflow-x-hidden">
+		<div class="flex flex-col items-center justify-end overflow-x-hidden">
 			<div class="p-2 text-zinc-500">
 				<div>Welcome to the chatroom!</div>
 				{#if channel.toUpperCase() != 'GLOBAL'}
@@ -65,22 +65,22 @@
 		</div>
 	</div>
 	{#if enabled}
-		<div class="p-5 w-full">
+		<div class="w-full p-5">
 			<input
 				type="text"
 				bind:this={box}
 				on:keydown={keydown}
 				placeholder="Send a message"
-				class="text-sm disabled:bg-zinc-800 transition bg-zinc-700 p-2 rounded-full outline-none focus:shadow-lg block w-full"
+				class="block w-full rounded-full bg-zinc-700 p-2 text-sm outline-none transition focus:shadow-lg disabled:bg-zinc-800"
 			/>
 		</div>
 	{:else}
-		<div class="p-5 w-full">
+		<div class="w-full p-5">
 			<input
 				type="text"
 				disabled
 				placeholder="Join the game to chat"
-				class="text-sm bg-zinc-700 p-2 rounded-full outline-none focus:shadow-lg block w-full"
+				class="block w-full rounded-full bg-zinc-700 p-2 text-sm outline-none focus:shadow-lg"
 			/>
 		</div>
 	{/if}

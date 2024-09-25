@@ -26,19 +26,19 @@
 	};
 </script>
 
-<div class="grid top bg-zinc-900">
+<div class="top grid bg-zinc-900">
 	<img
-		class="rounded-l-lg row-start-1 row-end-1 col-start-1 col-end-2"
+		class="col-start-1 col-end-2 row-start-1 row-end-1 rounded-l-lg"
 		src={map.square_url}
 		alt=""
 	/>
 	<div
-		class="bg-zinc-900 -translate-x-2 pl-2 rounded-l-lg flex flex-col justify-center font-rounded"
+		class="flex -translate-x-2 flex-col justify-center rounded-l-lg bg-zinc-900 pl-2 font-rounded"
 	>
 		<div class="text-xl font-extrabold">{map.title}</div>
 		<div class="font-bold">by {map.artist}</div>
 		<div>[{map.difficulty_name}]</div>
-		<div class="text-xs pt-2">
+		<div class="pt-2 text-xs">
 			<MapStat>{map.stats.star_rating} <Star class="inline" size={14} /></MapStat>
 			<MapStat>{timeString} <Clock class="inline" size={14} /></MapStat>
 			<MapStat>{map.stats.bpm} BPM</MapStat>
@@ -48,16 +48,16 @@
 		</div>
 	</div>
 	<div
-		class="mt-2 p-2 w-full row-start-3 row-end-4 col-start-1 col-end-3 bg-zinc-700 flex justify-around"
+		class="col-start-1 col-end-3 row-start-3 row-end-4 mt-2 flex w-full justify-around bg-zinc-700 p-2"
 	>
 		<button
 			on:click={copy}
-			class="font-rounded relative block bg-pink-800 rounded w-40 text-center font-bold hover:bg-pink-700 active:bg-pink-900 transition"
+			class="relative block w-40 rounded bg-pink-800 text-center font-rounded font-bold transition hover:bg-pink-700 active:bg-pink-900"
 		>
 			{#if showCopy}
 				<div
 					out:fly={{ y: -20, duration: 500 }}
-					class="absolute w-full text-center text-green-400 text-s"
+					class="text-s absolute w-full text-center text-green-400"
 				>
 					Copied
 				</div>
@@ -65,7 +65,7 @@
 			Copy Map ID
 		</button>
 		<a
-			class="font-rounded block bg-pink-800 rounded w-40 text-center font-bold hover:bg-pink-700 active:bg-pink-900 transition"
+			class="block w-40 rounded bg-pink-800 text-center font-rounded font-bold transition hover:bg-pink-700 active:bg-pink-900"
 			target="_blank"
 			rel="noopener noreferrer"
 			href="https://osu.ppy.sh/b/{map.id}">Open on osu!web</a

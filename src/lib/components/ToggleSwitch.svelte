@@ -28,27 +28,27 @@
 </script>
 
 <div
-	class="relative w-full grid grid-cols-2 grid-rows-1 h-10 bg-zinc-900 rounded-lg"
+	class="relative grid h-10 w-full grid-cols-2 grid-rows-1 rounded-lg bg-zinc-900"
 	style="--color: {toggle ? onColor : offColor}"
 >
 	<input
 		on:click={cooldown}
-		class="z-20 peer cursor-pointer absolute h-full w-full appearance-none"
+		class="peer absolute z-20 h-full w-full cursor-pointer appearance-none"
 		type="checkbox"
 		bind:this={checkbox}
 		bind:checked={toggle}
 	/>
 	<div
-		class="h-full select-none peer-checked:text-zinc-800 transition flex items-center justify-center font-bold font-rounded uppercase z-10"
+		class="z-10 flex h-full select-none items-center justify-center font-rounded font-bold uppercase transition peer-checked:text-zinc-800"
 	>
 		{offText}
 	</div>
 	<div
-		class="h-full select-none peer-checked:text-purple-300 text-zinc-800 transition flex items-center justify-center font-bold font-rounded uppercase z-10"
+		class="z-10 flex h-full select-none items-center justify-center font-rounded font-bold uppercase text-zinc-800 transition peer-checked:text-purple-300"
 	>
 		{onText}
 	</div>
 	<div
-		class="transition-all rounded-lg absolute peer-checked:left-[50%] left-[0%] top-0 h-10 w-1/2 bg-[var(--color)]"
+		class="absolute left-[0%] top-0 h-10 w-1/2 rounded-lg bg-[var(--color)] transition-all peer-checked:left-[50%]"
 	></div>
 </div>

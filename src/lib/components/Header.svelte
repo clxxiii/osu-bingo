@@ -4,10 +4,10 @@
 	import VR from './VerticalRule.svelte';
 </script>
 
-<nav class="relative h-12 w-full flex items-center p-1 overflow-hidden">
-	<a href="/" class="h-10 p-2 hover:bg-zinc-900 flex gap-1 rounded transition">
+<nav class="relative flex h-12 w-full items-center overflow-hidden p-1">
+	<a href="/" class="flex h-10 gap-1 rounded p-2 transition hover:bg-zinc-900">
 		<img src="/icon.svg" class="h-6" alt="" />
-		<div class="flex items-center font-display h-6 text-lg text-nowrap">bingo</div>
+		<div class="flex h-6 items-center text-nowrap font-display text-lg">bingo</div>
 	</a>
 	<VR />
 	<NavLink href="/">Home</NavLink>

@@ -34,22 +34,22 @@
 	<div
 		data-expand={expanded}
 		style="--w: {$width}px"
-		class="hover:bg-zinc-900 transition w-[var(--w)] items-center data-[expand=true]:bg-zinc-900 h-10 rounded overflow-hidden"
+		class="h-10 w-[var(--w)] items-center overflow-hidden rounded transition hover:bg-zinc-900 data-[expand=true]:bg-zinc-900"
 	>
 		{#if expanded}
-			<div class="flex items-center justify-evenly h-full">
+			<div class="flex h-full items-center justify-evenly">
 				<button
 					in:fly={{ y: 30, delay: 300 }}
 					out:fly={{ y: -30, delay: 0 }}
 					on:click={click}
-					class="size-8 flex items-center hover:bg-zinc-700 justify-center transition rounded"
+					class="flex size-8 items-center justify-center rounded transition hover:bg-zinc-700"
 				>
 					<X />
 				</button>
 				<a
 					in:fly={{ y: 30, delay: 350 }}
 					out:fly={{ y: -30, delay: 50 }}
-					class="size-8 flex items-center hover:bg-zinc-700 justify-center transition rounded"
+					class="flex size-8 items-center justify-center rounded transition hover:bg-zinc-700"
 					href="/user/settings"
 				>
 					<Settings />
@@ -57,7 +57,7 @@
 				<a
 					in:fly={{ y: 30, delay: 400 }}
 					out:fly={{ y: -30, delay: 100 }}
-					class="size-8 text-amber-600 flex items-center hover:bg-zinc-700 justify-center transition rounded"
+					class="flex size-8 items-center justify-center rounded text-amber-600 transition hover:bg-zinc-700"
 					href="/auth/logout?from={window.location.href}"
 				>
 					<LogOut />
@@ -69,15 +69,15 @@
 				out:fly={{ y: -30 }}
 				on:click={click}
 				bind:clientWidth={nameplateWidth}
-				class="text-display grid gap-x-1 items-center px-2 h-10 absolute top-0 transition"
+				class="text-display absolute top-0 grid h-10 items-center gap-x-1 px-2 transition"
 			>
 				<img
-					class="row-start-1 row-end-3 col-start-1 col-end-2 h-8 rounded-full"
+					class="col-start-1 col-end-2 row-start-1 row-end-3 h-8 rounded-full"
 					src={$user.avatar_url}
 					alt=""
 				/>
-				<div class="text-left col-start-2 col-end-3 row-start-1 row-end 2">{$user.username}</div>
-				<div class="text-[8px] text-left col-start-2 col-end-3 row-start-2 row-end-3">
+				<div class="row-end 2 col-start-2 col-end-3 row-start-1 text-left">{$user.username}</div>
+				<div class="col-start-2 col-end-3 row-start-2 row-end-3 text-left text-[8px]">
 					#{$user.global_rank?.toLocaleString()}
 				</div>
 			</button>
@@ -85,7 +85,7 @@
 	</div>
 {:else if browser}
 	<a
-		class="font-rounded px-10 hover:bg-pink-900 transition active:bg-pink-950 font-bold bg-pink-800 border-pink-200 rounded-full p-1 w-40"
+		class="w-40 rounded-full border-pink-200 bg-pink-800 p-1 px-10 font-rounded font-bold transition hover:bg-pink-900 active:bg-pink-950"
 		href="/auth/login/osu?from={window.location.href}">login with osu!</a
 	>
 {/if}

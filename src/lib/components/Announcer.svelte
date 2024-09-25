@@ -10,7 +10,7 @@
 	export let currentTeam: string | undefined;
 </script>
 
-<div class="size-full mb-4 h-32 font-rounded font-bold rounded-xl bg-zinc-800">
+<div class="mb-4 size-full h-32 rounded-xl bg-zinc-800 font-rounded font-bold">
 	{#if $gameStore.state == 0}
 		<AnnouncerPreGame {gameStore} {user} {isHost} {currentTeam} />
 	{:else if $gameStore.state == 1}

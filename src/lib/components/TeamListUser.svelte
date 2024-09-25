@@ -24,14 +24,14 @@
 
 <a
 	transition:fly={{ duration: 250, y: 0, x: -100 }}
-	class="h-8 mt-1 z-0 gap-2 p-1 rounded group transition hover:bg-zinc-800 w-full flex justify-between"
+	class="group z-0 mt-1 flex h-8 w-full justify-between gap-2 rounded p-1 transition hover:bg-zinc-800"
 	target="_blank"
 	rel="noopener noreferrer"
 	href="https://osu.ppy.sh/u/{gameuser.user_id}"
 >
 	<img src={gameuser.user.avatar_url} class="size-6 rounded-full" alt="" />
-	<span class="h-6 text-left mr-1 w-full col-start-2 col-end-3 flex items-center">
-		<div class="w-full overflow-hidden whitespace-nowrap flex items-center">
+	<span class="col-start-2 col-end-3 mr-1 flex h-6 w-full items-center text-left">
+		<div class="flex w-full items-center overflow-hidden whitespace-nowrap">
 			{gameuser.user.username}
 			<SquareArrowOutUpRight
 				class="ml-1 text-transparent transition group-hover:text-zinc-400"
@@ -40,12 +40,12 @@
 		</div>
 		{#if gameuser.host}
 			<span class="p-1">
-				<Crown class="text-yellow-600 size-4" />
+				<Crown class="size-4 text-yellow-600" />
 			</span>
 		{/if}
 	</span>
 	<span
-		class="h-6 col-start-3 col-end-4 text-xs italic font-rounded text-zinc-600 flex items-center"
+		class="col-start-3 col-end-4 flex h-6 items-center font-rounded text-xs italic text-zinc-600"
 	>
 		{#if gameuser.user.global_rank}
 			<span class="p-1">
@@ -56,7 +56,7 @@
 		{#if movable}
 			<button
 				on:click={move}
-				class="w-0 z-10 h-6 group-hover:w-6 flex items-center justify-center hover:bg-zinc-900 hover:text-blue-400 rounded transition-all"
+				class="z-10 flex h-6 w-0 items-center justify-center rounded transition-all hover:bg-zinc-900 hover:text-blue-400 group-hover:w-6"
 			>
 				<ArrowRightLeft class="size-4" />
 			</button>

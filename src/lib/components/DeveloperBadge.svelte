@@ -5,7 +5,7 @@
 
 {#if id == DEV_ID}
 	<span
-		class="text-xs not-italic font-rounded text-zinc-700 bg-yellow-500 p-1 px-2 font-black rounded-full"
+		class="rounded-full bg-yellow-500 p-1 px-2 font-rounded text-xs font-black not-italic text-zinc-700"
 		>DEV</span
 	>
 {/if}

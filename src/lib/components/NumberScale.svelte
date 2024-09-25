@@ -34,13 +34,13 @@
 </script>
 
 <div style="--c: {color}">
-	<div class="bg-zinc-900 p-1 rounded-full">
-		<div class="relative h-4 group">
+	<div class="rounded-full bg-zinc-900 p-1">
+		<div class="group relative h-4">
 			<input
 				on:change={update}
 				on:input={minChange}
 				bind:value={selected_min}
-				class="absolute top-[50%] transition left-0 z-10 group-hover:brightness-125"
+				class="absolute left-0 top-[50%] z-10 transition group-hover:brightness-125"
 				type="range"
 				{min}
 				{max}
@@ -49,7 +49,7 @@
 				on:change={update}
 				on:input={maxChange}
 				bind:value={selected_max}
-				class="absolute top-[50%] transition left-0 z-10 group-hover:brightness-125"
+				class="absolute left-0 top-[50%] z-10 transition group-hover:brightness-125"
 				type="range"
 				{min}
 				{max}
@@ -58,7 +58,7 @@
 				style="--l: calc({(selected_min * 100) / (max - min)}% - {selected_min /
 					(max - min)} * 1rem + 0.5rem); --w: calc({((selected_max - selected_min) * 100) /
 					(max - min)}% - {(selected_max - selected_min) / (max - min)} * 1rem)"
-				class="absolute z-0 left-[var(--l)] w-[var(--w)] h-full bg-[var(--c)]"
+				class="absolute left-[var(--l)] z-0 h-full w-[var(--w)] bg-[var(--c)]"
 			></div>
 		</div>
 	</div>

@@ -33,7 +33,7 @@
 
 <div
 	transition:scale={{ delay: 300 }}
-	class="grid p-2 bg-base-950 w-full max-w-[560px] rounded"
+	class="grid w-full max-w-[560px] rounded bg-base-950 p-2"
 	style="
 	grid-template-columns: 30px repeat({xMax + 1}, {xMax + 1}fr); 
 	grid-template-rows: 30px repeat({yMax + 1}, {yMax + 1}fr);
@@ -44,7 +44,7 @@
 		<img src="/icon.svg" class="grayscale" alt="" />
 		{#each new Array(xMax + 1) as _, i}
 			<div
-				class="w-full flex items-center justify-center font-bold text-zinc-500"
+				class="flex w-full items-center justify-center font-bold text-zinc-500"
 				style="grid-area: 1 / {i + 2} / 2 / {i + 3}"
 			>
 				{alphabet.charAt(i)}
@@ -53,7 +53,7 @@
 		<!-- Column Labels -->
 		{#each new Array(xMax + 1) as _, i}
 			<div
-				class="w-full flex items-center justify-center font-bold text-zinc-500"
+				class="flex w-full items-center justify-center font-bold text-zinc-500"
 				style="grid-area: 1 / {i + 2} / 2 / {i + 3}"
 			>
 				{alphabet.charAt(i)}
@@ -62,7 +62,7 @@
 		<!-- Row Labels -->
 		{#each new Array(yMax + 1) as _, i}
 			<div
-				class="w-full flex items-center justify-center font-bold font-display text-zinc-500"
+				class="flex w-full items-center justify-center font-display font-bold text-zinc-500"
 				style="grid-area: {i + 2} / 1 / {i + 3} / 2"
 			>
 				{i + 1}

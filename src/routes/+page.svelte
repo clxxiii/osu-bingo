@@ -13,7 +13,7 @@
 <div class="pattern h-[300px]"></div>
 <div class="m-auto mt-10 w-full max-w-[800px]">
 	<h1 class="text-3xl">Welcome to osu! Bingo!</h1>
-	<hr class="border-zinc-700 my-2" />
+	<hr class="my-2 border-zinc-700" />
 	<div class="w-full">
 		{#each data.games as game}
 			<GameListItem {game} />

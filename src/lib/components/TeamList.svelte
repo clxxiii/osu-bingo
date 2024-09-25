@@ -69,18 +69,18 @@
 	});
 </script>
 
-<div transition:slide={{ axis: 'x' }} class="p-4 h-full w-full bg-zinc-900 flex gap-4 rounded-lg">
+<div transition:slide={{ axis: 'x' }} class="flex h-full w-full gap-4 rounded-lg bg-zinc-900 p-4">
 	<div
 		data-team={team}
-		class="relative h-full w-full data-[team=BLUE]:border-blue-700 data-[team=RED]:border-amber-700 border-2 rounded-xl"
+		class="relative h-full w-full rounded-xl border-2 data-[team=BLUE]:border-blue-700 data-[team=RED]:border-amber-700"
 	>
 		<h1
 			data-team={team}
-			class="bg-zinc-900 capitalize font-semibold font-rounded data-[team=BLUE]:text-blue-700 data-[team=RED]:text-amber-700 absolute top-0 left-3 w-fit px-2 -translate-y-3.5"
+			class="absolute left-3 top-0 w-fit -translate-y-3.5 bg-zinc-900 px-2 font-rounded font-semibold capitalize data-[team=BLUE]:text-blue-700 data-[team=RED]:text-amber-700"
 		>
 			{team.toLowerCase()} Team
 		</h1>
-		<div class="p-2 overflow-y-scroll">
+		<div class="overflow-y-scroll p-2">
 			{#each users as gameuser}
 				<TeamListUser
 					{gameuser}
@@ -89,18 +89,18 @@
 				/>
 			{/each}
 		</div>
-		<div class="absolute bottom-0 w-full p-1 bg-black/30 rounded-xl">
+		<div class="absolute bottom-0 w-full rounded-xl bg-black/30 p-1">
 			{#if !gameuser?.team_name}
 				<button
 					on:click={join}
-					class="bg-green-600 hover:bg-green-700 active:bg-green-800 h-8 p-1 rounded-lg font-rounded font-bold w-full text-sm px-2 transition"
+					class="h-8 w-full rounded-lg bg-green-600 p-1 px-2 font-rounded text-sm font-bold transition hover:bg-green-700 active:bg-green-800"
 					>Join {team.toUpperCase()} team</button
 				>
 			{:else}
 				<button
 					on:click={switchTeam}
 					data-team={team.toUpperCase()}
-					class="data-[team=BLUE]:bg-blue-600 data-[team=BLUE]:hover:bg-blue-700 data-[team=BLUE]:active:bg-blue-800 data-[team=RED]:bg-amber-600 data-[team=RED]:hover:bg-amber-700 data-[team=RED]:active:bg-amber-800 h-8 p-1 rounded-lg font-rounded font-bold w-full text-sm px-2 transition"
+					class="h-8 w-full rounded-lg p-1 px-2 font-rounded text-sm font-bold transition data-[team=BLUE]:bg-blue-600 data-[team=RED]:bg-amber-600 data-[team=BLUE]:hover:bg-blue-700 data-[team=RED]:hover:bg-amber-700 data-[team=BLUE]:active:bg-blue-800 data-[team=RED]:active:bg-amber-800"
 				>
 					{gameuser.team_name == team ? 'Leave' : 'Switch to'}
 					{team.toUpperCase()} team

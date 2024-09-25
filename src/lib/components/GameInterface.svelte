@@ -22,11 +22,11 @@
 {#if enabled}
 	{#if $store}
 		<section class="grid">
-			<article class="row-start-1 row-end-2 col-start-1 col-end-2">
+			<article class="col-start-1 col-end-2 row-start-1 row-end-2">
 				<Announcer {currentTeam} gameStore={store} {user} isHost={is_host} />
 			</article>
 			<article
-				class="row-start-2 relative flex gap-x-4 items-center justify-center rounded-xl p-4 gap-y-2 row-end-3 col-start-1 col-end-2 bg-[rgba(0,0,0,0.5)]"
+				class="relative col-start-1 col-end-2 row-start-2 row-end-3 flex items-center justify-center gap-x-4 gap-y-2 rounded-xl bg-[rgba(0,0,0,0.5)] p-4"
 			>
 				{#if $store.state == 0}
 					<div class="h-[500px] w-[350px]">
@@ -42,7 +42,7 @@
 					</div>
 				{/if}
 				{#if is_host && $store.state == 0}
-					<div class="absolute top-0 right-0 p-2 z-10">
+					<div class="absolute right-0 top-0 z-10 p-2">
 						<button on:click={() => (hostSettingsOpen = !hostSettingsOpen)}>
 							{#if hostSettingsOpen}
 								<X class="size-8" />
@@ -56,7 +56,7 @@
 					{/if}
 				{/if}
 			</article>
-			<article class=" w-[500px] pl-4 relative row-start-1 row-end-3 col-start-2 col-end-3">
+			<article class=" relative col-start-2 col-end-3 row-start-1 row-end-3 w-[500px] pl-4">
 				{#key currentTeam}
 					{#if currentTeam || $store.state == 0 || $store.state == 2}
 						<Chatbox
@@ -64,7 +64,7 @@
 							enabled={currentTeam != undefined || is_host}
 						/>
 					{:else if $store.state == 1}
-						<div class="h-full rounded-lg bg-zinc-800 p-4 gap-y-4 grid grid-rows-2">
+						<div class="grid h-full grid-rows-2 gap-y-4 rounded-lg bg-zinc-800 p-4">
 							<TeamList team="RED" gameStore={store} host={is_host} {user} />
 							<TeamList team="BLUE" gameStore={store} host={is_host} {user} />
 						</div>
@@ -74,7 +74,7 @@
 			{#if $square != null}
 				<article
 					transition:fade={{ duration: 150 }}
-					class="pl-4 relative row-start-1 row-end-3 col-start-2 col-end-3"
+					class="relative col-start-2 col-end-3 row-start-1 row-end-3 pl-4"
 				>
 					<SquareSidebar gameStore={store} tiebreaker={$store.tiebreaker} />
 				</article>

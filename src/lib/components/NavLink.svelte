@@ -4,7 +4,7 @@
 
 <a
 	{href}
-	class="p-2 rounded relative transition hover:bg-[rgba(0,0,0,0.5)] hover:after:w-[100%] after:transition-all uppercase after:absolute after:bottom-0 hover:after:left-[0%] after:left-[50%] after:w-[0%] after:bg-purple-300 after:h-[2px] block"
+	class="relative block rounded p-2 uppercase transition after:absolute after:bottom-0 after:left-[50%] after:h-[2px] after:w-[0%] after:bg-purple-300 after:transition-all hover:bg-[rgba(0,0,0,0.5)] hover:after:left-[0%] hover:after:w-[100%]"
 >
 	<slot />
 </a>

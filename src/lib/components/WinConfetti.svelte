@@ -14,7 +14,7 @@
 </script>
 
 <div
-	class="pointer-events-none fixed top-[-50px] left-0 w-screen h-screen flex justify-center overflow-hidden"
+	class="pointer-events-none fixed left-0 top-[-50px] flex h-screen w-screen justify-center overflow-hidden"
 >
 	<!-- Fullscreen -->
 	<Confetti
@@ -29,10 +29,10 @@
 	/>
 
 	<!-- Cannons -->
-	<div class="absolute left-0 bottom-0">
+	<div class="absolute bottom-0 left-0">
 		<Confetti colorArray={colors} delay={[0, 250]} x={[0.25, 3]} y={[0.75, 4]} />
 	</div>
-	<div class="absolute right-0 bottom-0">
+	<div class="absolute bottom-0 right-0">
 		<Confetti colorArray={colors} delay={[0, 250]} x={[-0.25, -3]} y={[0.75, 4]} />
 	</div>
 </div>

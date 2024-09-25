@@ -32,7 +32,7 @@
 </script>
 
 {#if time}
-	<span data-soon={soon} class="data-[soon=true]:animate-warning flex items-center gap-x-1">
+	<span data-soon={soon} class="flex items-center gap-x-1 data-[soon=true]:animate-warning">
 		{#if text}
 			{text}
 			{#if clock}

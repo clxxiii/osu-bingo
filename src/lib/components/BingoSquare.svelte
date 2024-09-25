@@ -34,25 +34,25 @@
 <button
 	style="--url: url({square.data.square_url})"
 	data-animation={blinking ? 'blinking' : bouncing ? 'bouncing' : ''}
-	class="block group data-[animation=blinking]:animate-pulse data-[animation=bouncing]:animate-bounce transition bg-black relative square z-0 w-full h-full overflow-hidden rounded"
+	class="square group relative z-0 block h-full w-full overflow-hidden rounded bg-black transition data-[animation=blinking]:animate-pulse data-[animation=bouncing]:animate-bounce"
 	on:click={click}
 >
-	<div class="background absolute top-0 size-full -z-10 transition">
+	<div class="background absolute top-0 -z-10 size-full transition">
 		{#if claimed === 'RED'}
-			<div class="absolute top-0 size-full bg-amber-600 z-10 opacity-70"></div>
-			<div class="absolute bg-img top-0 size-full z-0 grayscale"></div>
+			<div class="absolute top-0 z-10 size-full bg-amber-600 opacity-70"></div>
+			<div class="bg-img absolute top-0 z-0 size-full grayscale"></div>
 		{:else if claimed === 'BLUE'}
-			<div class="absolute top-0 size-full bg-blue-600 z-10 opacity-70"></div>
-			<div class="absolute bg-img top-0 size-full z-0 grayscale"></div>
+			<div class="absolute top-0 z-10 size-full bg-blue-600 opacity-70"></div>
+			<div class="bg-img absolute top-0 z-0 size-full grayscale"></div>
 		{:else}
 			<div
-				class="transition absolute bg-img top-0 size-full z-0 grayscale-[100%] hover:grayscale-[0%]"
+				class="bg-img absolute top-0 z-0 size-full grayscale-[100%] transition hover:grayscale-[0%]"
 			></div>
 		{/if}
 	</div>
 	<div class="popout-box font-display">
 		<div
-			class="flex items-center justify-center gap-1 font-rounded font-bold text-xs rounded-tr absolute w-12 bottom-0 left-0 bg-zinc-900 z-20 pointer-events-none"
+			class="pointer-events-none absolute bottom-0 left-0 z-20 flex w-12 items-center justify-center gap-1 rounded-tr bg-zinc-900 font-rounded text-xs font-bold"
 		>
 			<OsuModeIcon mode={square.data.gamemode} size={12} />
 			{difficulty}

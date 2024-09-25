@@ -32,12 +32,12 @@
 <div
 	data-team={currentTeam}
 	class="
-data-[team=BLUE]:bg-blue-900 h-full w-[250px] transition data-[team=RED]:bg-amber-900 bg-zinc-900/50 p-2 rounded-lg flex gap-x-2"
+flex h-full w-[250px] gap-x-2 rounded-lg bg-zinc-900/50 p-2 transition data-[team=BLUE]:bg-blue-900 data-[team=RED]:bg-amber-900"
 >
 	{#if buttons}
 		<div
 			data-team={currentTeam}
-			class="transition flex data-[team=BLUE]:text-blue-700 data-[team=RED]:text-amber-700 flex-col leading-4 items-center justify-center text-zinc-700"
+			class="flex flex-col items-center justify-center leading-4 text-zinc-700 transition data-[team=BLUE]:text-blue-700 data-[team=RED]:text-amber-700"
 		>
 			<span>T</span>
 			<span>E</span>
@@ -45,18 +45,18 @@ data-[team=BLUE]:bg-blue-900 h-full w-[250px] transition data-[team=RED]:bg-ambe
 			<span>M</span>
 		</div>
 	{/if}
-	<div class="flex flex-col justify-center gap-y-2 w-full">
+	<div class="flex w-full flex-col justify-center gap-y-2">
 		{#if !buttons}
 			<div
 				data-team={currentTeam}
-				class="transition text-center data-[team=BLUE]:text-blue-700 data-[team=RED]:text-amber-700 text-zinc-700"
+				class="text-center text-zinc-700 transition data-[team=BLUE]:text-blue-700 data-[team=RED]:text-amber-700"
 			>
 				YOUR TEAM
 			</div>
 		{/if}
 		<span
 			data-team={currentTeam}
-			class="bg-zinc-600 h-8 transition rounded-full flex justify-center items-center data-[team=BLUE]:bg-blue-700 data-[team=RED]:bg-amber-700"
+			class="flex h-8 items-center justify-center rounded-full bg-zinc-600 transition data-[team=BLUE]:bg-blue-700 data-[team=RED]:bg-amber-700"
 		>
 			{#if currentTeam}
 				{currentTeam.toUpperCase()} TEAM
@@ -68,14 +68,14 @@ data-[team=BLUE]:bg-blue-900 h-full w-[250px] transition data-[team=RED]:bg-ambe
 			{#if currentTeam}
 				<button
 					on:click={leave}
-					class="bg-amber-600 hover:bg-amber-700 active:bg-amber-800 h-8 p-1 rounded-lg text-sm px-2 transition"
+					class="h-8 rounded-lg bg-amber-600 p-1 px-2 text-sm transition hover:bg-amber-700 active:bg-amber-800"
 				>
 					LEAVE
 				</button>
 			{:else}
 				<button
 					on:click={join}
-					class="bg-green-600 hover:bg-green-700 active:bg-green-800 h-8 p-1 rounded-lg text-sm px-2 transition"
+					class="h-8 rounded-lg bg-green-600 p-1 px-2 text-sm transition hover:bg-green-700 active:bg-green-800"
 					>JOIN</button
 				>
 			{/if}

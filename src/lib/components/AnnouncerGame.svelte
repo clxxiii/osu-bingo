@@ -18,10 +18,10 @@
 	});
 </script>
 
-<div class="flex justify-between gap-x-2 p-2 items-center h-full">
+<div class="flex h-full items-center justify-between gap-x-2 p-2">
 	<AnnouncerTeam {currentTeam} {user} />
 
-	<div class="bg-zinc-900/50 font-rounded p-2 h-full rounded-lg">
+	<div class="h-full rounded-lg bg-zinc-900/50 p-2 font-rounded">
 		<h2 class="text-xl">Current Rules:</h2>
 		<ul class="ml-4 list-disc">
 			<li>

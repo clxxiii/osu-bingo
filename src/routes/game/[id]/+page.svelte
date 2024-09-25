@@ -54,7 +54,7 @@
 {#if !$listener}
 	<div
 		transition:fade
-		class="fixed z-30 top-0 left-0 w-screen flex justify-center items-center h-screen bg-black/50 backdrop-blur-md"
+		class="fixed left-0 top-0 z-30 flex h-screen w-screen items-center justify-center bg-black/50 backdrop-blur-md"
 	>
 		You lost connection to the game, attempting to reconnect.
 		<br />
@@ -64,7 +64,7 @@
 {#if $login_request}
 	<div
 		transition:fade
-		class="fixed z-30 top-12 left-0 w-screen flex justify-center items-center h-screen bg-black/50 backdrop-blur-md"
+		class="fixed left-0 top-12 z-30 flex h-screen w-screen items-center justify-center bg-black/50 backdrop-blur-md"
 	>
 		<LoginRequest />
 	</div>

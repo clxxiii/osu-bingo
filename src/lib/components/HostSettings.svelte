@@ -38,11 +38,11 @@
 	};
 </script>
 
-<div class="absolute top-0 right-0 min-w-[300px] h-full rounded-r-xl overflow-hidden">
-	<div transition:slide={{ axis: 'x' }} class="absolute right-0 w-full h-full bg-zinc-800 p-2">
-		<h1 class="font-rounded text-2xl pt-4 pb-4 text-center font-bold">Host Settings</h1>
+<div class="absolute right-0 top-0 h-full min-w-[300px] overflow-hidden rounded-r-xl">
+	<div transition:slide={{ axis: 'x' }} class="absolute right-0 h-full w-full bg-zinc-800 p-2">
+		<h1 class="pb-4 pt-4 text-center font-rounded text-2xl font-bold">Host Settings</h1>
 		<div
-			class="bg-zinc-900/50 flex mb-4 items-center font-rounded uppercase font-bold flex-col w-full p-2 rounded-lg"
+			class="mb-4 flex w-full flex-col items-center rounded-lg bg-zinc-900/50 p-2 font-rounded font-bold uppercase"
 		>
 			Game Visibility
 			<div class="w-full max-w-[200px] pt-1">
@@ -57,7 +57,7 @@
 			</div>
 		</div>
 		<div
-			class="bg-zinc-900/50 mb-4 flex items-center font-rounded uppercase font-bold flex-col w-full p-2 rounded-lg"
+			class="mb-4 flex w-full flex-col items-center rounded-lg bg-zinc-900/50 p-2 font-rounded font-bold uppercase"
 		>
 			Star Rating
 			<div class="w-full pt-1">
@@ -71,7 +71,7 @@
 			</div>
 		</div>
 		<div
-			class="bg-zinc-900/50 bg-yellow-200 flex items-center font-rounded uppercase font-bold flex-col w-full p-2 rounded-lg"
+			class="flex w-full flex-col items-center rounded-lg bg-yellow-200 bg-zinc-900/50 p-2 font-rounded font-bold uppercase"
 		>
 			Map Length
 			<div class="w-full pt-1">

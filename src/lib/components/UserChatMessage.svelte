@@ -11,7 +11,7 @@
 	});
 </script>
 
-<div class="group w-full p-1 px-3 hover:bg-[rgba(0,0,0,0.2)] relative">
+<div class="group relative w-full p-1 px-3 hover:bg-[rgba(0,0,0,0.2)]">
 	<DeveloperBadge id={chat.user.user_id} />
 	{#if chat.user.host}
 		<Crown class="group inline size-4 text-yellow-600" />
@@ -21,7 +21,7 @@
 	<span class="font-bold">{chat.user.user.username}: </span>
 	{chat.text}
 	<div
-		class="absolute bottom-0 select-none right-0 p-1 text-xs text-zinc-700 invisible group-hover:visible font-rounded"
+		class="invisible absolute bottom-0 right-0 select-none p-1 font-rounded text-xs text-zinc-700 group-hover:visible"
 	>
 		{time}
 	</div>
