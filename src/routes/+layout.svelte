@@ -31,7 +31,16 @@
 			}
 			if (!event) return;
 
-			if (isInit(event)) listener.set(event.data.id);
+			if (isInit(event)) {
+				listener.set(event.data.id);
+
+				// Switch listener immediately if we're on a game page
+				if (data.game_id) {
+					fetch(`/game_stream/change_game?id=${event.data.id}&game_id=gam_${data.game_id}`, {
+						method: 'POST'
+					});
+				}
+			}
 			console.log(event);
 			updateGame(event);
 		});
