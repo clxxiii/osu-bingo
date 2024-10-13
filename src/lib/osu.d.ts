@@ -38,7 +38,7 @@ export namespace Osu {
 		is_supporter: boolean;
 		last_visit?: string;
 		pm_friends_only: boolean;
-		profile_colour?: string;
+		profile_colour: string | null;
 		username: string;
 		// Optional Attributes
 		is_restricted?: boolean;
@@ -78,7 +78,7 @@ export namespace Osu {
 		};
 		ranked_beatmapset_count?: number;
 		replays_watched_counts?: Count[];
-		scores_best_count: number;
+		scores_best_count?: number;
 		scores_first_count?: number;
 		scores_pinned_count?: number;
 		scores_recent_count?: number;
@@ -248,6 +248,7 @@ export namespace Osu {
 		id: number;
 		nsfw: boolean;
 		offset: number;
+		hype?: number | null;
 		play_count: number;
 		preview_url: string;
 		source: string;
@@ -255,9 +256,11 @@ export namespace Osu {
 		spotlight: boolean;
 		title: string;
 		title_unicode: string;
-		user_id: string;
+		track_id?: string | null
+		user_id: number;
 		// optional
 		beatmaps?: (Beatmap | BeatmapExtended)[];
+		video?: boolean;
 	}
 	interface Covers {
 		cover: string;
@@ -286,12 +289,13 @@ export namespace Osu {
 		accuracy: number; // OD
 		ar: number;
 		bpm: number;
+		checksum?: string;
 		convert: boolean;
 		count_circles: number;
 		count_sliders: number;
 		count_spinners: number;
 		cs: number;
-		deleted_at?: string;
+		deleted_at: string | null;
 		drain: number;
 		hit_length: number;
 		is_scoreable: boolean;
@@ -299,13 +303,13 @@ export namespace Osu {
 		mode_int: number;
 		passcount: number;
 		playcount: number;
-		status: number;
+		ranked?: number;
 		url: string;
-		max_combo: number;
+		max_combo?: number;
 	}
 	interface Score {
 		accuracy: number;
-		best_id?: number;
+		best_id?: number | null;
 		created_at?: string;
 		id: number;
 		max_combo: number;
@@ -339,22 +343,24 @@ export namespace Osu {
 		ranked: boolean;
 		preserve: boolean;
 		maximum_statistics?: ScoreStatistics;
+		processed: boolean;
 		mods: { acronym: ModAbbr }[];
 		statistics: ScoreStatistics;
 		beatmap_id: number;
-		best_id?: number;
+		best_id?: number | null;
 		id: number;
 		rank: Grade;
 		type: string;
 		user_id: number;
 		accuracy: number;
-		build_id?: number;
+		build_id?: number | null;
 		ended_at: string;
 		has_replay: boolean;
 		is_perfect_combo: boolean;
 		legacy_perect: boolean;
 		legacy_score_id: number | null;
 		legacy_total_score: number; // 0 if set on lazer
+		classic_total_score: number;
 		max_combo: number;
 		passed: boolean;
 		playlist_item_id?: number;

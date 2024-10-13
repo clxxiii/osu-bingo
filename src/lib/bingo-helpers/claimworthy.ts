@@ -23,7 +23,7 @@ type Evaluator = {
 const evaluators: { [key: string]: Evaluator } = {
 	fc: {
 		display_string: () => 'Get an FC',
-		evaluate: (score) => score.is_perfect_combo
+		evaluate: (score) => evaluators["pass"].evaluate(score, "") && score.is_perfect_combo
 	},
 	rank: {
 		display_string: (value) => `Get an ${value.toUpperCase()} rank or higher`,
@@ -32,7 +32,7 @@ const evaluators: { [key: string]: Evaluator } = {
 			const scoreRank = hierarchy.indexOf(score.rank.toUpperCase() ?? 'F');
 			const testRank = hierarchy.indexOf(value.toUpperCase() ?? 'F');
 
-			return scoreRank <= testRank;
+			return evaluators["pass"].evaluate(score, value) && (scoreRank <= testRank);
 		}
 	},
 	pp: {
@@ -41,7 +41,7 @@ const evaluators: { [key: string]: Evaluator } = {
 			const pp = score.pp ?? 0;
 			const target = parseFloat(value);
 
-			return pp > target;
+			return evaluators["pass"].evaluate(score, value) && (pp >= target);
 		}
 	},
 	miss: {
@@ -50,7 +50,7 @@ const evaluators: { [key: string]: Evaluator } = {
 			const miss = score.statistics.miss ?? 0;
 			const target = parseInt(value);
 
-			return miss < target;
+			return evaluators["pass"].evaluate(score, value) && (miss <= target);
 		}
 	},
 	combo: {
@@ -59,7 +59,7 @@ const evaluators: { [key: string]: Evaluator } = {
 			const combo = score.max_combo;
 			const target = parseInt(value);
 
-			return combo > target;
+			return evaluators["pass"].evaluate(score, value) && (combo >= target);
 		}
 	},
 	score: {
@@ -68,7 +68,7 @@ const evaluators: { [key: string]: Evaluator } = {
 			const total_score = score.total_score;
 			const target = parseInt(value);
 
-			return total_score > target;
+			return evaluators["pass"].evaluate(score, value) && (total_score >= target);
 		}
 	},
 	pass: {
