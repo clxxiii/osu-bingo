@@ -2,7 +2,7 @@ import q from '$lib/drizzle/queries';
 import { logger } from '$lib/logger';
 import handlers from '../event_handler';
 
-const POLLING_INTERVAL_MS = 5 * 1000;
+const POLLING_INTERVAL_MS = 30 * 1000;
 
 const scheduledEvents: Map<string, boolean> = new Map();
 let timeout: Timer;
