@@ -1,4 +1,4 @@
-import { and, eq, lt } from 'drizzle-orm';
+import { and, eq, lt, not } from 'drizzle-orm';
 import { db } from '..';
 import { BingoGame, GameUser, Session, User } from '../schema';
 import { env } from '$env/dynamic/private';
@@ -79,6 +79,8 @@ export const isInGame = async (user_id: number) => {
 			.innerJoin(BingoGame, eq(GameUser.game_id, BingoGame.id))
 			.where(
 				and(
+					not(eq(GameUser.team_name, "invited")),
+					not(eq(GameUser.team_name, "none")),
 					eq(GameUser.user_id, user_id),
 					lt(BingoGame.state, 2))
 			)

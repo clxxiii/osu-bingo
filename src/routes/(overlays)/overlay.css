@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Roundor';
+  src: url('/fonts/RoundorNonCommercial.otf');
+}
+
+@font-face {
+  font-family: 'Comfortaa';
+  src: url('/fonts/Comfortaa-VariableFont_wght.ttf');
+}
+
+@font-face {
+  font-family: 'CutiveMono';
+  src: url('/fonts/CutiveMono-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  font-weight: 400;
+  src: url('/fonts/montserrat/Montserrat-Regular.ttf');
+}
