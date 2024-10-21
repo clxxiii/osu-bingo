@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm';
+import { and, eq, lt } from 'drizzle-orm';
 import { db } from '..';
 import { BingoGame, GameUser, Session, User } from '../schema';
 import { env } from '$env/dynamic/private';
@@ -77,7 +77,11 @@ export const isInGame = async (user_id: number) => {
 			})
 			.from(GameUser)
 			.innerJoin(BingoGame, eq(GameUser.game_id, BingoGame.id))
-			.where(and(eq(GameUser.user_id, user_id), eq(BingoGame.state, 1)))
+			.where(
+				and(
+					eq(GameUser.user_id, user_id),
+					lt(BingoGame.state, 2))
+			)
 	)[0];
 	logger.silly('Finished db request', { function: 'isInGame', obj: 'gameUser', dir: 'end' });
 	return gameUser;

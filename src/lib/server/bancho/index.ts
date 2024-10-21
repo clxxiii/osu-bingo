@@ -22,7 +22,7 @@ if (env.BANCHO_USER && env.BANCHO_PASS) {
 		const gameCheck = await q.isInGame(user.id);
 		if (!gameCheck) return;
 		const game = await q.getGame(gameCheck.game_id);
-		if (!game) return;
+		if (!game || game.state != 1) return;
 		await sendBoard(user.id, game);
 	});
 }
