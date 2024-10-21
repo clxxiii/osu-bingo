@@ -11,6 +11,7 @@
 	export let hostSettingsOpen = true;
 	import { fade } from 'svelte/transition';
 	import { Settings, X } from 'lucide-svelte';
+	import LoadingIcon from './LoadingIcon.svelte';
 
 	export let enabled: boolean;
 	export let is_host: boolean;
@@ -21,7 +22,7 @@
 
 {#if enabled}
 	{#if $store}
-		<section class="grid">
+		<section in:fade={{ delay: 200, duration: 200 }} class="grid">
 			<article class="col-start-1 col-end-2 row-start-1 row-end-2">
 				<Announcer {currentTeam} gameStore={store} {user} isHost={is_host} />
 			</article>
@@ -79,13 +80,19 @@
 					<SquareSidebar gameStore={store} tiebreaker={$store.tiebreaker} />
 				</article>
 			{/if}
-		</section>
 
-		{#if winner}
-			<WinConfetti team={winner} />
-		{/if}
+			{#if winner}
+				<WinConfetti team={winner} />
+			{/if}
+		</section>
 	{:else}
-		loading game
+		<div
+			out:fade={{ duration: 200 }}
+			class="flex w-full flex-col items-center font-rounded text-lg"
+		>
+			<LoadingIcon size={75} />
+			<div class="mt-4">LOADING GAME</div>
+		</div>
 	{/if}
 {:else}
 	You haven't been invited to this private game
