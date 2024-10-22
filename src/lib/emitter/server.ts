@@ -74,7 +74,7 @@ export const removeListener = (id: string) => {
 		const game = games.get(listener.game_id);
 		if (game) {
 			const i = game.indexOf(id);
-			if (i != -1) game.splice(i);
+			if (i != -1) game.splice(i, 1);
 
 			if (game.length == 0) games.delete(listener.game_id);
 			else games.set(listener.game_id, game);
@@ -85,7 +85,7 @@ export const removeListener = (id: string) => {
 		const user = users.get(listener.user_id);
 		if (user) {
 			const i = user.indexOf(id);
-			if (i != -1) user.splice(i);
+			if (i != -1) user.splice(i, 1);
 
 			if (user.length == 0) users.delete(listener.user_id);
 			else users.set(listener.user_id, user);
@@ -96,7 +96,7 @@ export const removeListener = (id: string) => {
 		const game_channel = game_channels.get(`${listener.game_id}_${listener.channel}`);
 		if (game_channel) {
 			const i = game_channel.indexOf(id);
-			if (i != -1) game_channel.splice(i);
+			if (i != -1) game_channel.splice(i, 1);
 
 			if (game_channel.length == 0) game_channels.delete(`${listener.game_id}_${listener.channel}`);
 			else game_channels.set(`${listener.game_id}_${listener.channel}`, game_channel);
@@ -159,7 +159,7 @@ export const switchGame = (id: string, game_id: string) => {
 		const game = games.get(listener.game_id);
 		if (game) {
 			const i = game.indexOf(id);
-			if (i != -1) game.splice(i);
+			if (i != -1) game.splice(i, 1);
 
 			if (game.length == 0) games.delete(listener.game_id);
 			else games.set(listener.game_id, game);
@@ -179,6 +179,7 @@ export const switchGame = (id: string, game_id: string) => {
 		listener,
 		type: 'listener_game_switch'
 	});
+	console.log({ users, games })
 	return listener;
 };
 
@@ -191,7 +192,9 @@ export const removeGame = (id: string) => {
 		const game = games.get(listener.game_id);
 		if (game) {
 			const i = game.indexOf(id);
-			if (i != -1) game.splice(i);
+			console.log(game);
+			if (i != -1) game.splice(i, 1);
+			console.log(game);
 
 			if (game.length == 0) games.delete(listener.game_id);
 			else games.set(listener.game_id, game);
@@ -202,6 +205,7 @@ export const removeGame = (id: string) => {
 	listeners.set(id, listener);
 
 	logger.info(`[~] Switched listener ${id} to no game`, { listener, type: 'listener_game_switch' });
+	console.log({ users, games })
 	return listener;
 };
 
@@ -215,7 +219,7 @@ export const switchChannel = (id: string, channel: string) => {
 		const game_channel = game_channels.get(`${listener.game_id}_${listener.channel}`);
 		if (game_channel) {
 			const i = game_channel.indexOf(id);
-			if (i != -1) game_channel.splice(i);
+			if (i != -1) game_channel.splice(i, 1);
 
 			if (game_channel.length == 0) game_channels.delete(`${listener.game_id}_${listener.channel}`);
 			else game_channels.set(`${listener.game_id}_${listener.channel}`, game_channel);
