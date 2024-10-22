@@ -3,7 +3,7 @@
 	import AnnouncerTeam from './AnnouncerTeam.svelte';
 	import AnnouncerInvite from './AnnouncerInvite.svelte';
 
-	export let gameStore: Writable<Bingo.Card>;
+	export let gameStore: Writable<Bingo.Card | null>;
 	export let user: Bingo.User | undefined;
 	export let isHost: boolean;
 	export let currentTeam: string | undefined;
@@ -25,5 +25,7 @@
 			<button on:click={start} class="rounded-full bg-green-600 p-1 px-2 text-sm"> START</button>
 		{/if}
 	</div>
-	<AnnouncerInvite linkCode={$gameStore.link_id} hidden={!$gameStore.public} />
+	{#if $gameStore}
+		<AnnouncerInvite linkCode={$gameStore.link_id} hidden={!$gameStore.public} />
+	{/if}
 </div>

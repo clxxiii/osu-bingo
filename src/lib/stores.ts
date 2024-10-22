@@ -10,6 +10,6 @@ export const listener = writable<string | null>(null);
 
 export const user = writable<Bingo.User | undefined>(undefined);
 
-export const game = writable<Bingo.Card>();
+export const game = writable<Bingo.Card | null>(null);
 
 export const chats = writable<(ChatMessage | GameUserEvent)[]>([]);

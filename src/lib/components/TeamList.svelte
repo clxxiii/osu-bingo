@@ -5,7 +5,7 @@
 	import { slide } from 'svelte/transition';
 	import { browser } from '$app/environment';
 
-	export let gameStore: Writable<Bingo.Card>;
+	export let gameStore: Writable<Bingo.Card | null>;
 	export let team: string;
 	export let user: Bingo.User | undefined;
 	export let host: boolean = false;
@@ -53,6 +53,8 @@
 
 	onMount(() => {
 		gameStore.subscribe((value) => {
+			if (!value) return;
+
 			const players: Bingo.Card.FullUser[] = [];
 			gameuser = null;
 			for (const player of value.users) {
@@ -85,7 +87,7 @@
 				<TeamListUser
 					{gameuser}
 					movable={host ||
-						(gameuser.user_id == user?.id && ($gameStore.allow_team_switching ?? false))}
+						(gameuser.user_id == user?.id && ($gameStore?.allow_team_switching ?? false))}
 				/>
 			{/each}
 		</div>

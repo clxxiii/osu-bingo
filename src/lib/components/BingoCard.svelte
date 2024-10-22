@@ -5,13 +5,15 @@
 	import { square } from '$lib/stores';
 	import { checkWin } from '$lib/bingo-helpers/check_win';
 
-	export let store: Writable<Bingo.Card>;
+	export let store: Writable<Bingo.Card | null>;
 	let yMax: number;
 	let xMax: number;
 
 	let winningLine: number[] | null = null;
 
 	store.subscribe((card) => {
+		if (!card) return;
+
 		if (card.squares) {
 			yMax = Math.max(...card.squares.map((x) => x.y_pos));
 			xMax = Math.max(...card.squares.map((x) => x.x_pos));
@@ -25,7 +27,7 @@
 	const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 	const click = (s: Bingo.Card.FullSquare) => {
-		const index = $store.squares?.findIndex((x) => x.id == s.id);
+		const index = $store?.squares?.findIndex((x) => x.id == s.id);
 		if (index == undefined) return;
 		$square = index;
 	};
@@ -40,7 +42,7 @@
 	aspect-ratio: {xMax + 1} / {yMax + 1}
 	"
 >
-	{#if $store.squares}
+	{#if $store && $store.squares}
 		<img src="/icon.svg" class="grayscale" alt="" />
 		{#each new Array(xMax + 1) as _, i}
 			<div

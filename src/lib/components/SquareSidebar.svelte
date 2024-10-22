@@ -7,14 +7,14 @@
 	import ScoreList from './ScoreList.svelte';
 
 	export let tiebreaker: string;
-	export let gameStore: Writable<Bingo.Card>;
+	export let gameStore: Writable<Bingo.Card | null>;
 
 	let square: Bingo.Card.FullSquare | null = null;
 	let sidebar: HTMLDivElement;
 	let transition = false;
 
 	store.subscribe(async (index) => {
-		if (index == null || $gameStore.squares == null) {
+		if (index == null || $gameStore?.squares == null) {
 			square = null;
 			return;
 		}
@@ -31,6 +31,8 @@
 		transition = !transition;
 	});
 	gameStore.subscribe((value) => {
+		if (!value) return;
+
 		const newSquare = value.squares?.find((x) => x.id == square?.id);
 		if (newSquare) {
 			square = newSquare;

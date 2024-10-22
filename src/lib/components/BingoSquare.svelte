@@ -4,14 +4,14 @@
 	import OsuModeIcon from '$lib/components/OsuModeIcon.svelte';
 
 	export let square: Bingo.Card.FullSquare;
-	export let store: Writable<Bingo.Card>;
+	export let store: Writable<Bingo.Card | null>;
 
 	export let blinking = false;
 	export let bouncing = false;
 
 	onMount(() => {
 		store.subscribe((card) => {
-			if (!card.squares) return;
+			if (!card?.squares) return;
 
 			square = card.squares
 				.filter((x) => x.x_pos == square.x_pos)

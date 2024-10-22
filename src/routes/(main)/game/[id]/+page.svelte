@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { onDestroy, onMount } from 'svelte';
-	import { game as store, listener, login_request } from '$lib/stores';
+	import { game as store, square, listener, login_request } from '$lib/stores';
 	import GameInterface from '$lib/components/GameInterface.svelte';
 	import LoginRequest from '$lib/components/LoginRequest.svelte';
 	import { fade } from 'svelte/transition';
@@ -31,6 +31,8 @@
 		if ($listener) {
 			fetch(`/game_stream/change_game?id=${$listener}`, { method: 'POST' });
 		}
+		store.set(null);
+		square.set(null);
 	});
 </script>
 
