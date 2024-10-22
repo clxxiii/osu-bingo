@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { game } from '$lib/stores';
+	import MinimalCard from '../SimpleCard.svelte';
 
 	export let settings: Settings;
 
@@ -19,11 +20,8 @@
 			{:else}
 				Private Game
 			{/if}
-		{:else if $game.state == 1}
-			Game has started!
 		{:else}
-			Game has ended
+			<MinimalCard cardStore={game} />
 		{/if}
 	{/if}
 </div>
-{JSON.stringify($game)}

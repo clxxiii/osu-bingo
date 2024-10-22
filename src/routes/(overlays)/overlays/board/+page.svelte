@@ -50,7 +50,7 @@
 
 			if (isInit(event)) {
 				listener_id = event.data.id;
-				fetch(`/game_stream/change_game?id=${listener_id}&game_id=${game_id}`, {
+				fetch(`/game_stream/change_game?id=${listener_id}&game_id=gam_${game_id}`, {
 					method: 'POST'
 				});
 			}
@@ -73,9 +73,9 @@
 					console.log('No game found');
 					return;
 				}
-				game_id = user.game_id;
+				game_id = user.game_id.substring(4);
 				if (listener_id) {
-					fetch(`/game_stream/change_game?id=${listener_id}&game_id=${game_id}`, {
+					fetch(`/game_stream/change_game?id=${listener_id}&game_id=gam_${game_id}`, {
 						method: 'POST'
 					});
 				}
@@ -92,7 +92,7 @@
 <div style="--s: {settings.scale}" class="relative size-[400px] origin-top-left scale-[var(--s)]">
 	{#if game_id}
 		<div class="absolute size-full" transition:blur={{ duration: 500 }}>
-			<Board />
+			<Board {settings} />
 		</div>
 	{:else}
 		<div
