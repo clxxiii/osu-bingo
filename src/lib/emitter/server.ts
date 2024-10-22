@@ -179,7 +179,6 @@ export const switchGame = (id: string, game_id: string) => {
 		listener,
 		type: 'listener_game_switch'
 	});
-	console.log({ users, games })
 	return listener;
 };
 
@@ -192,9 +191,7 @@ export const removeGame = (id: string) => {
 		const game = games.get(listener.game_id);
 		if (game) {
 			const i = game.indexOf(id);
-			console.log(game);
 			if (i != -1) game.splice(i, 1);
-			console.log(game);
 
 			if (game.length == 0) games.delete(listener.game_id);
 			else games.set(listener.game_id, game);
@@ -205,7 +202,6 @@ export const removeGame = (id: string) => {
 	listeners.set(id, listener);
 
 	logger.info(`[~] Switched listener ${id} to no game`, { listener, type: 'listener_game_switch' });
-	console.log({ users, games })
 	return listener;
 };
 
