@@ -43,27 +43,22 @@ export const getChatChannel = async (
 	const chats: Bingo.Card.FullChat[] = [];
 	logger.silly('Started db request', { function: 'getChatChannel', obj: 'dbChats', dir: 'start' });
 	const dbChats = await db
-		.select()
+		.select({
+			chat: Chat,
+			gameuser: GameUser,
+			user: User
+		})
 		.from(Chat)
-		.where(and(eq(Chat.game_id, game_id), eq(Chat.channel, channel.toUpperCase())));
+		.leftJoin(User, eq(Chat.user_id, User.id))
+		.leftJoin(GameUser, and(eq(User.id, GameUser.user_id), eq(Chat.game_id, GameUser.game_id)))
+		.where(and(
+			eq(Chat.game_id, game_id),
+			eq(Chat.channel, channel.toUpperCase())))
 	logger.silly('Finished db request', { function: 'getChatChannel', obj: 'dbChats', dir: 'end' });
 
-	for (const chat of dbChats) {
-		logger.silly('Started db request', {
-			function: 'getChatChannel',
-			obj: 'userObj',
-			dir: 'start'
-		});
-		const userObj = (
-			await db
-				.select()
-				.from(GameUser)
-				.innerJoin(User, eq(GameUser.user_id, User.id))
-				.where(eq(User.id, chat.user_id))
-		)[0];
-		logger.silly('Finished db request', { function: 'getChatChannel', obj: 'userObj', dir: 'end' });
-
-		chats.push({ ...chat, user: { ...userObj.GameUser, user: userObj.User } });
+	for (const data of dbChats) {
+		if (!data || !data.user || !data.gameuser) continue;
+		chats.push({ ...data.chat, user: { ...data.gameuser, user: data.user } });
 	}
 
 	return chats;

@@ -1,8 +1,8 @@
-import { and, eq, not, or } from 'drizzle-orm';
+import { and, desc, eq, or } from 'drizzle-orm';
 import { db } from '..';
-import { BingoGame, BingoSquare, GameUser, Map, MapStats, Score, TimeEvent, User } from '../schema';
-import { getTemplate } from './template';
+import { BingoGame, BingoSquare, GameUser, Map, MapStats, Score, Template, TimeEvent, User } from '../schema';
 import { logger } from '$lib/logger';
+import { getTemplate } from './template';
 
 export const newGame = async () => {
 	const randomLetter = () => {
@@ -39,104 +39,114 @@ export const newGame = async () => {
 };
 
 export const getGame = async (game_id: string): Promise<Bingo.Card | null> => {
+
+	// Get All game metadata in one request
 	logger.silly('Started db request', { function: 'getGame', obj: 'game', dir: 'start' });
-	const game = (await db.select().from(BingoGame).where(eq(BingoGame.id, game_id)))[0];
+	const data = await db.select({
+		game: BingoGame,
+		template: Template,
+		gameuser: GameUser,
+		user: User,
+		event: TimeEvent,
+	}).from(BingoGame)
+		.leftJoin(Template, eq(BingoGame.template_id, Template.id))
+		.leftJoin(TimeEvent, eq(BingoGame.id, TimeEvent.game_id))
+		.leftJoin(GameUser, eq(BingoGame.id, GameUser.game_id))
+		.leftJoin(User, eq(GameUser.user_id, User.id))
+		.where(eq(BingoGame.id, game_id));
 	logger.silly('Finished db request', { function: 'getGame', obj: 'game', dir: 'end' });
-	if (!game) return null;
 
-	const users: Bingo.Card.FullUser[] = [];
-	logger.silly('Started db request', { function: 'getGame', obj: 'gameusers', dir: 'start' });
-	const gameusers = await db
-		.select()
-		.from(GameUser)
-		.where(
-			and(
-				eq(GameUser.game_id, game_id),
-				not(eq(GameUser.team_name, 'none')),
-				not(eq(GameUser.team_name, 'invited'))
-			)
-		);
-	logger.silly('Finished db request', { function: 'getGame', obj: 'gameusers', dir: 'end' });
+	if (!data) return null;
 
-	for (const gameuser of gameusers) {
-		logger.silly('Started db request', { function: 'getGame', obj: 'user', dir: 'start' });
-		const user = (
-			await db
-				.select()
-				.from(User)
-				.where(and(eq(User.id, gameuser.user_id)))
-		)[0];
-		logger.silly('Finished db request', { function: 'getGame', obj: 'user', dir: 'end' });
-		users.push({ ...gameuser, user });
+	const game = data[0].game;
+
+	let template = data[0].template;
+	if (!template) {
+		template = await getTemplate(null);
 	}
 
-	logger.silly('Started db request', { function: 'getGame', obj: 'hosts', dir: 'start' });
-	const hosts = (
-		await db
-			.select({ user: User })
-			.from(GameUser)
-			.innerJoin(User, eq(GameUser.user_id, User.id))
-			.where(and(eq(GameUser.game_id, game.id), eq(GameUser.host, true)))
-	).map((x) => x.user);
-	logger.silly('Finished db request', { function: 'getGame', obj: 'hosts', dir: 'end' });
+	// To be filled with data from sql request
+	const users: Bingo.Card.FullUser[] = [];
+	const hosts: Bingo.User[] = [];
+	const events: Bingo.TimeEvent[] = [];
 
-	logger.silly('Started db request', { function: 'getGame', obj: 'events', dir: 'start' });
-	const events = await db.select().from(TimeEvent).where(eq(TimeEvent.game_id, game_id));
-	logger.silly('Finished db request', { function: 'getGame', obj: 'events', dir: 'end' });
-	const template = await getTemplate(game.template_id);
+	// Cache IDS we've already processed so we don't have to remake this list every loop
+	const userIDs: number[] = [];
+	const eventIDs: string[] = [];
+	for (const line of data) {
+		const { user, gameuser, event } = line;
 
+		// We need a check like this because users appear multiple times (due to the nature of sql joins)
+		if (user && gameuser && !userIDs.includes(user.id)) {
+			userIDs.push(user.id)
+
+			const fullUser = { ...gameuser, user };
+			users.push(fullUser);
+			if (gameuser.host) {
+				hosts.push(user);
+			}
+		}
+
+		if (event && !eventIDs.includes(event.id)) {
+			eventIDs.push(event.id);
+			events.push(event);
+		}
+	}
+
+	// Squares should be hidden if the game hasn't started yet (also they shouldn't exist but that's to a lesser point)
 	if (game.state == 0) return { ...game, users, events, squares: null, hosts, template };
 
-	const squares: Bingo.Card.FullSquare[] = [];
 	logger.silly('Started db request', { function: 'getGame', obj: 'dbSquares', dir: 'start' });
 	const dbSquares = await db
-		.select()
+		.select({
+			square: BingoSquare,
+			map: Map,
+			mapstats: MapStats,
+			score: Score
+		})
 		.from(BingoSquare)
-		.where(eq(BingoSquare.game_id, game_id))
+		.leftJoin(Map, eq(BingoSquare.map_id, Map.id))
+		.leftJoin(MapStats, eq(Map.id, MapStats.map_id))
+		.leftJoin(Score, eq(BingoSquare.id, Score.square_id))
+		.where(and(
+			eq(BingoSquare.game_id, game_id),
+			eq(MapStats.mod_string, BingoSquare.mod_string ?? '')
+		))
 		.orderBy(BingoSquare.y_pos, BingoSquare.x_pos);
 	logger.silly('Finished db request', { function: 'getGame', obj: 'dbSquares', dir: 'end' });
 
-	for (const square of dbSquares) {
-		logger.silly('Started db request', { function: 'getGame', obj: 'map', dir: 'start' });
-		const map = (
-			await db
-				.select()
-				.from(Map)
-				.innerJoin(MapStats, eq(MapStats.map_id, Map.id))
-				.where(and(eq(Map.id, square.map_id), eq(MapStats.mod_string, square.mod_string ?? '')))
-		)[0];
-		logger.silly('Finished db request', { function: 'getGame', obj: 'map', dir: 'end' });
+	const squares: Bingo.Card.FullSquare[] = [];
+	const squareIDs: string[] = [];
+	for (const { square, map, mapstats, score } of dbSquares) {
+		if (!square || !map || !mapstats) continue;
 
-		const scores: Bingo.Card.FullScore[] = [];
-		logger.silly('Started db request', { function: 'getGame', obj: 'dbScores', dir: 'start' });
-		const dbScores = await db.select().from(Score).where(eq(Score.square_id, square.id));
-		logger.silly('Finished db request', { function: 'getGame', obj: 'dbScores', dir: 'end' });
+		if (!squareIDs.includes(square.id)) {
+			squareIDs.push(square.id);
 
-		for (const score of dbScores) {
-			logger.silly('Started db request', { function: 'getGame', obj: 'user', dir: 'start' });
-			const user = users.find((x) => x.user_id == score.user_id);
-			logger.silly('Finished db request', { function: 'getGame', obj: 'user', dir: 'end' });
-			if (!user) continue;
-			scores.push({ ...score, user });
+			let claimed_by: Bingo.GameUser | null = null;
+			if (square.claimed_by_id) {
+				claimed_by = users.find(x => x.id == square.claimed_by_id) ?? null;
+			}
+
+			squares.push({
+				...square,
+				data: {
+					...map,
+					stats: mapstats
+				},
+				claimed_by,
+				scores: [] // Start with array empty
+			});
 		}
 
-		let claimed_by: Bingo.GameUser | null = null;
-		if (square.claimed_by_id) {
-			logger.silly('Started db request', { function: 'getGame', obj: 'claimed_by', dir: 'start' });
-			claimed_by = (
-				await db.select().from(GameUser).where(eq(GameUser.id, square.claimed_by_id))
-			)[0];
-			logger.silly('Finished db request', { function: 'getGame', obj: 'claimed_by', dir: 'end' });
-		}
-		squares.push({
-			...square,
-			data: {
-				...map.Map,
-				stats: map.MapStats
-			},
-			claimed_by,
-			scores
-		});
+		if (!score) continue;
+
+		// Find the square it belongs to and push this score
+		const squareIdx = squares.findIndex(x => x.id == score.square_id);
+		const user = users.find((x) => x.user_id == score.user_id);
+		if (!squareIdx || !user) continue;
+
+		squares[squareIdx].scores.push({ ...score, user })
 	}
 
 	return { ...game, users, events, squares, hosts, template };
@@ -177,13 +187,14 @@ export const getCurrentGames = async () => {
 	return query;
 };
 
-export const getAllGames = async () => {
+export const getAllGames = async (limit?: number) => {
+	limit = limit ?? 10;
 	logger.silly('Started db request', { function: 'getAllGames', obj: 'query', dir: 'start' });
 	const query = await db
 		.select()
 		.from(BingoGame)
-		.orderBy(BingoGame.state)
-		.limit(10)
+		.orderBy(BingoGame.state, desc(BingoGame.start_time))
+		.limit(limit)
 		.where(eq(BingoGame.public, true));
 	logger.silly('Finished db request', { function: 'getAllGames', obj: 'query', dir: 'end' });
 	return query;
