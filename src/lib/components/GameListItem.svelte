@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { formatDistance } from 'date-fns';
 	export let game: Bingo.BingoGame;
 
-	const text = ['Starting soon', 'In Progress', 'Completed'];
+	const text = ['Starting soon', 'Started', 'Finished'];
 </script>
 
 <article class="p-1">
@@ -17,7 +18,15 @@
 			<h2 class="text-lg">
 				Game {game.link_id}
 			</h2>
-			<span class="absolute bottom-2 right-2 uppercase text-zinc-600">{text[game.state]}</span>
+			<h3 class="text-lg uppercase text-zinc-600">
+				{text[game.state]}
+
+				{#if game.start_time}
+					<span class="text-lg text-zinc-600"
+						>{formatDistance(game.start_time, new Date(), { addSuffix: true })}</span
+					>
+				{/if}
+			</h3>
 		</div>
 	</a>
 </article>
