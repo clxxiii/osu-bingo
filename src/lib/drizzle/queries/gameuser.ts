@@ -3,6 +3,11 @@ import { db } from '..';
 import { BingoGame, GameUser, User } from '../schema';
 import { logger } from '$lib/logger';
 
+// The GameUser team can represent the user's team, or their role in the game:
+export const invitedTeam = "invited"; // 
+export const kickedTeam = "kicked";
+export const noneTeam = "none";
+
 export const joinGame = async (
 	game_id: string,
 	user_id: number,
@@ -18,7 +23,7 @@ export const joinGame = async (
 	logger.silly('Finished db request', { function: 'joinGame', obj: 'test', dir: 'end' });
 
 	if (test.length != 0) {
-		if (test[0].host || test[0].team_name == 'invited') {
+		if (test[0].host || test[0].team_name == invitedTeam) {
 			logger.silly('Started db request', { function: 'joinGame', obj: 'gameuser1', dir: 'start' });
 			const gameuser = (
 				await db
@@ -86,7 +91,7 @@ export const leaveGame = async (
 			await db
 				.update(GameUser)
 				.set({
-					team_name: 'none'
+					team_name: noneTeam
 				})
 				.where(eq(GameUser.id, test[0].id))
 				.returning()
@@ -117,7 +122,7 @@ export const leaveGame = async (
 		const gameuser = (
 			await db
 				.update(GameUser)
-				.set({ team_name: 'invited' })
+				.set({ team_name: invitedTeam })
 				.where(and(eq(GameUser.game_id, game_id), eq(GameUser.user_id, user_id)))
 				.returning()
 		)[0];
@@ -265,7 +270,7 @@ export const setInvited = async (
 			.values({
 				game_id,
 				user_id,
-				team_name: 'invited'
+				team_name: invitedTeam
 			})
 			.returning()
 	)[0];

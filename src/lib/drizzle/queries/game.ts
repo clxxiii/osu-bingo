@@ -3,6 +3,7 @@ import { db } from '..';
 import { BingoGame, BingoSquare, GameUser, Map, MapStats, Score, Template, TimeEvent, User } from '../schema';
 import { logger } from '$lib/logger';
 import { getTemplate } from './template';
+import { invitedTeam, kickedTeam, noneTeam } from './gameuser';
 
 export const newGame = async () => {
 	const randomLetter = () => {
@@ -81,7 +82,13 @@ export const getGame = async (game_id: string): Promise<Bingo.Card | null> => {
 			userIDs.push(user.id)
 
 			const fullUser = { ...gameuser, user };
-			users.push(fullUser);
+			if (
+				gameuser.team_name != noneTeam &&
+				gameuser.team_name != invitedTeam &&
+				gameuser.team_name != kickedTeam
+			) {
+				users.push(fullUser);
+			}
 			if (gameuser.host) {
 				hosts.push(user);
 			}
