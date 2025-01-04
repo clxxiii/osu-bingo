@@ -2,16 +2,16 @@
 	import type { PageData } from './$types';
 	import { onDestroy, onMount } from 'svelte';
 	import { game as store, square, listener, login_request } from '$lib/stores';
-	import GameInterface from '$lib/components/GameInterface.svelte';
+	import InterfaceGrids from '../../../../lib/components/InterfaceGrids.svelte';
 	import LoginRequest from '$lib/components/LoginRequest.svelte';
 	import { fade } from 'svelte/transition';
-	import InterfaceGrids from '$lib/components/InterfaceGrids.svelte';
 	import TeamList from '$lib/components/TeamList.svelte';
+	import Announcer from '$lib/components/Announcer.svelte';
 	import BingoCard from '$lib/components/BingoCard.svelte';
 	import SquareSidebar from '$lib/components/SquareSidebar.svelte';
+	import WinConfetti from '$lib/components/WinConfetti.svelte';
 	import Chatbox from '$lib/components/Chatbox.svelte';
 	import EventList from '$lib/components/EventList.svelte';
-	import LoadingIcon from '$lib/components/LoadingIcon.svelte';
 
 	export let data: PageData;
 
@@ -82,13 +82,7 @@
 			<EventList {store}></EventList>
 		</article>
 	</InterfaceGrids>
-{:else}
-	<div out:fade={{ duration: 200 }} class="flex w-full flex-col items-center font-rounded text-lg">
-		<LoadingIcon size={75} />
-		<div class="mt-4">LOADING GAME</div>
-	</div>
 {/if}
-
 {#if !$listener}
 	<div
 		transition:fade
@@ -106,4 +100,7 @@
 	>
 		<LoginRequest />
 	</div>
+{/if}
+{#if winner}
+	<WinConfetti team={winner} />
 {/if}

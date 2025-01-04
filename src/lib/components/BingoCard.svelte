@@ -9,6 +9,8 @@
 	let yMax: number;
 	let xMax: number;
 
+	let square_width: number;
+
 	let winningLine: number[] | null = null;
 
 	store.subscribe((card) => {
@@ -35,7 +37,8 @@
 
 <div
 	transition:scale={{ delay: 300 }}
-	class="grid w-full max-w-[560px] rounded bg-base-950 p-2"
+	class="grid w-full rounded bg-base-950 p-2"
+	bind:clientWidth={square_width}
 	style="
 	grid-template-columns: 30px repeat({xMax + 1}, {xMax + 1}fr); 
 	grid-template-rows: 30px repeat({yMax + 1}, {yMax + 1}fr);
@@ -72,9 +75,8 @@
 		{/each}
 		{#each $store.squares as square, i}
 			<div
-				class="p-2"
 				style="grid-area: {square.y_pos + 2} / {square.x_pos + 2} / {square.y_pos +
-					3} / {square.x_pos + 3}"
+					3} / {square.x_pos + 3}; padding: {square_width / 100}px"
 			>
 				<BingoSquare
 					{store}

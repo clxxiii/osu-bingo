@@ -80,7 +80,7 @@
 				type="text"
 				disabled
 				placeholder="Join the game to chat"
-				class="block w-full rounded-full bg-zinc-700 p-2 text-sm outline-none focus:shadow-lg"
+				class="block w-full rounded-full bg-zinc-700/50 p-2 text-sm outline-none focus:shadow-lg"
 			/>
 		</div>
 	{/if}

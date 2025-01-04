@@ -18,7 +18,7 @@
 			<h2 class="text-lg">
 				Game {game.link_id}
 			</h2>
-			<h3 class="text-lg uppercase text-zinc-600">
+			<h3 class="text-lg font-light uppercase text-zinc-600">
 				{text[game.state]}
 
 				{#if game.start_time}

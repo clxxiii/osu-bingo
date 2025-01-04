@@ -9,8 +9,12 @@
 	<h2 class="font-rounded text-xl font-bold">Scores</h2>
 	<hr class="mb-2 border-zinc-600" />
 	<div class="h-full overflow-y-scroll p-2">
-		{#each scores as score, index}
-			<ScoreListItem {score} {index} sort={tiebreaker} />
+		{#each scores as score}
+			{#if score.grade != 'F'}
+				<div class="mb-2">
+					<ScoreListItem {score} sort={tiebreaker} />
+				</div>
+			{/if}
 		{/each}
 	</div>
 </div>

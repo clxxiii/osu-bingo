@@ -71,7 +71,7 @@
 	});
 </script>
 
-<div transition:slide={{ axis: 'x' }} class="flex h-full w-full gap-4 rounded-lg bg-zinc-900 p-4">
+<div class="flex h-full w-full gap-4 rounded-lg bg-zinc-900 p-4">
 	<div
 		data-team={team}
 		class="relative h-full w-full rounded-xl border-2 data-[team=BLUE]:border-blue-700 data-[team=RED]:border-amber-700"
@@ -91,24 +91,26 @@
 				/>
 			{/each}
 		</div>
-		<div class="absolute bottom-0 w-full rounded-xl bg-black/30 p-1">
-			{#if !gameuser?.team_name}
-				<button
-					on:click={join}
-					class="h-8 w-full rounded-lg bg-green-600 p-1 px-2 font-rounded text-sm font-bold transition hover:bg-green-700 active:bg-green-800"
-					>Join {team.toUpperCase()} team</button
-				>
-			{:else}
-				<button
-					on:click={switchTeam}
-					data-team={team.toUpperCase()}
-					class="h-8 w-full rounded-lg p-1 px-2 font-rounded text-sm font-bold transition data-[team=BLUE]:bg-blue-600 data-[team=RED]:bg-amber-600 data-[team=BLUE]:hover:bg-blue-700 data-[team=RED]:hover:bg-amber-700 data-[team=BLUE]:active:bg-blue-800 data-[team=RED]:active:bg-amber-800"
-				>
-					{gameuser.team_name == team ? 'Leave' : 'Switch to'}
-					{team.toUpperCase()} team
-				</button>
-			{/if}
-		</div>
+		{#if $gameStore && $gameStore.state == 0}
+			<div class="absolute bottom-0 w-full rounded-xl bg-black/30 p-1">
+				{#if !gameuser?.team_name}
+					<button
+						on:click={join}
+						class="h-8 w-full rounded-lg bg-green-600 p-1 px-2 font-rounded text-sm font-bold transition hover:bg-green-700 active:bg-green-800"
+						>Join {team.toUpperCase()} team</button
+					>
+				{:else}
+					<button
+						on:click={switchTeam}
+						data-team={team.toUpperCase()}
+						class="h-8 w-full rounded-lg p-1 px-2 font-rounded text-sm font-bold transition data-[team=BLUE]:bg-blue-600 data-[team=RED]:bg-amber-600 data-[team=BLUE]:hover:bg-blue-700 data-[team=RED]:hover:bg-amber-700 data-[team=BLUE]:active:bg-blue-800 data-[team=RED]:active:bg-amber-800"
+					>
+						{gameuser.team_name == team ? 'Leave' : 'Switch to'}
+						{team.toUpperCase()} team
+					</button>
+				{/if}
+			</div>
+		{/if}
 	</div>
 </div>
 
