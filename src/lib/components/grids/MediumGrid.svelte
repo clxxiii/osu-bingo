@@ -4,6 +4,7 @@
 	import { fade } from 'svelte/transition';
 
 	export let state: number;
+	export let host: boolean;
 	let board_height: number;
 	let show_player_list = false;
 </script>
@@ -30,11 +31,12 @@
 			{/if}
 		</div>
 	{/if}
-	<div
-		bind:clientWidth={board_height}
-		class="col-start-1 col-end-2 h-full max-h-[500px] w-full rounded-xl"
-	>
-		<slot name="board"></slot>
+	<div bind:clientHeight={board_height} class="col-start-1 col-end-2 h-full w-full rounded-xl">
+		{#if host && state == 0}
+			<slot name="host-settings"></slot>
+		{:else}
+			<slot name="board"></slot>
+		{/if}
 	</div>
 	{#if state != 0}
 		<div

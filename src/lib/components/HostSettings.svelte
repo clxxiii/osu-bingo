@@ -3,6 +3,7 @@
 	import { slide } from 'svelte/transition';
 	import ToggleSwitch from './ToggleSwitch.svelte';
 	import NumberScale from './NumberScale.svelte';
+	import Invite from './Invite.svelte';
 
 	export let store: Writable<Bingo.Card | null>;
 
@@ -36,25 +37,39 @@
 			body
 		});
 	};
+
+	const start = async () => {
+		const data = new FormData();
+		await fetch(`?/start_game`, {
+			body: data,
+			method: 'POST'
+		});
+	};
 </script>
 
-<div class="absolute right-0 top-0 h-full min-w-[300px] overflow-hidden rounded-r-xl">
-	<div transition:slide={{ axis: 'x' }} class="absolute right-0 h-full w-full bg-zinc-800 p-2">
+<div class="absolute right-0 top-0 h-full w-full overflow-hidden rounded-xl bg-zinc-800">
+	<div transition:slide={{ axis: 'x' }} class="absolute right-0 h-full w-full p-2">
 		{#if $store}
 			<h1 class="pb-4 pt-4 text-center font-rounded text-2xl font-bold">Host Settings</h1>
-			<div
-				class="mb-4 flex w-full flex-col items-center rounded-lg bg-zinc-900/50 p-2 font-rounded font-bold uppercase"
-			>
-				Game Visibility
-				<div class="w-full max-w-[200px] pt-1">
-					<ToggleSwitch
-						onText="Public"
-						onColor="#16a34a"
-						offColor="#755780"
-						offText="Private"
-						on:update={(e) => changeVisibility(e.detail)}
-						toggle={$store.public}
-					/>
+			<div class="flex gap-4">
+				<div
+					class="mb-4 flex w-full flex-col items-center rounded-lg bg-zinc-900/50 p-2 font-rounded font-bold uppercase"
+				>
+					Game Visibility
+					<div class="w-full max-w-[200px] pt-1">
+						<ToggleSwitch
+							onText="Public"
+							onColor="#16a34a"
+							offColor="#755780"
+							offText="Private"
+							on:update={(e) => changeVisibility(e.detail)}
+							toggle={$store.public}
+						/>
+					</div>
+				</div>
+
+				<div class="mb-4 flex w-full">
+					<Invite hidden={!$store?.public} linkCode={$store?.link_id ?? ''} />
 				</div>
 			</div>
 			<div
@@ -86,6 +101,12 @@
 					/>
 				</div>
 			</div>
+			<button
+				on:click={start}
+				class="mt-4 w-full rounded-full bg-green-600 p-1 px-2 font-rounded text-xl font-bold hover:bg-green-700 active:bg-green-900"
+			>
+				START GAME</button
+			>
 		{/if}
 	</div>
 </div>

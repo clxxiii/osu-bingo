@@ -57,7 +57,7 @@ export const getGame = async (game_id: string): Promise<Bingo.Card | null> => {
 		.where(eq(BingoGame.id, game_id));
 	logger.silly('Finished db request', { function: 'getGame', obj: 'game', dir: 'end' });
 
-	if (!data) return null;
+	if (!data[0]) return null;
 
 	const game = data[0].game;
 

@@ -6,14 +6,17 @@
 	import TabBoxPane from '../TabBoxPane.svelte';
 
 	export let state: number;
+	export let host: boolean;
+
 	let board_width: number;
+	let board_height: number;
 	let grid_height: number;
 </script>
 
 <div
 	class="mobile-grid grid md:hidden"
 	bind:clientHeight={grid_height}
-	style="--bh: {board_width}px; --gh: {grid_height}px"
+	style="--bw: {board_width}px; --gh: {grid_height}px; --bh: {board_height}px;"
 >
 	{#if $square == null}
 		<!-- Top Box -->
@@ -21,8 +24,13 @@
 			class="row-start-1 row-end-2 h-full w-full rounded-xl"
 			transition:fly={{ duration: 150, x: -50 }}
 			bind:clientWidth={board_width}
+			bind:clientHeight={board_height}
 		>
-			<slot name="board"></slot>
+			{#if host && state == 0}
+				<slot name="host-settings"></slot>
+			{:else}
+				<slot name="board"></slot>
+			{/if}
 		</div>
 
 		<!-- Bottom Box -->

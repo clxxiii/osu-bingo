@@ -22,11 +22,11 @@ type Evaluator = {
 
 const evaluators: { [key: string]: Evaluator } = {
 	fc: {
-		display_string: () => 'Get an FC',
+		display_string: () => 'FC',
 		evaluate: (score) => evaluators["pass"].evaluate(score, "") && score.is_perfect_combo
 	},
 	rank: {
-		display_string: (value) => `Get an ${value.toUpperCase()} rank or higher`,
+		display_string: (value) => `${value.toUpperCase()} rank or higher`,
 		evaluate: (score, value) => {
 			const hierarchy = ['SSH', 'SS', 'SH', 'S', 'A', 'B', 'C', 'D', 'F'];
 			const scoreRank = hierarchy.indexOf(score.rank.toUpperCase() ?? 'F');
@@ -36,7 +36,7 @@ const evaluators: { [key: string]: Evaluator } = {
 		}
 	},
 	pp: {
-		display_string: (value) => `Set a score worth ${parseFloat(value).toLocaleString()} pp`,
+		display_string: (value) => `${parseFloat(value).toLocaleString()}pp or higher`,
 		evaluate: (score, value) => {
 			const pp = score.pp ?? 0;
 			const target = parseFloat(value);
@@ -45,7 +45,7 @@ const evaluators: { [key: string]: Evaluator } = {
 		}
 	},
 	miss: {
-		display_string: (value) => `Get less than ${parseInt(value).toLocaleString()} misses`,
+		display_string: (value) => `${parseInt(value).toLocaleString()} misses or fewer`,
 		evaluate: (score, value) => {
 			const miss = score.statistics.miss ?? 0;
 			const target = parseInt(value);
@@ -54,7 +54,7 @@ const evaluators: { [key: string]: Evaluator } = {
 		}
 	},
 	combo: {
-		display_string: (value) => `Get more than ${parseInt(value).toLocaleString()} combo`,
+		display_string: (value) => `${parseInt(value).toLocaleString()} combo or more`,
 		evaluate: (score, value) => {
 			const combo = score.max_combo;
 			const target = parseInt(value);
@@ -63,7 +63,7 @@ const evaluators: { [key: string]: Evaluator } = {
 		}
 	},
 	score: {
-		display_string: (value) => `Score more than ${parseInt(value).toLocaleString()}`,
+		display_string: (value) => `${parseInt(value).toLocaleString()} or more`,
 		evaluate: (score, value) => {
 			const total_score = score.total_score;
 			const target = parseInt(value);
@@ -72,14 +72,14 @@ const evaluators: { [key: string]: Evaluator } = {
 		}
 	},
 	pass: {
-		display_string: () => 'Pass the map',
+		display_string: () => 'Pass',
 		evaluate: (score) => {
 			if (!score.passed) return false;
 			return !score.mods.map((x) => x.acronym).includes('NF');
 		}
 	},
 	any: {
-		display_string: () => 'Set any score',
+		display_string: () => 'None',
 		evaluate: () => true
 	}
 };

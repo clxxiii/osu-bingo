@@ -5,6 +5,9 @@
 	import { checkWin } from '$lib/bingo-helpers/check_win';
 	import boards from '$lib/bingo-helpers/default_boards';
 	import LoadingIcon from './LoadingIcon.svelte';
+	import Conditions from './Conditions.svelte';
+	import GameProgressBar from './GameProgressBar.svelte';
+	import AnnouncerPostGame from './AnnouncerPostGame.svelte';
 
 	export let store: Writable<Bingo.Card | null>;
 	let yMax: number;
@@ -37,6 +40,12 @@
 </script>
 
 {#if $store && $store.squares}
+	{#if $store.state == 2}
+		<AnnouncerPostGame gameStore={store} />
+	{/if}
+	{#if $store.state == 1}
+		<GameProgressBar />
+	{/if}
 	<div
 		class="grid w-full rounded bg-base-950 p-2"
 		bind:clientWidth={square_width}
@@ -79,6 +88,9 @@
 			</div>
 		{/each}
 	</div>
+	{#if $store.state == 1}
+		<Conditions />
+	{/if}
 {:else}
 	<div class="relative grid gap-4 rounded-xl bg-base-950 p-4">
 		{#each boards['5x5'].squares as square}

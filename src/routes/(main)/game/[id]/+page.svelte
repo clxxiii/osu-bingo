@@ -2,7 +2,6 @@
 	import type { PageData } from './$types';
 	import { onDestroy, onMount } from 'svelte';
 	import { game as store, square, listener, login_request } from '$lib/stores';
-	import GameInterface from '$lib/components/GameInterface.svelte';
 	import LoginRequest from '$lib/components/LoginRequest.svelte';
 	import { fade } from 'svelte/transition';
 	import InterfaceGrids from '$lib/components/InterfaceGrids.svelte';
@@ -12,15 +11,18 @@
 	import Chatbox from '$lib/components/Chatbox.svelte';
 	import EventList from '$lib/components/EventList.svelte';
 	import LoadingIcon from '$lib/components/LoadingIcon.svelte';
+	import HostSettings from '$lib/components/HostSettings.svelte';
 
 	export let data: PageData;
 
 	let currentTeam: string | undefined;
 	let winner: string | null = null;
+	let host: boolean = false;
 	store.subscribe((game) => {
 		if (!game) return;
 		winner = game.winning_team;
 		currentTeam = game.users.find((x) => x.user_id == data?.user?.id)?.team_name;
+		host = game.hosts.find((x) => x.id == data?.user?.id) != undefined;
 	});
 
 	// Recieve Game updates from server
@@ -54,7 +56,7 @@
 </svelte:head>
 
 {#if $store}
-	<InterfaceGrids>
+	<InterfaceGrids {host} state={$store.state}>
 		<article slot="player-list" class="grid h-full grid-rows-2 gap-y-2 bg-zinc-900">
 			<div class="h-full w-full">
 				<TeamList team="BLUE" gameStore={store} host={data.is_host} user={data.user} />
@@ -80,6 +82,9 @@
 		</article>
 		<article class="size-full bg-zinc-800 p-2" slot="event-list">
 			<EventList {store}></EventList>
+		</article>
+		<article class="size-full" slot="host-settings">
+			<HostSettings {store}></HostSettings>
 		</article>
 	</InterfaceGrids>
 {:else}
