@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { Writable } from 'svelte/store';
 	import BingoSquare from './BingoSquare.svelte';
-	import { scale } from 'svelte/transition';
 	import { square } from '$lib/stores';
 	import { checkWin } from '$lib/bingo-helpers/check_win';
 
@@ -36,7 +35,6 @@
 </script>
 
 <div
-	transition:scale={{ delay: 300 }}
 	class="grid w-full rounded bg-base-950 p-2"
 	bind:clientWidth={square_width}
 	style="
