@@ -8,7 +8,7 @@
 	let show_player_list = false;
 </script>
 
-<div class="medium-grid" style="--bh: {board_height}px">
+<div class="medium-grid" style="--bh: {Math.max(board_height, 450)}px">
 	{#if $square != null && state != 0}
 		<div class="z-20 col-start-2 col-end-3 row-start-1 row-end-3 h-full w-full rounded-xl">
 			<slot name="square-sidebar"></slot>
@@ -31,7 +31,7 @@
 		</div>
 	{/if}
 	<div
-		bind:clientHeight={board_height}
+		bind:clientWidth={board_height}
 		class="col-start-1 col-end-2 h-full max-h-[500px] w-full rounded-xl"
 	>
 		<slot name="board"></slot>
