@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { fade } from 'svelte/transition';
 	import LargeGrid from './grids/LargeGrid.svelte';
 	import MediumGrid from './grids/MediumGrid.svelte';
 	import MobileGrid from './grids/MobileGrid.svelte';
@@ -7,7 +8,7 @@
 	export let host: boolean = false;
 </script>
 
-<div class="grid">
+<div transition:fade class="absolute bottom-0 left-0 right-0 top-4 grid">
 	<LargeGrid {state} {host}>
 		<slot name="player-list" slot="player-list"></slot>
 		<slot name="square-sidebar" slot="square-sidebar"></slot>

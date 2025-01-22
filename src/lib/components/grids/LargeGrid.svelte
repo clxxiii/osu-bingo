@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { square } from '$lib/stores';
+	import { AlignJustify } from 'lucide-svelte';
 	import { fade } from 'svelte/transition';
 
 	export let state: number;
@@ -33,7 +34,16 @@
 		<slot name="event-list"></slot>
 	</div> -->
 	<div class="col-start-3 col-end-4 row-start-1 row-end-5 h-full w-full rounded-xl">
-		<slot name="chat"></slot>
+		<div class="mb-4 h-[calc(100vh-300px-4rem-1rem-1rem)] overflow-hidden rounded-xl bg-zinc-800">
+			<div class="flex pl-2 pt-2 font-rounded text-xl">
+				<AlignJustify />
+				<span class="pl-2"> Events </span>
+			</div>
+			<slot name="event-list"></slot>
+		</div>
+		<div class="h-[300px]">
+			<slot name="chat"></slot>
+		</div>
 	</div>
 </div>
 

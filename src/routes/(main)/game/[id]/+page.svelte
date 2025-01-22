@@ -12,6 +12,7 @@
 	import EventList from '$lib/components/EventList.svelte';
 	import LoadingIcon from '$lib/components/LoadingIcon.svelte';
 	import HostSettings from '$lib/components/HostSettings.svelte';
+	import WinConfetti from '$lib/components/WinConfetti.svelte';
 
 	export let data: PageData;
 
@@ -92,6 +93,9 @@
 		<LoadingIcon size={75} />
 		<div class="mt-4">LOADING GAME</div>
 	</div>
+{/if}
+{#if winner}
+	<WinConfetti team={winner} />
 {/if}
 
 {#if !$listener}
