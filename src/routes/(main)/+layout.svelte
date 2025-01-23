@@ -8,6 +8,7 @@
 	import { isInit, type EmitterEvent } from '$lib/emitter';
 	import { source } from 'sveltekit-sse';
 	import { updateGame } from '$lib/emitter/updater';
+	import { Toaster } from 'svelte-french-toast';
 
 	export let data: PageData;
 	user.set(data.user);
@@ -56,3 +57,5 @@
 <footer class="bg-zinc-800">
 	<Footer />
 </footer>
+
+<Toaster containerStyle={''} />
