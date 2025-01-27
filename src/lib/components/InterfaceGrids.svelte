@@ -8,7 +8,7 @@
 	export let host: boolean = false;
 </script>
 
-<div transition:fade class="absolute bottom-0 left-0 right-0 top-4 grid">
+<div transition:fade class="absolute bottom-0 left-4 right-0 top-4 grid">
 	<LargeGrid {state} {host}>
 		<slot name="player-list" slot="player-list"></slot>
 		<slot name="square-sidebar" slot="square-sidebar"></slot>
