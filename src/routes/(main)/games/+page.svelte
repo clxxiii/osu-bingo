@@ -2,8 +2,35 @@
 	import GameListItem from '$lib/components/GameListItem.svelte';
 	import { Plus } from 'lucide-svelte';
 	import type { PageData } from './$types';
+	import { promise } from '$lib/toast';
 
 	export let data: PageData;
+
+	const newGame = () => {
+		const p: Promise<Bingo.BingoGame> = new Promise((resolve, reject) => {
+			fetch('/games/new')
+				.then((response) => {
+					if (response.ok) {
+						response.json().then((g: Bingo.BingoGame) => {
+							resolve(g);
+						});
+					}
+
+					response.json().then((e) => reject(e.message));
+				})
+				.catch(reject);
+		});
+
+		// Toast Notification
+		promise(p, {
+			progress: 'Making Game...',
+			success: 'Game Created!'
+		});
+
+		p.then((response) => {
+			console.log(response);
+		}).catch(console.log);
+	};
 </script>
 
 <svelte:head>
@@ -16,13 +43,14 @@
 			<h1 class="text-3xl">Public Game List</h1>
 			Join a public game, or create your own!
 		</div>
-		<a
-			href="/games/new"
-			class="m-2 flex rounded bg-green-500 px-2 py-1 font-rounded font-bold text-zinc-200 transition hover:bg-green-600 active:bg-green-700"
+		<button
+			on:click={newGame}
+			class="m-2 flex cursor-pointer rounded bg-green-500 px-2 py-1 font-rounded font-bold text-zinc-200 transition hover:bg-green-600 active:bg-green-700 disabled:cursor-default disabled:bg-green-400 disabled:brightness-50"
+			disabled={!data.user}
 		>
 			<Plus />
 			New
-		</a>
+		</button>
 	</div>
 	<hr class="my-2 border-zinc-700" />
 	<div class="w-full">

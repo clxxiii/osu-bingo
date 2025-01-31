@@ -53,9 +53,10 @@
 </header>
 <main class="relative min-h-full p-4">
 	<slot />
+	<div>
+		<Toaster containerStyle={''} />
+	</div>
 </main>
 <footer class="bg-zinc-800">
 	<Footer />
 </footer>
-
-<Toaster containerStyle={''} />

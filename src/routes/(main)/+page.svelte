@@ -11,7 +11,7 @@
 </svelte:head>
 
 <div class="pattern h-[300px]"></div>
-<div class="m-auto flex flex-col lg:flex-row mt-10 gap-10 w-full max-w-[1200px]">
+<div class="m-auto mt-10 flex w-full max-w-[1200px] flex-col gap-10 lg:flex-row">
 	<div>
 		<h1 class="text-3xl">Welcome to osu! Bingo!</h1>
 		<hr class="my-2 border-zinc-700" />
@@ -55,7 +55,7 @@
 		{#each data.games as game}
 			<GameListItem {game} />
 		{/each}
-		<a class="w-full block text-center uppercase text-zinc-700" href="/games">View All Games</a>
+		<a class="block w-full text-center uppercase text-zinc-700" href="/games">View All Games</a>
 	</div>
 </div>
 

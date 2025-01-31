@@ -89,6 +89,29 @@ export const isInGame = async (user_id: number) => {
 	return gameUser;
 };
 
+export const isHostOfGame = async (user_id: number) => {
+	logger.silly('Started db request', { function: 'isInGame', obj: 'gameUser', dir: 'start' });
+	const gameUser = (
+		await db
+			.select({
+				user_id: GameUser.user_id,
+				game_id: BingoGame.id,
+				guid: GameUser.id
+			})
+			.from(GameUser)
+			.innerJoin(BingoGame, eq(GameUser.game_id, BingoGame.id))
+			.where(
+				and(
+					eq(GameUser.team_name, "none"),
+					eq(GameUser.host, true),
+					eq(GameUser.user_id, user_id),
+					lt(BingoGame.state, 2))
+			)
+	)[0];
+	logger.silly('Finished db request', { function: 'isInGame', obj: 'gameUser', dir: 'end' });
+	return gameUser;
+};
+
 export const updateUser = async (token: Bingo.OauthToken) => {
 	const response = await refreshOAuthToken(token, env.OSU_CLIENT_ID, env.OSU_CLIENT_SECRET);
 
