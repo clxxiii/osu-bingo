@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { fade, fly } from 'svelte/transition';
+	import { fly } from 'svelte/transition';
 </script>
 
 <div class="absolute left-0 top-0 w-full overflow-hidden">

@@ -29,6 +29,7 @@
 	rel="noopener noreferrer"
 	href="https://osu.ppy.sh/u/{gameuser.user_id}"
 >
+	<DeveloperBadge id={gameuser.user_id} />
 	<img src={gameuser.user.avatar_url} class="size-6 rounded-full" alt="" />
 	<span class="col-start-2 col-end-3 mr-1 flex h-6 w-full items-center text-left">
 		<div class="flex w-full items-center overflow-hidden whitespace-nowrap">
@@ -52,7 +53,6 @@
 				#{gameuser.user.global_rank.toLocaleString()}
 			</span>
 		{/if}
-		<DeveloperBadge id={gameuser.user_id} />
 		{#if movable}
 			<button
 				on:click={move}
