@@ -198,7 +198,20 @@ export const removeGame = (id: string) => {
 		}
 	}
 
+	// Remove old channel
+	if (listener.channel) {
+		const game_channel = game_channels.get(`${listener.game_id}_${listener.channel}`);
+		if (game_channel) {
+			const i = game_channel.indexOf(id);
+			if (i != -1) game_channel.splice(i, 1);
+
+			if (game_channel.length == 0) game_channels.delete(`${listener.game_id}_${listener.channel}`);
+			else game_channels.set(`${listener.game_id}_${listener.channel}`, game_channel);
+		}
+	}
+
 	listener.game_id = undefined;
+	listener.channel = undefined;
 	listeners.set(id, listener);
 
 	logger.info(`[~] Switched listener ${id} to no game`, { listener, type: 'listener_game_switch' });

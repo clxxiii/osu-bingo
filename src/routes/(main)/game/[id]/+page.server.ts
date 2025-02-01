@@ -2,7 +2,7 @@ import type { PageServerLoad } from './$types';
 import q from '$lib/drizzle/queries';
 import { error, redirect } from '@sveltejs/kit';
 import { StatusCodes } from '$lib/StatusCodes';
-import { sendToGame } from '$lib/emitter/server';
+import { sendToChannel, sendToGame } from '$lib/emitter/server';
 import { sendBoard } from '$lib/server/bancho/bancho_board';
 import { startGame } from '$lib/server/game/start';
 
@@ -133,7 +133,7 @@ export const actions = {
 
 		const msg = await q.sendChat(user.id, game.id, message, channel);
 		if (!msg) error(StatusCodes.BAD_REQUEST, 'Gameuser is invalid');
-		sendToGame(game.id, {
+		sendToChannel(game.id, channel, {
 			type: 'chat',
 			data: msg
 		});

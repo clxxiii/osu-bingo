@@ -6,7 +6,7 @@ import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { getChatChannel } from '$lib/drizzle/queries/chat';
 
-export const POST: RequestHandler = async ({ url }) => {
+export const POST: RequestHandler = async ({ url, locals }) => {
 	const id = url.searchParams.get('id');
 	const game_id = url.searchParams.get('game_id');
 	if (!id) error(StatusCodes.BAD_REQUEST);
@@ -18,10 +18,14 @@ export const POST: RequestHandler = async ({ url }) => {
 		const game = await q.getGame(game_id);
 		if (game) {
 			sendToListener(id, { type: 'fullUpdate', data: game });
-			sendToListener(id, {
-				type: 'fullChatUpdate',
-				data: await getChatChannel(game_id, 'GLOBAL')
-			});
+
+			let channel = 'GLOBAL';
+			const gu = game.users.find(x => x.user_id == locals?.user?.id);
+			if (gu && game.state == 1) {
+				channel = gu.team_name;
+			}
+
+			sendToListener(id, { type: 'fullChatUpdate', data: await getChatChannel(game_id, channel) })
 		}
 		return json(listener);
 	} else {

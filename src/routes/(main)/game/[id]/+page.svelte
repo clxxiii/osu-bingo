@@ -27,6 +27,14 @@
 		host = game.hosts.find((x) => x.id == data?.user?.id) != undefined;
 	});
 
+	$: {
+		if (currentTeam) {
+			fetch(`/game_stream/change_channel?id=${$listener}&channel=${currentTeam}`, {
+				method: 'POST'
+			});
+		}
+	}
+
 	// Recieve Game updates from server
 	onMount(() => {
 		if (data.game_id) {
