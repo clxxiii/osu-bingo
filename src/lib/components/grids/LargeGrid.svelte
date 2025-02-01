@@ -34,12 +34,16 @@
 		<slot name="event-list"></slot>
 	</div> -->
 	<div class="col-start-3 col-end-4 row-start-1 row-end-5 h-full w-full rounded-xl">
-		<div class="mb-4 h-[calc(100vh-300px-4rem-1rem-1rem)] overflow-hidden rounded-xl bg-zinc-800">
+		<div
+			class="event-grid mb-4 grid h-[calc(100vh-300px-4rem-1rem-1rem)] overflow-hidden rounded-xl bg-zinc-800"
+		>
 			<div class="flex pl-2 pt-2 font-rounded text-xl">
 				<AlignJustify />
 				<span class="pl-2"> Events </span>
 			</div>
-			<slot name="event-list"></slot>
+			<div class="overflow-y-hidden">
+				<slot name="event-list"></slot>
+			</div>
 		</div>
 		<div class="h-[300px]">
 			<slot name="chat"></slot>
@@ -57,5 +61,8 @@
 		display: grid;
 		grid-template-rows: 3fr 3fr 3fr;
 		grid-template-columns: 3fr var(--bh) 3fr;
+	}
+	.event-grid {
+		grid-template-rows: 2rem 1fr;
 	}
 </style>

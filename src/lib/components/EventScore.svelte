@@ -40,8 +40,8 @@
 			<div
 				class="absolute top-0 flex size-full items-center justify-center font-rounded text-lg font-black text-white/50 transition group-hover:text-white"
 			>
-				<span>{alphabet.charAt(square.y_pos)}</span>
-				<span>{square.x_pos + 1}</span>
+				<span>{alphabet.charAt(square.x_pos)}</span>
+				<span>{square.y_pos + 1}</span>
 			</div>
 		</button>
 

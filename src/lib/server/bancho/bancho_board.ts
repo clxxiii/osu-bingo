@@ -1,8 +1,10 @@
+import { logger } from '$lib/logger';
 import { sendMessage } from '.';
 
 export const sendBoard = async (user_id: number, card: Bingo.Card) => {
 	const board = banchoBoard(card);
 	if (!board) return;
+	logger.info(`Sending board for game ${card.id} to ${user_id}`, { type: "send_board" })
 	const strings = [
 		"Hey there! It's clx, the developer of osu!bingo. You asked for a board so here it is, Good Luck!",
 		...board.map((x) => x.join(' '))
