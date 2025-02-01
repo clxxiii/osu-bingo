@@ -159,13 +159,10 @@ export const actions = {
 		if (!user) error(StatusCodes.UNAUTHORIZED);
 		if (!game_check) error(StatusCodes.BAD_REQUEST);
 
-		const game = await q.getGame(game_check.id);
-		if (!game) error(StatusCodes.BAD_REQUEST);
-
-		const is_host = game.hosts.filter((x) => x.id == user.id).length != 0;
+		const is_host = await q.isHost(game_check.id, user.id);
 		if (!is_host) error(StatusCodes.UNAUTHORIZED);
 
-		await startGame(game.id);
+		await startGame(game_check.id);
 	},
 	change_settings: async ({ params, locals, request }) => {
 		const form = await request.formData();
@@ -223,5 +220,19 @@ export const actions = {
 			type: 'fullUpdate',
 			data: game
 		});
-	}
+	},
+	delete_game: async ({ params, locals }) => {
+		const user = locals.user;
+		const linkId = params.id;
+		const game_check = await q.gameExists(linkId);
+
+		if (!user) error(StatusCodes.UNAUTHORIZED);
+		if (!game_check) error(StatusCodes.BAD_REQUEST);
+
+		const is_host = await q.isHost(game_check.id, user.id);
+		if (!is_host) error(StatusCodes.UNAUTHORIZED);
+
+		const success = await q.deleteGame(game_check.id);
+		if (!success) error(StatusCodes.BAD_REQUEST);
+	},
 };

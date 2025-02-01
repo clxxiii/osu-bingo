@@ -252,3 +252,24 @@ export const updateGameSettings = async (game_id: string, settings: Bingo.Settin
 	if (!q) return null;
 	return q;
 };
+
+export const deleteGame = async (game_id: string) => {
+	logger.silly('Started db request', {
+		function: 'deleteGame',
+		obj: 'query',
+		dir: 'start'
+	});
+	const q = (
+		await db.select({ state: BingoGame.state, id: BingoGame.id }).from(BingoGame).where(eq(BingoGame.id, game_id))
+	)[0];
+	logger.silly('Finished db request', { function: 'deleteGame', obj: 'query', dir: 'end' });
+
+	if (!q) return null;
+	if (q.state == 2) return null;
+
+	logger.silly('Started db request', { function: 'deleteGame', obj: 'delete', dir: 'start' });
+	await db.delete(BingoGame).where(eq(BingoGame.id, game_id));
+	logger.silly('Finished db request', { function: 'deleteGame', obj: 'delete', dir: 'end' });
+	logger.info(`Deleted game ${q.id}`)
+	return q;
+}

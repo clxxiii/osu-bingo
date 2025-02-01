@@ -4,6 +4,7 @@
 	import ToggleSwitch from './ToggleSwitch.svelte';
 	import NumberScale from './NumberScale.svelte';
 	import Invite from './Invite.svelte';
+	import DeleteButton from './DeleteButton.svelte';
 
 	export let store: Writable<Bingo.Card | null>;
 
@@ -107,6 +108,10 @@
 			>
 				START GAME</button
 			>
+
+			<div class="absolute bottom-0 w-full p-4 pl-0">
+				<DeleteButton />
+			</div>
 		{/if}
 	</div>
 </div>

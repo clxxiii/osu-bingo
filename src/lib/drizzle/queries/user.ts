@@ -102,7 +102,6 @@ export const isHostOfGame = async (user_id: number) => {
 			.innerJoin(BingoGame, eq(GameUser.game_id, BingoGame.id))
 			.where(
 				and(
-					eq(GameUser.team_name, "none"),
 					eq(GameUser.host, true),
 					eq(GameUser.user_id, user_id),
 					lt(BingoGame.state, 2))
