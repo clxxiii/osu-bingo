@@ -7,9 +7,11 @@ import { addGame } from './watch';
 import boards from '$lib/bingo-helpers/default_boards';
 import { logger } from '$lib/logger';
 import { sendToGame } from '$lib/emitter/server';
+import { clearTimer } from './auto_deletion';
 
 export const startGame = async (game_id: string) => {
 	logger.info(`Starting game ${game_id}!`, { type: 'game_start' });
+	clearTimer(game_id);
 
 	const game = await q.getGame(game_id);
 	if (!game) return;

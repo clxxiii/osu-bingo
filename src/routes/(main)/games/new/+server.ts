@@ -3,6 +3,7 @@ import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { StatusCodes } from '$lib/StatusCodes';
 import { noneTeam } from '$lib/drizzle/queries/gameuser';
+import { registerGame } from '$lib/server/game/auto_deletion';
 
 export const GET: RequestHandler = async ({ locals }) => {
 	if (!locals.user) error(StatusCodes.UNAUTHORIZED);
@@ -16,5 +17,6 @@ export const GET: RequestHandler = async ({ locals }) => {
 	const game = await q.newGame();
 	await q.joinGame(game.id, locals.user.id, noneTeam);
 	await q.setHost(game.id, locals.user.id);
+	registerGame(game.id);
 	return json(game);
 };

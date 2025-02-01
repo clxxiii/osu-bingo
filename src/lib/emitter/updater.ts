@@ -9,13 +9,17 @@ import {
 	isGameUserUpdate,
 	isLoginRequest,
 	isSquareUpdate,
-	isStateUpdate
+	isStateUpdate,
+	isDeleteEvent
 } from '$lib/emitter';
 import { chats, game, login_request } from '$lib/stores';
 
 export const updateGame = (event: EmitterEvent) => {
 	game.update((card) => {
 		if (isFullUpdate(event)) return event.data;
+
+		if (!card) return card;
+		if (isDeleteEvent(event) && event.data.game_id == card.id) return null;
 
 		if (isLoginRequest(event)) login_request.set(event.data);
 

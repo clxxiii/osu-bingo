@@ -12,6 +12,22 @@ export const promise = (p: Promise<unknown>, e?: {
       return e + "";
     })
   }, {
+    position: "top-right",
     style: "background: rgb(39,39,42); color: #e5e7eb;"
+  })
+}
+
+export const sendToast = (e: string) => {
+  toast(e, {
+    position: "top-right",
+    style: "background: rgb(39,39,42); color: #e5e7eb;"
+  })
+}
+
+export const sendWarningToast = (e: string) => {
+  toast(e, {
+    duration: 10 * 1000,
+    position: "top-right",
+    style: "background: rgb(61,39,42); color: #e5e7eb;"
   })
 }

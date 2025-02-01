@@ -5,10 +5,11 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { listener, user } from '$lib/stores';
-	import { isInit, type EmitterEvent } from '$lib/emitter';
+	import { isInit, isToastNotification, type EmitterEvent } from '$lib/emitter';
 	import { source } from 'sveltekit-sse';
 	import { updateGame } from '$lib/emitter/updater';
 	import { Toaster } from 'svelte-french-toast';
+	import { sendToast, sendWarningToast } from '$lib/toast';
 
 	export let data: PageData;
 	user.set(data.user);
@@ -42,6 +43,15 @@
 					});
 				}
 			}
+
+			if (isToastNotification(event)) {
+				if (event.data.severity == 'NORMAL') {
+					sendToast(event.data.msg);
+				} else if (event.data.severity == 'WARNING') {
+					sendWarningToast(event.data.msg);
+				}
+			}
+
 			console.log(event);
 			updateGame(event);
 		});
@@ -53,10 +63,9 @@
 </header>
 <main class="relative min-h-full p-4">
 	<slot />
-	<div>
-		<Toaster containerStyle={''} />
-	</div>
 </main>
 <footer class="bg-zinc-800">
 	<Footer />
 </footer>
+
+<Toaster containerStyle={'top: 4rem'} />

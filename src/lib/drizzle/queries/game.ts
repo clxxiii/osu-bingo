@@ -173,6 +173,7 @@ export const gameLinkToId = async (link: string) => {
 	return query.game_id;
 };
 
+
 export const getGameFromLinkId = async (link: string) => {
 	const game_id = await gameLinkToId(link);
 	if (!game_id) return null;
@@ -272,4 +273,11 @@ export const deleteGame = async (game_id: string) => {
 	logger.silly('Finished db request', { function: 'deleteGame', obj: 'delete', dir: 'end' });
 	logger.info(`Deleted game ${q.id}`, { type: "delete_game" })
 	return q;
+}
+
+export const deleteUnstartedGames = async () => {
+	logger.silly('Started db request', { function: 'deleteUnstartedGames', obj: 'delete', dir: 'start' });
+	const deleted = await db.delete(BingoGame).where(eq(BingoGame.state, 0));
+	logger.silly('Finished db request', { function: 'deleteUnstartedGame', obj: 'sdelete', dir: 'end' });
+	logger.info(`Deleted ${deleted.rowsAffected} unstarted games`, { type: "delete_game" })
 }

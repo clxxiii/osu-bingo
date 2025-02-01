@@ -53,6 +53,21 @@ export type LoginRequest = {
 	data: boolean;
 };
 
+export type ToastNotification = {
+	type: 'toast';
+	data: {
+		severity: "NORMAL" | "WARNING" | "URGENT"
+		msg: string
+	};
+}
+
+export type DeleteEvent = {
+	type: 'delete';
+	data: {
+		game_id: string
+	};
+}
+
 export type EmitterEvent =
 	| GameUserEvent
 	| StateChangeEvent
@@ -61,7 +76,9 @@ export type EmitterEvent =
 	| FullChatUpdate
 	| ChatMessage
 	| Init
-	| LoginRequest;
+	| LoginRequest
+	| ToastNotification
+	| DeleteEvent;
 
 export const isGameUserUpdate = (event: EmitterEvent): event is GameUserEvent =>
 	event.type == 'gameUser';
@@ -77,3 +94,7 @@ export const isFullChatUpdate = (event: EmitterEvent): event is FullChatUpdate =
 export const isChatMessage = (event: EmitterEvent): event is ChatMessage => event.type == 'chat';
 export const isLoginRequest = (event: EmitterEvent): event is LoginRequest =>
 	event.type == 'login_request';
+export const isToastNotification = (event: EmitterEvent): event is ToastNotification =>
+	event.type == 'toast';
+export const isDeleteEvent = (event: EmitterEvent): event is DeleteEvent =>
+	event.type == 'delete';

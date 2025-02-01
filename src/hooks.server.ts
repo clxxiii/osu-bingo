@@ -13,6 +13,7 @@ tokens.setup();
 events.setup();
 watch();
 connect();
+q.deleteUnstartedGames()
 
 const jwt_secret = new TextEncoder().encode(env.JWT_SECRET);
 
@@ -46,7 +47,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 			event.locals.user = user;
 		} catch (error) {
-			logger.error(error, { type: 'invalid_session' });
+			logger.error(error as string, { type: 'invalid_session' });
 			event.cookies.delete('osu_bingo_token', { path: '/' });
 		}
 	}
