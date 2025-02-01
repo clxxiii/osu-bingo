@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Writable } from 'svelte/store';
 	import EventScore from './EventScore.svelte';
+	import { fly } from 'svelte/transition';
 
 	type ScoreInfo = {
 		score: Bingo.Card.FullScore;
@@ -12,11 +13,14 @@
 	let scores: ScoreInfo[] = [];
 	store.subscribe((card) => {
 		if (!card || !card.squares) return;
-		scores = [];
+
+		const score_id_map = scores.map((x) => x.score.id);
 
 		for (let i = 0; i < card.squares.length; i++) {
 			const square = card.squares[i];
 			for (const score of square.scores) {
+				if (score_id_map.includes(score.id)) continue;
+
 				scores.push({
 					score,
 					square,
@@ -31,7 +35,7 @@
 
 <div class="size-full overflow-y-scroll">
 	{#each scores as score}
-		<div class="relative mb-2 w-full">
+		<div class="relative mb-2 w-full" transition:fly={{ x: 30, duration: 1000 }}>
 			<EventScore
 				score={score.score}
 				square={score.square}

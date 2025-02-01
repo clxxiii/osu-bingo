@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 	import { promise } from '$lib/toast';
 	import { Trash2Icon } from 'lucide-svelte';
 	import { cubicOut } from 'svelte/easing';
@@ -16,8 +17,8 @@
 
 		p.then(() => {
 			setTimeout(() => {
-				if (browser) window.location.href = '/games';
-			}, 2000);
+				if (browser) goto('/games');
+			}, 1000);
 		});
 
 		promise(p, {

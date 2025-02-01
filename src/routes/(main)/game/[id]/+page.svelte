@@ -13,6 +13,7 @@
 	import LoadingIcon from '$lib/components/LoadingIcon.svelte';
 	import HostSettings from '$lib/components/HostSettings.svelte';
 	import WinConfetti from '$lib/components/WinConfetti.svelte';
+	import PageContainer from '$lib/components/PageContainer.svelte';
 
 	export let data: PageData;
 
@@ -56,63 +57,71 @@
 	{/if}
 </svelte:head>
 
-{#if $store}
-	<InterfaceGrids {host} state={$store.state}>
-		<article slot="player-list" class="grid h-full grid-rows-2 gap-y-2 bg-zinc-900">
-			<div class="h-full w-full">
-				<TeamList team="BLUE" gameStore={store} host={data.is_host} user={data.user} />
+<PageContainer>
+	<div class="grid">
+		{#if $store}
+			<InterfaceGrids {host} state={$store.state}>
+				<article slot="player-list" class="grid h-full grid-rows-2 gap-y-2 bg-zinc-900">
+					<div class="h-full w-full">
+						<TeamList team="BLUE" gameStore={store} host={data.is_host} user={data.user} />
+					</div>
+					<div class="h-full w-full">
+						<TeamList team="RED" gameStore={store} host={data.is_host} user={data.user} />
+					</div>
+				</article>
+
+				<article slot="board" class="grid aspect-square">
+					<BingoCard {store} />
+				</article>
+
+				<article slot="square-sidebar" class="size-full">
+					<SquareSidebar gameStore={store} tiebreaker={$store.tiebreaker} />
+				</article>
+
+				<article slot="chat" class="size-full">
+					<Chatbox
+						channel={$store.state == 1 ? currentTeam?.toLowerCase() : 'global'}
+						enabled={currentTeam != undefined || data.is_host}
+					/>
+				</article>
+				<article class="size-full bg-zinc-800 p-2" slot="event-list">
+					<EventList {store}></EventList>
+				</article>
+				<article class="size-full" slot="host-settings">
+					<HostSettings {store}></HostSettings>
+				</article>
+			</InterfaceGrids>
+		{:else}
+			<div
+				in:fade={{ delay: 500, duration: 0 }}
+				out:fade={{ duration: 200 }}
+				class="col-start-1 col-end-2 row-start-1 row-end-2 mt-10 flex w-full flex-col items-center font-rounded text-lg"
+			>
+				<LoadingIcon size={75} />
+				<div class="mt-4">LOADING GAME</div>
 			</div>
-			<div class="h-full w-full">
-				<TeamList team="RED" gameStore={store} host={data.is_host} user={data.user} />
+		{/if}
+		{#if winner}
+			<WinConfetti team={winner} />
+		{/if}
+
+		{#if !$listener}
+			<div
+				transition:fade
+				class="fixed left-0 top-0 z-30 flex h-screen w-screen items-center justify-center bg-black/50 backdrop-blur-md"
+			>
+				You lost connection to the game, attempting to reconnect.
+				<br />
+				If waiting doesn't do anything, a refresh might fix it!
 			</div>
-		</article>
-
-		<article slot="board" class="grid aspect-square">
-			<BingoCard {store} />
-		</article>
-
-		<article slot="square-sidebar" class="size-full">
-			<SquareSidebar gameStore={store} tiebreaker={$store.tiebreaker} />
-		</article>
-
-		<article slot="chat" class="size-full">
-			<Chatbox
-				channel={$store.state == 1 ? currentTeam?.toLowerCase() : 'global'}
-				enabled={currentTeam != undefined || data.is_host}
-			/>
-		</article>
-		<article class="size-full bg-zinc-800 p-2" slot="event-list">
-			<EventList {store}></EventList>
-		</article>
-		<article class="size-full" slot="host-settings">
-			<HostSettings {store}></HostSettings>
-		</article>
-	</InterfaceGrids>
-{:else}
-	<div out:fade={{ duration: 200 }} class="flex w-full flex-col items-center font-rounded text-lg">
-		<LoadingIcon size={75} />
-		<div class="mt-4">LOADING GAME</div>
+		{/if}
+		{#if $login_request}
+			<div
+				transition:fade
+				class="fixed left-0 top-12 z-30 flex h-screen w-screen items-center justify-center bg-black/50 backdrop-blur-md"
+			>
+				<LoginRequest />
+			</div>
+		{/if}
 	</div>
-{/if}
-{#if winner}
-	<WinConfetti team={winner} />
-{/if}
-
-{#if !$listener}
-	<div
-		transition:fade
-		class="fixed left-0 top-0 z-30 flex h-screen w-screen items-center justify-center bg-black/50 backdrop-blur-md"
-	>
-		You lost connection to the game, attempting to reconnect.
-		<br />
-		If waiting doesn't do anything, a refresh might fix it!
-	</div>
-{/if}
-{#if $login_request}
-	<div
-		transition:fade
-		class="fixed left-0 top-12 z-30 flex h-screen w-screen items-center justify-center bg-black/50 backdrop-blur-md"
-	>
-		<LoginRequest />
-	</div>
-{/if}
+</PageContainer>
