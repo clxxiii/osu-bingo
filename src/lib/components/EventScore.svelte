@@ -78,16 +78,16 @@
 {:else}
 	<div class="flex items-center pl-2 opacity-80">
 		<span class="mr-1 opacity-50">
-			<ListVideo />
+			<ListVideo class="inline" />
 		</span>
-		Failed score by
+		Unsubmitted score by
 		<span
 			data-user={score.user.team_name.toUpperCase()}
 			class="pl-1 font-bold data-[user=BLUE]:text-blue-400 data-[user=RED]:text-amber-400"
 			>{score.user.user.username}
 		</span>
 		<span class="pl-1"
-			>on <button on:click={click}>{alphabet.charAt(square.y_pos)}{square.x_pos + 1}</button></span
+			>on <button on:click={click}>{alphabet.charAt(square.x_pos)}{square.y_pos + 1}</button></span
 		>
 	</div>
 {/if}

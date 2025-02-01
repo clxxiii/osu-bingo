@@ -10,7 +10,10 @@
 	};
 </script>
 
-<div class="size-full rounded-xl bg-base-800/50 font-rounded text-white">
+<div
+	class="size-full rounded-xl bg-base-800/50 font-rounded text-white"
+	style="scale: {settings.scale}"
+>
 	{#if $game}
 		{#if $game.state == 0}
 			{#if $game.public}

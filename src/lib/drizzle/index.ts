@@ -1,6 +1,6 @@
 import { env } from '$env/dynamic/private';
 import { createClient } from '@libsql/client';
-import { drizzle, LibSQLDatabase } from 'drizzle-orm/libsql';
+import { drizzle, type LibSQLDatabase } from 'drizzle-orm/libsql';
 
 export let db: LibSQLDatabase<Record<string, never>>;
 
