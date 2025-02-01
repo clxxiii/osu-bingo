@@ -95,7 +95,7 @@
 		{/each}
 
 		<!-- Host Controls -->
-		{#if host}
+		{#if host && $store.state != 2}
 			<button
 				class="absolute right-0 top-0 p-2 transition hover:text-zinc-400"
 				on:click={() => (host_controls = true)}
