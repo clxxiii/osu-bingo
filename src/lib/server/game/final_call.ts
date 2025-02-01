@@ -37,7 +37,10 @@ export const finalCall = async (game_id: string) => {
 
 	// If no claims, tie
 	if (count.length == 0) {
-		logger.info(`Game ${game_id} had no scores set on final call`, game);
+		logger.info(`Game ${game_id} had no scores set on final call`, {
+			game,
+			type: "final_call_no_scores"
+		});
 		q.setGameState(game_id, 2);
 		sendToGame(game_id, {
 			type: 'state',
@@ -66,6 +69,7 @@ export const finalCall = async (game_id: string) => {
 		}
 
 		logger.info(`Game ${game_id} resulted in a final call tiebreaker, won by ${winning_team}`, {
+			type: "final_call_square_win",
 			...game,
 			count
 		});
@@ -112,7 +116,11 @@ export const finalCall = async (game_id: string) => {
 
 		logger.info(
 			`Game ${game_id} resulted in a final call score tiebreaker, won by ${winning_team}`,
-			{ ...game, count: score_map }
+			{
+				type: "final_call_score_win",
+				game,
+				count: score_map
+			}
 		);
 		q.setGameState(game_id, 2, winning_team);
 		sendToGame(game_id, {
@@ -126,7 +134,11 @@ export const finalCall = async (game_id: string) => {
 	}
 
 	// Ultimate Tie
-	logger.info(`Game ${game_id} resulted in a final call tie`, game);
+	logger.info(`Game ${game_id} resulted in a final call tie`, {
+		type: "final_call_ultimate_tie",
+		count: score_map,
+		game
+	});
 	q.setGameState(game_id, 2);
 	sendToGame(game_id, {
 		type: 'state',
