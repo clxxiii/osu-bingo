@@ -49,12 +49,14 @@
 		data-channel={channel}
 		class="flex h-12 w-full items-center gap-x-1 rounded-t-xl bg-zinc-800 p-2 font-rounded text-2xl font-bold capitalize shadow data-[channel=blue]:bg-blue-700 data-[channel=red]:bg-amber-700"
 	>
-		<MessageSquareText size={36} /> <span>{channel} Chat</span>
+		<MessageSquareText size={36} /> <span>{channel ?? 'Global'} Chat</span>
 	</h1>
 	<div use:scroll={chatLength} class="overflow-y-scroll">
 		<div class="flex flex-col items-center justify-end overflow-x-hidden">
 			<div class="p-2 text-zinc-500">
-				<div>Welcome to the chatroom!</div>
+				{#if enabled}
+					<div>Welcome to the chatroom!</div>
+				{/if}
 				{#if channel.toUpperCase() != 'GLOBAL'}
 					<div>Use this channel to collaborate with your fellow teammates!</div>
 				{/if}

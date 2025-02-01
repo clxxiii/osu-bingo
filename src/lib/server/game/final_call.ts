@@ -26,10 +26,13 @@ export const finalCall = async (game_id: string) => {
 		}
 	}
 
-	const count = square_map
-		.keys()
-		.map((x) => ({ team: x, count: square_map.get(x)?.length ?? 0 }))
-		.toArray();
+	const count = []
+	for (const team in square_map) {
+		count.push({
+			team,
+			count: square_map.get(team)?.length ?? 0
+		})
+	}
 	console.log({ square_map, count });
 
 	// If no claims, tie
@@ -45,13 +48,14 @@ export const finalCall = async (game_id: string) => {
 		return;
 	}
 
-	let total_claimed = 0;
+	// Check that there is no tie in square count
+	let tie = false;
+	const count_0 = count[0].count;
 	for (const team of count) {
-		total_claimed += team.count;
+		if (team.count != count_0) tie = true;
 	}
 
-	// Check that there is no tie
-	if (total_claimed / count.length != count[0].count) {
+	if (!tie) {
 		let winning_team = '';
 		let highest_score = 0;
 		for (const score of count) {
@@ -81,7 +85,7 @@ export const finalCall = async (game_id: string) => {
 	 * claiming scores and the higher sum wins.
 	 */
 	const score_map: { team: string; sum: number }[] = [];
-	for (const team of square_map.keys()) {
+	for (const team in square_map) {
 		let sum = 0;
 		for (const square of square_map.get(team)!) {
 			sum += getClaimingScore(square);
@@ -89,13 +93,14 @@ export const finalCall = async (game_id: string) => {
 		score_map.push({ team, sum });
 	}
 
-	let total_score = 0;
+	// Check there is no tie in score
+	let score_tie = false;
+	const score_count_0 = score_map[0].sum;
 	for (const team of score_map) {
-		total_score += team.sum;
+		if (team.sum != score_count_0) score_tie = true;
 	}
 
-	// Check there is no tie in score
-	if (total_score / score_map.length != score_map[0].sum) {
+	if (!score_tie) {
 		let winning_team = '';
 		let highest_score = 0;
 		for (const score of score_map) {
