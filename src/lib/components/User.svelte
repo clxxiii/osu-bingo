@@ -16,7 +16,7 @@
 	const click = () => {
 		expanded = !expanded;
 		if (expanded) {
-			$width = 150;
+			$width = 100;
 		} else {
 			$width = nameplateWidth;
 		}
@@ -46,14 +46,14 @@
 				>
 					<X />
 				</button>
-				<a
+				<!-- <a
 					in:fly={{ y: 30, delay: 350 }}
 					out:fly={{ y: -30, delay: 50 }}
 					class="flex size-8 items-center justify-center rounded transition hover:bg-zinc-700"
 					href="/user/settings"
 				>
 					<Settings />
-				</a>
+				</a> -->
 				<a
 					in:fly={{ y: 30, delay: 400 }}
 					out:fly={{ y: -30, delay: 100 }}

@@ -12,7 +12,7 @@
 	<VR />
 	<NavLink href="/">Home</NavLink>
 	<NavLink href="/games">Games</NavLink>
-	<NavLink href="/templates">Templates</NavLink>
+	<!-- <NavLink href="/templates">Templates</NavLink> -->
 	<div class="absolute right-1">
 		<User />
 	</div>
