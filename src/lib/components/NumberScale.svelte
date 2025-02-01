@@ -9,6 +9,8 @@
 	export let difference = 5;
 	export let decimals = 2;
 
+	export let disabled;
+
 	// For  showing the value, what to divide by
 	export let divisor = 1;
 
@@ -33,13 +35,14 @@
 	};
 </script>
 
-<div style="--c: {color}">
+<div style="--c: {disabled ? '#888' : color}">
 	<div class="rounded-full bg-zinc-900 p-1">
 		<div class="group relative h-4">
 			<input
 				on:change={update}
 				on:input={minChange}
 				bind:value={selected_min}
+				{disabled}
 				class="absolute left-0 top-[50%] z-10 transition group-hover:brightness-125"
 				type="range"
 				{min}
@@ -50,6 +53,7 @@
 				on:input={maxChange}
 				bind:value={selected_max}
 				class="absolute left-0 top-[50%] z-10 transition group-hover:brightness-125"
+				{disabled}
 				type="range"
 				{min}
 				{max}

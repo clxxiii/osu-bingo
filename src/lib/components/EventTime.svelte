@@ -12,7 +12,7 @@
 	}
 </script>
 
-<div class="flex size-full rounded bg-pink-400/50 p-2">
+<div class="flex size-full h-8 items-center rounded bg-pink-400/50 p-2">
 	<div class="mr-1 flex size-5 h-full items-center opacity-50">
 		<Clock />
 	</div>

@@ -35,5 +35,5 @@ const banchoBoard = (card: Bingo.Card): string[][] | null => {
 
 const linkify = (square: Bingo.Card.FullSquare) => {
 	const alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	return `[https://osu.ppy.sh/b/${square.map_id} [${alpha.charAt(square.y_pos)}${square.x_pos + 1}]]`;
+	return `[https://osu.ppy.sh/b/${square.map_id} [${alpha.charAt(square.x_pos)}${square.y_pos + 1}]]`;
 };

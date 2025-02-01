@@ -5,18 +5,12 @@
 	import EventTime from './EventTime.svelte';
 	import EventStart from './EventStart.svelte';
 
-	type Event = ScoreInfo | TimeEvent | StateChange | StartEvent;
+	type Event = ScoreInfo | TimeEvent | StartEvent;
 	type StartEvent = {
 		type: 'start';
 		date: Date;
 	};
 	const isStart = (e: Event): e is StartEvent => e.type == 'start';
-	type StateChange = {
-		type: 'state';
-		date: Date;
-		data: {};
-	};
-	const isStateChange = (e: Event): e is StateChange => e.type == 'state';
 
 	type TimeEvent = {
 		type: 'time';
@@ -108,7 +102,7 @@
 					stat={$store?.tiebreaker ?? ''}
 				/>
 			{:else if isTimeEvent(event)}
-				{#if event.data.time < new Date()}
+				{#if new Date(event.data.time).valueOf() < new Date().valueOf()}
 					<EventTime event={event.data} />
 				{/if}
 			{:else if isStart(event)}

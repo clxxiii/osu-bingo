@@ -71,7 +71,7 @@
 				</article>
 
 				<article slot="board" class="grid aspect-square">
-					<BingoCard {store} />
+					<BingoCard {store} {host} />
 				</article>
 
 				<article slot="square-sidebar" class="size-full">
@@ -88,7 +88,7 @@
 					<EventList {store}></EventList>
 				</article>
 				<article class="size-full" slot="host-settings">
-					<HostSettings {store}></HostSettings>
+					<HostSettings />
 				</article>
 			</InterfaceGrids>
 		{:else}

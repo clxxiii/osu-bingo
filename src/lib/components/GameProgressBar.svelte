@@ -36,7 +36,6 @@
 		if (event && browser) {
 			const req = await fetch(`/get_event_meaning?action=${event?.action}`);
 			const meaning = await req.text();
-			console.log(meaning);
 			return meaning;
 		}
 	};

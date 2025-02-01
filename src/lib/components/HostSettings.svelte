@@ -1,12 +1,11 @@
 <script lang="ts">
 	import type { Writable } from 'svelte/store';
 	import { slide } from 'svelte/transition';
+	import { game as store } from '$lib/stores';
 	import ToggleSwitch from './ToggleSwitch.svelte';
 	import NumberScale from './NumberScale.svelte';
 	import Invite from './Invite.svelte';
 	import DeleteButton from './DeleteButton.svelte';
-
-	export let store: Writable<Bingo.Card | null>;
 
 	const changeVisibility = async (is_public: boolean) => {
 		const body = new FormData();
@@ -49,7 +48,7 @@
 </script>
 
 <div class="absolute right-0 top-0 h-full w-full overflow-hidden rounded-xl bg-zinc-800">
-	<div transition:slide={{ axis: 'x' }} class="absolute right-0 h-full w-full p-2">
+	<div class="absolute right-0 h-full w-full p-2">
 		{#if $store}
 			<h1 class="pb-4 pt-4 text-center font-rounded text-2xl font-bold">Host Settings</h1>
 			<div class="flex gap-4">
@@ -74,7 +73,8 @@
 				</div>
 			</div>
 			<div
-				class="mb-4 flex w-full flex-col items-center rounded-lg bg-zinc-900/50 p-2 font-rounded font-bold uppercase"
+				data-disabled={$store.state != 0}
+				class="mb-4 flex w-full flex-col items-center rounded-lg bg-zinc-900/50 p-2 font-rounded font-bold uppercase data-[disabled=true]:text-base-600"
 			>
 				Star Rating
 				<div class="w-full pt-1">
@@ -82,13 +82,15 @@
 						color="#ee92c2"
 						selected_min={($store.min_sr ?? 4) * 10}
 						selected_max={($store.max_sr ?? 5) * 10}
+						disabled={$store.state != 0}
 						divisor={10}
 						on:update={(e) => changeStarRating(e.detail.min, e.detail.max)}
 					/>
 				</div>
 			</div>
 			<div
-				class="flex w-full flex-col items-center rounded-lg bg-yellow-200 bg-zinc-900/50 p-2 font-rounded font-bold uppercase"
+				data-disabled={$store.state != 0}
+				class="flex w-full flex-col items-center rounded-lg bg-yellow-200 bg-zinc-900/50 p-2 font-rounded font-bold uppercase data-[disabled=true]:text-base-600"
 			>
 				Map Length
 				<div class="w-full pt-1">
@@ -97,17 +99,20 @@
 						max={600}
 						selected_min={$store.min_length ?? 30}
 						selected_max={$store.max_length ?? 200}
+						disabled={$store.state != 0}
 						decimals={0}
 						on:update={(e) => changeLength(e.detail.min, e.detail.max)}
 					/>
 				</div>
 			</div>
-			<button
-				on:click={start}
-				class="mt-4 w-full rounded-full bg-green-600 p-1 px-2 font-rounded text-xl font-bold hover:bg-green-700 active:bg-green-900"
-			>
-				START GAME</button
-			>
+			{#if $store?.state == 0}
+				<button
+					on:click={start}
+					class="mt-4 w-full rounded-full bg-green-600 p-1 px-2 font-rounded text-xl font-bold hover:bg-green-700 active:bg-green-900"
+				>
+					START GAME</button
+				>
+			{/if}
 
 			<div class="absolute bottom-0 w-full p-4 pl-0">
 				<DeleteButton />

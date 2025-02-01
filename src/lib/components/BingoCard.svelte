@@ -8,10 +8,16 @@
 	import Conditions from './Conditions.svelte';
 	import GameProgressBar from './GameProgressBar.svelte';
 	import AnnouncerPostGame from './AnnouncerPostGame.svelte';
+	import { Wrench, X } from 'lucide-svelte';
+	import { fade } from 'svelte/transition';
+	import HostSettings from './HostSettings.svelte';
 
+	export let host: boolean;
 	export let store: Writable<Bingo.Card | null>;
 	let yMax: number;
 	let xMax: number;
+
+	let host_controls = false;
 
 	let square_width: number;
 
@@ -47,7 +53,7 @@
 		<GameProgressBar />
 	{/if}
 	<div
-		class="grid w-full rounded bg-base-950 p-2"
+		class="relative grid w-full rounded bg-base-950 p-2"
 		bind:clientWidth={square_width}
 		style="
 	grid-template-columns: 30px repeat({xMax + 1}, {xMax + 1}fr); 
@@ -87,6 +93,33 @@
 				/>
 			</div>
 		{/each}
+
+		<!-- Host Controls -->
+		{#if host}
+			<button
+				class="absolute right-0 top-0 p-2 transition hover:text-zinc-400"
+				on:click={() => (host_controls = true)}
+			>
+				<Wrench />
+			</button>
+			{#if host_controls}
+				<div
+					transition:fade={{ duration: 150 }}
+					class="absolute inset-0 rounded bg-black/50 backdrop-blur-md"
+				>
+					<button
+						class="absolute right-0 top-0 p-2 transition hover:text-zinc-400"
+						on:click={() => (host_controls = false)}
+					>
+						<X />
+					</button>
+
+					<div class="absolute inset-16">
+						<HostSettings />
+					</div>
+				</div>
+			{/if}
+		{/if}
 	</div>
 	{#if $store.state == 1}
 		<Conditions />

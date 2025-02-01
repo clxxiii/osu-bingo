@@ -18,9 +18,9 @@
 						response.json().then((g: Bingo.BingoGame) => {
 							resolve(g);
 						});
+					} else {
+						response.json().then((e) => reject(e.message));
 					}
-
-					response.json().then((e) => reject(e.message));
 				})
 				.catch(reject);
 		});
@@ -32,9 +32,6 @@
 		});
 
 		p.then((response) => {
-			console.log(response);
-
-			// Create a link element and click it (for svelte to transition properly);
 			if (browser) {
 				setTimeout(() => goto(`/game/${response.id.substring(4)}`), 1000);
 			}
