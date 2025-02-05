@@ -22,6 +22,9 @@
 		}
 	};
 
+	// If width gets created before nameplateWidth, width will be undefined and the user won't be visible
+	$: if (width && $width == undefined) $width = nameplateWidth;
+
 	onMount(() => {
 		width = tweened(nameplateWidth, {
 			duration: 300,
@@ -33,7 +36,7 @@
 {#if $user != undefined && browser}
 	<div
 		data-expand={expanded}
-		style="--w: {$width}px"
+		style="--w: {$width ?? 100}px"
 		class="h-10 w-[var(--w)] items-center overflow-hidden rounded transition hover:bg-zinc-900 data-[expand=true]:bg-zinc-900"
 	>
 		{#if expanded}
@@ -76,7 +79,9 @@
 					src={$user.avatar_url}
 					alt=""
 				/>
-				<div class="row-end 2 col-start-2 col-end-3 row-start-1 text-left">{$user.username}</div>
+				<div class="col-start-2 col-end-3 row-start-1 row-end-2 whitespace-nowrap text-left">
+					{$user.username}
+				</div>
 				<div class="col-start-2 col-end-3 row-start-2 row-end-3 text-left text-[8px]">
 					#{$user.global_rank?.toLocaleString()}
 				</div>
