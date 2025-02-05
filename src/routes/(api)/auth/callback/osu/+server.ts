@@ -2,6 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { StatusCodes } from '$lib/StatusCodes';
 import { env } from '$env/dynamic/private';
+import { env as pub_env } from '$env/dynamic/public';
 import q from '$lib/drizzle/queries';
 import { exchangeAuthCode, getMe } from '$lib/server/osu';
 import { getState } from '../../state';
@@ -19,7 +20,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 
 	const token = await exchangeAuthCode(
 		code,
-		env.OSU_CLIENT_ID,
+		pub_env.PUBLIC_OSU_CLIENT_ID,
 		env.OSU_CLIENT_SECRET,
 		`${url.origin}/auth/callback/osu`
 	);

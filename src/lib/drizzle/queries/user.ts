@@ -2,6 +2,7 @@ import { and, eq, lt, not } from 'drizzle-orm';
 import { db } from '..';
 import { BingoGame, GameUser, Session, User } from '../schema';
 import { env } from '$env/dynamic/private';
+import { env as pub_env } from '$env/dynamic/public';
 import { getMe, refreshOAuthToken } from '$lib/server/osu';
 import { logger } from '$lib/logger';
 import { deleteToken, getToken, setToken } from './token';
@@ -112,7 +113,7 @@ export const isHostOfGame = async (user_id: number) => {
 };
 
 export const updateUser = async (token: Bingo.OauthToken) => {
-	const response = await refreshOAuthToken(token, env.OSU_CLIENT_ID, env.OSU_CLIENT_SECRET);
+	const response = await refreshOAuthToken(token, pub_env.PUBLIC_OSU_CLIENT_ID, env.OSU_CLIENT_SECRET);
 
 	if (response == null) {
 		logger.info(`Failed to update token, deleting...`, { type: 'token_update_failed' });
