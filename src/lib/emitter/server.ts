@@ -12,6 +12,7 @@ import { logger } from '$lib/logger';
 import ShortUniqueId from 'short-unique-id';
 
 import type { EmitterEvent, Fn, Listener } from '.';
+import { publishEvent } from '$lib/server/rabbit';
 
 const { randomUUID } = new ShortUniqueId({ length: 12, dictionary: 'alpha' });
 
@@ -116,32 +117,56 @@ export const sendToListener = (id: string, event: EmitterEvent) => {
 	if (listener) listener.fn(event);
 };
 
-export const sendToGame = (game_id: string, event: EmitterEvent) => {
+export const sendToGame = (game_id: string, event: EmitterEvent, local?: boolean) => {
 	const game = games.get(game_id);
 	if (!game) return;
 
 	for (const id of game) {
 		sendToListener(id, event);
 	}
+
+	if (!local) {
+		publishEvent({
+			'send_to': 'game',
+			'topic': game_id,
+			event
+		})
+	}
 	logger.info(`Sent ${event.type} event to game ${game_id}`, { event, type: 'sent_game_event' });
 };
 
-export const sendToUser = (user_id: number, event: EmitterEvent) => {
+export const sendToUser = (user_id: number, event: EmitterEvent, local?: boolean) => {
 	const user = users.get(user_id);
 	if (!user) return;
 
 	for (const id of user) {
 		sendToListener(id, event);
 	}
+
+	if (!local) {
+		publishEvent({
+			'send_to': 'user',
+			'topic': `${user_id}`,
+			event
+		})
+	}
 	logger.info(`Sent ${event.type} event to user ${user_id}`, { event, type: 'sent_user_event' });
 };
 
-export const sendToChannel = (game_id: string, channel: string, event: EmitterEvent) => {
+export const sendToChannel = (game_id: string, channel: string, event: EmitterEvent, local?: boolean) => {
 	const game_channel = game_channels.get(`${game_id}_${channel}`);
 	if (!game_channel) return;
 
 	for (const id of game_channel) {
 		sendToListener(id, event);
+	}
+
+	if (!local) {
+		publishEvent({
+			'send_to': 'channel',
+			'topic': `${game_id}_${channel}`,
+			event
+		})
 	}
 	logger.info(`Sent ${event.type} event to game channel ${game_id}_${channel}`, {
 		event,

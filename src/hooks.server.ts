@@ -3,16 +3,22 @@ import * as jose from 'jose';
 import { env } from '$env/dynamic/private';
 import q from '$lib/drizzle/queries';
 import { StatusCodes } from '$lib/StatusCodes';
-import { connect } from '$lib/server/bancho';
-
-// Start Polling Services
-import { tokens, events } from '$lib/server/polling';
-import { setup as watch } from '$lib/server/game/watch';
 import { logger } from '$lib/logger';
+
+
+// Start Polling
+import { tokens, events } from '$lib/server/polling';
+import { setup as startWatch } from '$lib/server/game/watch';
 tokens.setup();
 events.setup();
-watch();
-connect();
+startWatch();
+
+// Connect Services
+import { connect as connectBancho } from '$lib/server/bancho';
+import { connect as connectRabbit } from '$lib/server/rabbit';
+connectBancho();
+connectRabbit();
+
 q.deleteUnstartedGames()
 
 const jwt_secret = new TextEncoder().encode(env.JWT_SECRET);
