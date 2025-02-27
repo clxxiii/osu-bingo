@@ -9,6 +9,16 @@
 
 <svelte:head>
 	<title>osu!Bingo</title>
+
+	<meta property="twitter:card" content="summary" />
+	<meta property="og:title" content="osu!Bingo" />
+	<meta property="og:type" content="website" />
+	<meta
+		property="og:description"
+		content="A team vs team battle to claim squares on a bingo board, all while playing your favorite circle clicking game."
+	/>
+	<meta property="og:url" content="https://osu.bingo" />
+	<meta property="og:image" content="https://osu.bingo/icon.svg" />
 </svelte:head>
 
 <PageContainer>

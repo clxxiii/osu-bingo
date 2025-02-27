@@ -60,8 +60,17 @@
 		<title>
 			Bingo Game: {$store.link_id}
 		</title>
-	{:else}
+
+		<meta property="twitter:card" content="summary" />
+		<meta property="og:title" content="osu!Bingo: Game {$store.link_id}" />
+		<meta property="og:type" content="website" />
+		<meta property="og:description" content="A public osu! bingo game!" />
+		<meta property="og:url" content="https://osu.bingo/{$store.link_id}" />
+		<meta property="og:image" content="https://osu.bingo/icon.svg" />
+	{:else if data.game_id && !$store?.public}
 		<title>Private Game</title>
+	{:else}
+		<title>Loading Game...</title>
 	{/if}
 </svelte:head>
 
