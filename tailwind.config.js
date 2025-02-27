@@ -5,8 +5,9 @@ export default {
 		extend: {
 			fontFamily: {
 				sans: ['Montserrat', 'sans-serif'],
-				display: ['Roundor', 'display', 'sans-serif'],
+				display: ['Poiret One', 'display', 'sans-serif'],
 				rounded: ['Comfortaa', 'sans-serif'],
+				square: ['Geo', 'sans-serif'],
 				mono: ['CutiveMono', 'monospace']
 			},
 			animation: {

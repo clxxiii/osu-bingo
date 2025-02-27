@@ -3,6 +3,6 @@
 </script>
 
 <div>
-	<h2 class="font-rounded text-2xl font-bold">{title}</h2>
+	<h2 class="font-display text-2xl">{title}</h2>
 	<p class="ml-2"><slot /></p>
 </div>

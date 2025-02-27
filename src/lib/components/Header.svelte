@@ -7,7 +7,7 @@
 <nav class="relative flex h-12 w-full items-center overflow-hidden p-1">
 	<a href="/" class="flex h-10 gap-1 rounded p-2 transition hover:bg-zinc-900">
 		<img src="/icon.svg" class="h-6" alt="" />
-		<div class="flex h-6 items-center text-nowrap font-display text-lg">bingo</div>
+		<div class="flex h-6 items-center text-nowrap font-rounded text-lg font-bold">BINGO</div>
 	</a>
 	<VR />
 	<NavLink href="/">Home</NavLink>

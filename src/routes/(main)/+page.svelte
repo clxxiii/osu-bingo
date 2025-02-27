@@ -12,7 +12,9 @@
 </svelte:head>
 
 <PageContainer>
-	<div class="pattern h-[300px]"></div>
+	<div class="flex h-[300px] items-center justify-center">
+		<h1 class="font-display text-[96px]">osu!Bingo</h1>
+	</div>
 	<div class="m-auto mt-10 flex w-full max-w-[1200px] flex-col gap-10 lg:flex-row">
 		<div>
 			<h1 class="text-3xl">Welcome to osu! Bingo!</h1>
@@ -28,7 +30,7 @@
 			</MainPageSection>
 
 			<MainPageSection title="No square is safe!">
-				Even if a team claims a square, the other team can **reclaim** that square by getting a high
+				Even if a team claims a square, the other team can <b>reclaim</b> that square by getting a high
 				score on the map that also meets the claim condition.
 			</MainPageSection>
 

@@ -23,6 +23,16 @@
 	src: url('/fonts/montserrat/Montserrat-Regular.ttf');
 }
 
+@font-face {
+	font-family: 'Geo';
+	src: url('/fonts/Geo-Regular.ttf');
+}
+
+@font-face {
+	font-family: 'Poiret One';
+	src: url('/fonts/PoiretOne-Regular.ttf');
+}
+
 body {
 	@apply bg-zinc-900 font-sans text-purple-300;
 }
