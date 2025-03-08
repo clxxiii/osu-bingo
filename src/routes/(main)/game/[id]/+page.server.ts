@@ -57,6 +57,11 @@ export const actions = {
 		if (!user) error(StatusCodes.UNAUTHORIZED);
 		if (!team || !game || typeof team != 'string') error(StatusCodes.BAD_REQUEST);
 
+		if (!game.public) {
+			const invited = await q.isInvited(game.id, user.id);
+			if (!invited) error(StatusCodes.UNAUTHORIZED);
+		}
+
 		const fulluser = await q.joinGame(game.id, user.id, team);
 		if (fulluser == null) error(StatusCodes.BAD_REQUEST, 'User is already in game');
 
@@ -79,6 +84,11 @@ export const actions = {
 		if (!actor) error(StatusCodes.UNAUTHORIZED);
 		if (!team || !game || typeof team != 'string' || typeof guid != 'string')
 			error(StatusCodes.BAD_REQUEST);
+
+		if (!game.public) {
+			const invited = await q.isInvited(game.id, actor.id);
+			if (!invited) error(StatusCodes.UNAUTHORIZED);
+		}
 
 		const is_host = await q.isHost(game.id, actor.id);
 		if (!is_host) {
@@ -105,6 +115,11 @@ export const actions = {
 		if (!user) error(StatusCodes.UNAUTHORIZED);
 		if (!game) error(StatusCodes.BAD_REQUEST);
 
+		if (!game.public) {
+			const invited = await q.isInvited(game.id, user.id);
+			if (!invited) error(StatusCodes.UNAUTHORIZED);
+		}
+
 		const fulluser = await q.leaveGame(game.id, user.id);
 		if (fulluser == null) error(StatusCodes.BAD_REQUEST);
 
@@ -123,6 +138,11 @@ export const actions = {
 
 		if (!user) error(StatusCodes.UNAUTHORIZED);
 		if (!game) error(StatusCodes.BAD_REQUEST);
+
+		if (!game.public) {
+			const invited = await q.isInvited(game.id, user.id);
+			if (!invited) error(StatusCodes.UNAUTHORIZED);
+		}
 
 		const body = await request.formData();
 
@@ -145,6 +165,11 @@ export const actions = {
 
 		if (!user) error(StatusCodes.UNAUTHORIZED);
 		if (!game_check) error(StatusCodes.BAD_REQUEST);
+
+		if (!game_check.public) {
+			const invited = await q.isInvited(game_check.id, user.id);
+			if (!invited) error(StatusCodes.UNAUTHORIZED);
+		}
 
 		const game = await q.getGame(game_check.id);
 		if (!game) error(StatusCodes.BAD_REQUEST);
