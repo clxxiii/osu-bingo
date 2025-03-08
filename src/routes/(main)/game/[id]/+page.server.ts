@@ -38,12 +38,12 @@ export const load: PageServerLoad = async ({ params, locals, url }) => {
 			);
 		}
 
-		if (await q.isInvited(game.id, locals.user?.id)) return { game, is_host };
+		if (await q.isInvited(game.id, locals.user?.id)) return { game_id: game.id, is_host, invited: true };
 
-		return { game_id: null, is_host };
+		return { game_id: game.id, is_host, invited: false };
 	}
 
-	return { game_id: game.id, is_host };
+	return { game_id: game.id, is_host, invited: true };
 };
 
 export const actions = {

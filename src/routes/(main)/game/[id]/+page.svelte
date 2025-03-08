@@ -80,10 +80,22 @@
 			<InterfaceGrids {host} state={$store.state}>
 				<article slot="player-list" class="grid h-full grid-rows-2 gap-y-2 bg-zinc-900">
 					<div class="h-full w-full">
-						<TeamList team="BLUE" gameStore={store} host={data.is_host} user={data.user} />
+						<TeamList
+							invited={data.invited}
+							team="BLUE"
+							gameStore={store}
+							host={data.is_host}
+							user={data.user}
+						/>
 					</div>
 					<div class="h-full w-full">
-						<TeamList team="RED" gameStore={store} host={data.is_host} user={data.user} />
+						<TeamList
+							invited={data.invited}
+							team="RED"
+							gameStore={store}
+							host={data.is_host}
+							user={data.user}
+						/>
 					</div>
 				</article>
 

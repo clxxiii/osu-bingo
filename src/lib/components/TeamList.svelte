@@ -2,13 +2,13 @@
 	import type { Writable } from 'svelte/store';
 	import TeamListUser from './TeamListUser.svelte';
 	import { onMount } from 'svelte';
-	import { slide } from 'svelte/transition';
 	import { browser } from '$app/environment';
 
 	export let gameStore: Writable<Bingo.Card | null>;
 	export let team: string;
 	export let user: Bingo.User | undefined;
 	export let host: boolean = false;
+	export let invited: boolean = true;
 
 	let users: Bingo.Card.FullUser[] = [];
 	let gameuser: Bingo.GameUser | null;
@@ -91,7 +91,7 @@
 				/>
 			{/each}
 		</div>
-		{#if $gameStore && $gameStore.state == 0}
+		{#if invited && $gameStore && $gameStore.state == 0}
 			<div class="absolute bottom-0 w-full rounded-xl bg-black/30 p-1">
 				{#if !gameuser?.team_name}
 					<button
