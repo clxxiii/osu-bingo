@@ -5,12 +5,15 @@
 	export let cardStore: Writable<Bingo.Card | null>;
 	export let cardPadding = 5;
 	export let padding = 5;
+	export let labels = true;
 	export let rounded = true;
 
 	let yMax: number;
 	let xMax: number;
 
 	let winningLine: number[] | null = null;
+
+	const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 	cardStore.subscribe((card) => {
 		if (!card) return;
@@ -43,10 +46,14 @@
 					2} / {square.x_pos + 2}; --p: {padding}px; --r: {rounded ? padding : 0}px"
 			>
 				<div
-					class="size-full rounded-[var(--r)] bg-base-700 data-[winning=true]:animate-pulse data-[team=BLUE]:bg-blue-600 data-[team=RED]:bg-red-500"
+					class="flex size-full items-center justify-center rounded-[var(--r)] bg-base-700 font-rounded text-2xl font-black text-white/50 data-[winning=true]:animate-pulse data-[team=BLUE]:bg-blue-600 data-[team=RED]:bg-red-500"
 					data-team={square.claimed_by?.team_name.toUpperCase()}
 					data-winning={winningLine?.includes(i)}
-				></div>
+				>
+					{#if labels}
+						{alphabet.charAt(square.x_pos)}{square.y_pos + 1}
+					{/if}
+				</div>
 			</div>
 		{/each}
 	{/if}

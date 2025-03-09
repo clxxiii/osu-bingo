@@ -10,6 +10,7 @@ export const load: PageServerLoad = ({ url }) => {
 
   const settings = {
     show_rules: params.get("show_rules") ? true : false,
+    show_labels: params.get("show_labels") ? true : false,
     scale: parseFloat(params.get("scale") ?? "1") ?? 1.0
   }
 

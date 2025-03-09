@@ -6,6 +6,7 @@
 
 	type Settings = {
 		scale: number;
+		show_labels: boolean;
 		show_rules: boolean;
 	};
 </script>
@@ -24,7 +25,7 @@
 				Private Game
 			{/if}
 		{:else}
-			<MinimalCard cardStore={game} />
+			<MinimalCard cardStore={game} labels={settings.show_labels} />
 		{/if}
 	{/if}
 </div>
