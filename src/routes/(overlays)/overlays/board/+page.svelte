@@ -70,7 +70,6 @@
 				const user = await userReq.json();
 				if (!user.game_id) {
 					game_id = null;
-					console.log('No game found');
 					return;
 				}
 				game_id = user.game_id.substring(4);

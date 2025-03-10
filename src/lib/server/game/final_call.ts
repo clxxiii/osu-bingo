@@ -33,7 +33,6 @@ export const finalCall = async (game_id: string) => {
 			count: square_map.get(team)?.length ?? 0
 		})
 	}
-	console.log({ square_map, count });
 
 	// If no claims, tie
 	if (count.length == 0) {
