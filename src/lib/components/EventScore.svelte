@@ -48,12 +48,11 @@
 		<!-- User -->
 		<div class="pl-2">
 			<div class="flex items-center">
-				{score.important ? 'Claiming score by' : 'Score by'}
-				<span class="pl-1">
-					<img src={score.user.user.avatar_url} class="inline h-6 rounded-full" alt="" />
+				<span>
+					<img src={score.user.user.avatar_url} class="inline h-5 rounded-full" alt="" />
 					<span
 						data-user={score.user.team_name.toUpperCase()}
-						class="pl-1 font-bold data-[user=BLUE]:text-blue-400 data-[user=RED]:text-amber-400"
+						class="text-sm font-bold data-[user=BLUE]:text-blue-300 data-[user=RED]:text-amber-300"
 						>{score.user.user.username}
 					</span>
 				</span>
@@ -62,7 +61,7 @@
 		</div>
 
 		<div
-			class="absolute right-0 top-0 flex h-full translate-y-1 items-center p-2 font-display text-2xl"
+			class="absolute right-0 top-0 flex h-full translate-y-1 items-center p-2 font-rounded text-2xl"
 		>
 			{#if stat == 'score'}
 				{score.score.toLocaleString()}
@@ -76,18 +75,24 @@
 		</div>
 	</a>
 {:else}
-	<div class="flex items-center pl-2 opacity-80">
+	<div class="relative pl-2 opacity-80">
 		<span class="mr-1 opacity-50">
 			<ListVideo class="inline" />
 		</span>
-		Unsubmitted score by
+		Score by
 		<span
 			data-user={score.user.team_name.toUpperCase()}
-			class="pl-1 font-bold data-[user=BLUE]:text-blue-400 data-[user=RED]:text-amber-400"
-			>{score.user.user.username}
-		</span>
-		<span class="pl-1"
-			>on <button on:click={click}>{alphabet.charAt(square.x_pos)}{square.y_pos + 1}</button></span
+			class="font-bold data-[user=BLUE]:text-blue-400 data-[user=RED]:text-amber-400"
 		>
+			{score.user.user.username}
+		</span>
+		<span>
+			<button
+				class="absolute right-0 w-8 rounded bg-zinc-700 px-1 font-rounded font-bold"
+				on:click={click}
+			>
+				{alphabet.charAt(square.x_pos)}{square.y_pos + 1}
+			</button>
+		</span>
 	</div>
 {/if}
