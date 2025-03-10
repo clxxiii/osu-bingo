@@ -153,10 +153,18 @@ export const actions = {
 
 		const msg = await q.sendChat(user.id, game.id, message, channel);
 		if (!msg) error(StatusCodes.BAD_REQUEST, 'Gameuser is invalid');
-		sendToChannel(game.id, channel, {
-			type: 'chat',
-			data: msg
-		});
+
+		if (channel == 'GLOBAL') {
+			sendToGame(game.id, {
+				type: 'chat',
+				data: msg
+			})
+		} else {
+			sendToChannel(game.id, channel, {
+				type: 'chat',
+				data: msg
+			});
+		}
 	},
 	send_board: async ({ params, locals }) => {
 		const user = locals.user;
