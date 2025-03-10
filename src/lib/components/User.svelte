@@ -37,7 +37,7 @@
 	<div
 		data-expand={expanded}
 		style="--w: {$width ?? 100}px"
-		class="h-10 w-[var(--w)] items-center overflow-hidden rounded transition hover:bg-zinc-900 data-[expand=true]:bg-zinc-900"
+		class="relative h-10 w-[var(--w)] items-center overflow-hidden rounded transition hover:bg-zinc-900 data-[expand=true]:bg-zinc-900"
 	>
 		{#if expanded}
 			<div class="flex h-full items-center justify-evenly">
