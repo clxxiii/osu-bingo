@@ -2,43 +2,42 @@
 	import { MessageSquareText } from 'lucide-svelte';
 	import ChatMessage from './ChatMessage.svelte';
 	import { chats } from '$lib/stores';
+	import { afterUpdate } from 'svelte';
 
 	export let channel = 'global';
 
-	let chatLength = 0;
-	const scroll = (node: HTMLDivElement, chatLength: number) => {
-		const scroll = () => scrollToBottom(node);
-		scroll();
+	// Autoscroll
+	let box: HTMLDivElement;
+	const scrollToBottom = () => {
+		if (!box) return;
 
-		return { update: scroll };
-	};
-
-	const scrollToBottom = (node: HTMLDivElement) => {
-		node.scroll({
-			top: node.scrollHeight,
+		box.scroll({
+			top: box.scrollHeight,
 			behavior: 'smooth'
 		});
 	};
+	afterUpdate(scrollToBottom);
 
 	export let enabled: boolean = false;
 
-	let box: HTMLInputElement;
+	let input: HTMLInputElement;
 	const keydown = async (ev: KeyboardEvent) => {
 		if (ev.key != 'Enter') return;
 
 		const body = new FormData();
-		body.set('message', box.value);
+		body.set('message', input.value);
 		body.set('channel', channel.toUpperCase());
 
-		box.disabled = true;
+		input.disabled = true;
 		const result = await fetch('?/chat', {
 			method: 'POST',
 			body
 		});
 		if (result.ok) {
-			box.value = '';
+			input.value = '';
 		}
-		box.disabled = false;
+		input.disabled = false;
+		input.focus();
 	};
 </script>
 
@@ -51,7 +50,7 @@
 	>
 		<MessageSquareText size={36} /> <span>{channel ?? 'Global'} Chat</span>
 	</h1>
-	<div use:scroll={chatLength} class="overflow-y-scroll">
+	<div bind:this={box} class="overflow-y-scroll">
 		<div class="flex flex-col items-center justify-end overflow-x-hidden">
 			<div class="p-2 text-zinc-500">
 				{#if enabled}
@@ -70,7 +69,7 @@
 		<div class="w-full p-5">
 			<input
 				type="text"
-				bind:this={box}
+				bind:this={input}
 				on:keydown={keydown}
 				placeholder="Send a message"
 				class="block w-full rounded-full bg-zinc-700 p-2 text-sm outline-none transition focus:shadow-lg disabled:bg-zinc-800"

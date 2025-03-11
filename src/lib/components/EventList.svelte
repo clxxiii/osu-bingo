@@ -4,6 +4,7 @@
 	import { fly } from 'svelte/transition';
 	import EventTime from './EventTime.svelte';
 	import EventStart from './EventStart.svelte';
+	import { afterUpdate } from 'svelte';
 
 	type Event = ScoreInfo | TimeEvent | StartEvent;
 	type StartEvent = {
@@ -89,9 +90,21 @@
 
 		events.sort((a, b) => new Date(a.date).valueOf() - new Date(b.date).valueOf());
 	});
+
+	// Autoscroll
+	let box: HTMLDivElement;
+	const scrollToBottom = () => {
+		if (!box) return;
+
+		box.scroll({
+			top: box.scrollHeight,
+			behavior: 'smooth'
+		});
+	};
+	afterUpdate(scrollToBottom);
 </script>
 
-<div class="flex size-full flex-col-reverse gap-2 overflow-y-scroll pr-2">
+<div bind:this={box} class="flex size-full flex-col gap-2 overflow-y-scroll pr-2">
 	{#each events as event}
 		<div class="relative w-full" transition:fly={{ x: 30, duration: 1000 }}>
 			{#if isScore(event)}
@@ -102,7 +115,7 @@
 					stat={$store?.tiebreaker ?? ''}
 				/>
 			{:else if isTimeEvent(event)}
-				{#if new Date(event.data.time).valueOf() < new Date().valueOf()}
+				{#if new Date(event.data.time).valueOf() < new Date().valueOf() && event.data.fulfilled}
 					<EventTime event={event.data} />
 				{/if}
 			{:else if isStart(event)}
