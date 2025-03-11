@@ -151,7 +151,7 @@ export const getGame = async (game_id: string): Promise<Bingo.Card | null> => {
 		// Find the square it belongs to and push this score
 		const squareIdx = squares.findIndex(x => x.id == score.square_id);
 		const user = users.find((x) => x.user_id == score.user_id);
-		if (!squareIdx || !user) continue;
+		if (squareIdx == -1 || !user) continue;
 
 		squares[squareIdx].scores.push({ ...score, user })
 	}
