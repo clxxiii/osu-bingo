@@ -24,27 +24,35 @@ const default_lines = [
 export const checkWin = (game: Bingo.Card) => {
 	if (!game.squares) return null;
 
-	// Arrange the board into a 2D array.
-	const yMax = Math.max(...game.squares.map((x) => x.y_pos));
-	const xMax = Math.max(...game.squares.map((x) => x.x_pos));
-
-	const board: (string | null)[] = new Array((yMax + 1) * (xMax + 1));
-	for (const square of game.squares) {
-		const index = square.y_pos * 5 + square.x_pos;
-		board[index] = square.claimed_by?.team_name ?? null;
-	}
-
-	// Get lines from template
+	// Get board and lines from template
 	let template: Template;
 	try {
 		template = JSON.parse(game.template.data);
 	} catch {
-		return bingoCheck(board);
+		throw "Template is invalid";
 	}
-	const { lines } =
-		typeof template.setup.board == 'string' ? boards[template.setup.board] : template.setup.board;
 
-	return bingoCheck(board, lines);
+	// Get board and lines from template
+	let board: Template.Board;
+	if (typeof template.setup.board == 'string') {
+		board = boards[template.setup.board];
+	} else {
+		board = template.setup.board;
+	}
+
+	if (!board) {
+		throw "Template does not have a valid board";
+	}
+
+	const boardMarks: (string | null)[] = new Array(board.squares.length);
+	for (let i = 0; i < board.squares.length; i++) {
+		const coords = board.squares[i];
+		const square = game.squares.find((x) => ((x.x_pos == coords[1]) && (x.y_pos == coords[0])))
+		if (!square) continue;
+		boardMarks[i] = square.claimed_by?.team_name?.toUpperCase() ?? null
+	}
+
+	return bingoCheck(boardMarks, board.lines);
 };
 
 /**
