@@ -104,7 +104,7 @@
 	afterUpdate(scrollToBottom);
 </script>
 
-<div bind:this={box} class="flex size-full flex-col gap-2 overflow-y-scroll pr-2">
+<div bind:this={box} class="flex size-full flex-col gap-2 overflow-x-hidden overflow-y-scroll pr-2">
 	{#each events as event}
 		<div class="relative w-full" transition:fly={{ x: 30, duration: 1000 }}>
 			{#if isScore(event)}
