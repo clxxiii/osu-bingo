@@ -33,7 +33,7 @@
 
 	export let store: Writable<Bingo.Card | null>;
 
-	const events: Event[] = [];
+	let events: Event[] = [];
 	store.subscribe((card) => {
 		if (!card || !card.squares) return;
 
@@ -59,10 +59,13 @@
 		}
 
 		if (card.start_time != null && card.state != 0) {
-			events.push({
-				type: 'start',
-				date: card.start_time
-			});
+			const startEvent = events.find(isStart);
+			if (!startEvent) {
+				events.push({
+					type: 'start',
+					date: card.start_time
+				});
+			}
 		}
 
 		// Add new scores
@@ -89,6 +92,9 @@
 		}
 
 		events.sort((a, b) => new Date(a.date).valueOf() - new Date(b.date).valueOf());
+
+		// Because we haven't upgraded to svelte 5 yet, we have to do this to tell svelte to update the list
+		events = [...events];
 	});
 
 	// Autoscroll
