@@ -27,10 +27,10 @@ export const finalCall = async (game_id: string) => {
 	}
 
 	const count = []
-	for (const team in square_map) {
+	for (const [team, value] of square_map.entries()) {
 		count.push({
 			team,
-			count: square_map.get(team)?.length ?? 0
+			count: value.length ?? 0
 		})
 	}
 
@@ -51,33 +51,28 @@ export const finalCall = async (game_id: string) => {
 	}
 
 	// Check that there is no tie in square count
-	let tie = false;
+	count.sort((a, b) => b.count - a.count)
+
+	const winners = [];
 	const count_0 = count[0].count;
-	for (const team of count) {
-		if (team.count != count_0) tie = true;
+	for (const { team, count: score } of count) {
+		if (score == count_0) winners.push({ team, count: score });
 	}
 
-	if (!tie) {
-		let winning_team = '';
-		let highest_score = 0;
-		for (const score of count) {
-			if (score.count > highest_score) {
-				highest_score = score.count;
-				winning_team = score.team;
-			}
-		}
+	if (winners.length == 1) {
+		const { team } = count[0];
 
-		logger.info(`Game ${game_id} resulted in a final call tiebreaker, won by ${winning_team}`, {
+		logger.info(`Game ${game_id} resulted in a final call tiebreaker, won by ${team}`, {
 			type: "final_call_square_win",
 			...game,
 			count
 		});
-		q.setGameState(game_id, 2, winning_team);
+		q.setGameState(game_id, 2, team);
 		sendToGame(game_id, {
 			type: 'state',
 			data: {
 				state: 2,
-				winner: winning_team
+				winner: team
 			}
 		});
 		return;
@@ -87,46 +82,44 @@ export const finalCall = async (game_id: string) => {
 	 * If there is a tie in square count, we get the sum of all the squares'
 	 * claiming scores and the higher sum wins.
 	 */
-	const score_map: { team: string; sum: number }[] = [];
-	for (const team in square_map) {
+	const scores: { team: string; sum: number }[] = [];
+	for (const { team } of winners) {
+		const value = square_map.get(team);
+		if (!value) continue;
+
 		let sum = 0;
-		for (const square of square_map.get(team)!) {
+		for (const square of value) {
 			sum += getClaimingScore(square);
 		}
-		score_map.push({ team, sum });
+		scores.push({ team, sum });
 	}
 
-	// Check there is no tie in score
-	let score_tie = false;
-	const score_count_0 = score_map[0].sum;
-	for (const team of score_map) {
-		if (team.sum != score_count_0) score_tie = true;
+	// Check that there is no tie in score
+	scores.sort((a, b) => b.sum - a.sum)
+
+	const scoreWinners = [];
+	const score_0 = scores[0].sum;
+	for (const { team, sum: score } of scores) {
+		if (score == score_0) scoreWinners.push({ team, sum: score });
 	}
 
-	if (!score_tie) {
-		let winning_team = '';
-		let highest_score = 0;
-		for (const score of score_map) {
-			if (score.sum > highest_score) {
-				highest_score = score.sum;
-				winning_team = score.team;
-			}
-		}
+	if (scoreWinners.length == 1) {
+		const { team } = count[0];
 
 		logger.info(
-			`Game ${game_id} resulted in a final call score tiebreaker, won by ${winning_team}`,
+			`Game ${game_id} resulted in a final call score tiebreaker, won by ${team}`,
 			{
 				type: "final_call_score_win",
 				game,
-				count: score_map
+				count: scores
 			}
 		);
-		q.setGameState(game_id, 2, winning_team);
+		q.setGameState(game_id, 2, team);
 		sendToGame(game_id, {
 			type: 'state',
 			data: {
 				state: 2,
-				winner: winning_team
+				winner: team
 			}
 		});
 		return;
@@ -135,7 +128,7 @@ export const finalCall = async (game_id: string) => {
 	// Ultimate Tie
 	logger.info(`Game ${game_id} resulted in a final call tie`, {
 		type: "final_call_ultimate_tie",
-		count: score_map,
+		count: scores,
 		game
 	});
 	q.setGameState(game_id, 2);
