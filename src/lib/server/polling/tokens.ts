@@ -4,6 +4,7 @@
 
 import q from '$lib/drizzle/queries';
 import { updateUser } from '$lib/drizzle/queries/user';
+import { logger } from '$lib/logger';
 
 const POLLING_INTERVAL_MS = 60 * 1000;
 
@@ -17,6 +18,8 @@ export const setup = () => {
 };
 
 const interval = async () => {
+	logger.debug("Looking for lingering tokens", { type: "token_poll" })
+
 	const lingeringTokens = await q.getLingeringTokens();
 
 	for (const old of lingeringTokens) {

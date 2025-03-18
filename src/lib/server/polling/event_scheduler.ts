@@ -16,6 +16,8 @@ export const setup = () => {
 };
 
 export const interval = async () => {
+	logger.debug("Looking for new events", { type: "event_poll" })
+
 	const events = await q.getUpcomingEvents();
 	for (const event of events) {
 		if (scheduledEvents.has(event.id)) continue;

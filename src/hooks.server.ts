@@ -16,6 +16,7 @@ startWatch();
 // Connect Services
 import { connect as connectBancho } from '$lib/server/bancho';
 import { connect as connectRabbit } from '$lib/server/rabbit';
+import { ka } from 'date-fns/locale';
 connectBancho();
 connectRabbit();
 
@@ -57,7 +58,20 @@ export const handle: Handle = async ({ event, resolve }) => {
 			event.cookies.delete('osu_bingo_token', { path: '/' });
 		}
 	}
-	logger.http(`[${event.locals.user?.username ?? 'UNKNOWN'}]: ${event.url}`, { type: 'http_log' });
 
-	return await resolve(event);
+	const resolved = await resolve(event);
+
+	// Turn searchParams into a javascript object
+	const params = Array.from(event.url.searchParams.entries()).reduce((a, [k, v]) => ({ ...a, [k]: v }), {});
+	const user = event.locals.user?.username;
+	logger.log("http", `${resolved.status} ${event.request.method} ${event.url.pathname}`, {
+		type: 'http_log',
+		user,
+		params,
+		path: event.url.pathname,
+		method: event.request.method,
+		status: resolved.status
+	});
+
+	return resolved;
 };
