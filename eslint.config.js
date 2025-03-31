@@ -12,11 +12,28 @@ export default [
 	prettier,
 	...svelte.configs['flat/prettier'],
 	{
+		rules: {
+			'no-undef': ['off'],
+			'@typescript-eslint/no-unused-vars': [
+				'error',
+				{
+					argsIgnorePattern: '^_',
+					varsIgnorePattern: '^_',
+					caughtErrorsIgnorePattern: '^_'
+				}
+			]
+		},
 		languageOptions: {
 			globals: {
 				...globals.browser,
 				...globals.node
 			}
+		}
+	},
+	{
+		files: ['**/*.d.ts'],
+		rules: {
+			'@typescript-eslint/no-unused-vars': ['off']
 		}
 	},
 	{
