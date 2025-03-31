@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { game } from '$lib/stores';
-	import { BookCheck, BookText, Flag, Timer } from 'lucide-svelte';
+	import { BookCheck, BookText, Flag, Infinity, Timer } from 'lucide-svelte';
 
 	let gametime: number;
 	let progress: number;
@@ -120,6 +120,19 @@
 				{/each}
 			</div>
 		</div>
+		{#if endless}
+			<div class="relative flex items-center pl-2">
+				<div class="peer">
+					<Infinity />
+				</div>
+
+				<div
+					class="invisible absolute -bottom-12 left-[-110px] z-20 w-[220px] rounded bg-zinc-900/80 p-2 text-sm opacity-0 backdrop-blur-sm transition peer-hover:visible peer-hover:opacity-100"
+				>
+					This game does not have a end condition
+				</div>
+			</div>
+		{/if}
 	</div>
 	<div class="ml-2 flex h-full items-center rounded bg-base-800 p-2 font-mono font-bold">
 		{minutes < 10 ? '0' + minutes : minutes}:{seconds < 10 ? '0' + seconds : seconds}
