@@ -1,4 +1,6 @@
-export const load = ({ locals, url }) => {
+import type { LayoutServerLoad } from "./$types";
+
+export const load: LayoutServerLoad = ({ locals, url }) => {
 	const path = url.pathname
 
 	if (path.match("/game/\\w+")) {

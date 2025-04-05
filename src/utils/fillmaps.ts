@@ -223,7 +223,7 @@ const addMap = async (
 		square_url: set.covers['list@2x'],
 		banner_url: set.covers['card@2x'],
 		status: set.status,
-		max_combo: map.max_combo,
+		max_combo: map.max_combo ?? 0,
 		last_updated: new Date(map.last_updated),
 		available: map.is_scoreable,
 		fetch_time: new Date()

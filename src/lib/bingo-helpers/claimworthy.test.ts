@@ -38,15 +38,8 @@ const exampleScore: Osu.LazerScore = {
   "passed": true,
   "pp": 225.032,
   "ruleset_id": 0,
-  "started_at": null,
   "total_score": 940822,
   "replay": false,
-  "current_user_attributes": {
-    "pin": {
-      "is_pinned": false,
-      "score_id": 1215149162
-    }
-  },
   "beatmap": {
     "beatmapset_id": 389343,
     "difficulty_rating": 5.69,
@@ -121,10 +114,6 @@ const exampleScore: Osu.LazerScore = {
     "profile_colour": null,
     "username": "clx"
   },
-  "weight": {
-    "percentage": 95,
-    "pp": 213.7804
-  }
 }
 
 let testData: Osu.LazerScore | null = null;
