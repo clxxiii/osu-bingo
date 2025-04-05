@@ -1,5 +1,3 @@
-import type { IntegerConfig } from 'drizzle-orm/sqlite-core';
-
 export namespace Osu {
 	type AuthScope =
 		| 'chat.read'

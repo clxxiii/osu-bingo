@@ -5,7 +5,6 @@ import q from '$lib/drizzle/queries';
 import { StatusCodes } from '$lib/StatusCodes';
 import { logger } from '$lib/logger';
 
-
 // Start Polling
 import { tokens, events } from '$lib/server/polling';
 import { setup as startWatch } from '$lib/server/game/watch';
@@ -16,11 +15,10 @@ startWatch();
 // Connect Services
 import { connect as connectBancho } from '$lib/server/bancho';
 import { connect as connectRabbit } from '$lib/server/rabbit';
-import { ka } from 'date-fns/locale';
 connectBancho();
 connectRabbit();
 
-q.deleteUnstartedGames()
+q.deleteUnstartedGames();
 
 const jwt_secret = new TextEncoder().encode(env.JWT_SECRET);
 
@@ -62,9 +60,12 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const resolved = await resolve(event);
 
 	// Turn searchParams into a javascript object
-	const params = Array.from(event.url.searchParams.entries()).reduce((a, [k, v]) => ({ ...a, [k]: v }), {});
+	const params = Array.from(event.url.searchParams.entries()).reduce(
+		(a, [k, v]) => ({ ...a, [k]: v }),
+		{}
+	);
 	const user = event.locals.user?.username;
-	logger.log("http", `${resolved.status} ${event.request.method} ${event.url.pathname}`, {
+	logger.log('http', `${resolved.status} ${event.request.method} ${event.url.pathname}`, {
 		type: 'http_log',
 		user,
 		params,

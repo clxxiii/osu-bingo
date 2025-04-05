@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
 	import LargeGrid from './grids/LargeGrid.svelte';
-	import MediumGrid from './grids/MediumGrid.svelte';
-	import MobileGrid from './grids/MobileGrid.svelte';
+	// import MediumGrid from './grids/MediumGrid.svelte';
+	// import MobileGrid from './grids/MobileGrid.svelte';
 
 	export let state: number;
 	export let host: boolean = false;

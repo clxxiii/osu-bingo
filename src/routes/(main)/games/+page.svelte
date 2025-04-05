@@ -4,7 +4,6 @@
 	import type { PageData } from './$types';
 	import { promise } from '$lib/toast';
 	import { browser } from '$app/environment';
-	import { fade } from 'svelte/transition';
 	import { goto } from '$app/navigation';
 	import PageContainer from '$lib/components/PageContainer.svelte';
 

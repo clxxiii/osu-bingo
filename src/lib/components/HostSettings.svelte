@@ -1,6 +1,4 @@
 <script lang="ts">
-	import type { Writable } from 'svelte/store';
-	import { slide } from 'svelte/transition';
 	import { game as store } from '$lib/stores';
 	import ToggleSwitch from './ToggleSwitch.svelte';
 	import NumberScale from './NumberScale.svelte';
