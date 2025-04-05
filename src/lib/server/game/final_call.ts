@@ -89,7 +89,7 @@ export const finalCall = async (game_id: string) => {
 
 		let sum = 0;
 		for (const square of value) {
-			sum += getClaimingScore(square);
+			sum += getMaxClaimingScore(square);
 		}
 		scores.push({ team, sum });
 	}
@@ -140,10 +140,10 @@ export const finalCall = async (game_id: string) => {
 	});
 };
 
-const getClaimingScore = (square: Bingo.Card.FullSquare): number => {
+const getMaxClaimingScore = (square: Bingo.Card.FullSquare): number => {
 	let max_score = 0;
 	for (const score of square.scores) {
-		if (!score.important) continue;
+		if (!score.claimworthy) continue;
 		if (score.score > max_score) max_score = score.score;
 	}
 

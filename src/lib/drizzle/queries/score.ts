@@ -18,7 +18,7 @@ export const addScore = async (
 	score: Osu.LazerScore,
 	user: Bingo.Card.FullUser,
 	square_id: string,
-	important?: boolean
+	claimworthy?: boolean
 ): Promise<Bingo.Card.FullScore> => {
 	logger.silly('Started db request', { function: 'addScore', obj: 'dbScore', dir: 'start' });
 	const dbScore = (
@@ -40,7 +40,7 @@ export const addScore = async (
 					.join(''),
 				max_combo: score.max_combo,
 				square_id,
-				important,
+				claimworthy,
 				user_id: score.user_id,
 				game_user_id: user.id
 			})
