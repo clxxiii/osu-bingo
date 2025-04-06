@@ -1,6 +1,6 @@
-import { and, eq } from 'drizzle-orm';
+import { and, count, eq } from 'drizzle-orm';
 import { db } from '..';
-import { Score } from '../schema';
+import { BingoGame, BingoSquare, Score } from '../schema';
 import type { Osu } from '$lib/osu';
 import { logger } from '$lib/logger';
 
@@ -14,11 +14,24 @@ export const getScores = async (user_id: number, square_id: string) => {
 	return select;
 };
 
+export const getScoresFromGame = async (game_id: string) => {
+	logger.silly('Started db request', { function: 'getScoresFromGame', obj: 'select', dir: 'start' });
+	const select = await db
+		.select({ score_id: Score.score_id })
+		.from(BingoGame)
+		.innerJoin(BingoSquare, eq(BingoSquare.game_id, BingoGame.id))
+		.innerJoin(Score, eq(Score.square_id, BingoSquare.id))
+		.where(eq(BingoGame.id, game_id))
+	logger.silly('Started db request', { function: 'getScoresFromGame', obj: 'select', dir: 'end' });
+	return select;
+}
+
 export const addScore = async (
 	score: Osu.LazerScore,
 	user: Bingo.Card.FullUser,
 	square_id: string,
-	claimworthy?: boolean
+	claimworthy?: boolean,
+	claim?: number
 ): Promise<Bingo.Card.FullScore> => {
 	logger.silly('Started db request', { function: 'addScore', obj: 'dbScore', dir: 'start' });
 	const dbScore = (
@@ -41,6 +54,7 @@ export const addScore = async (
 				max_combo: score.max_combo,
 				square_id,
 				claimworthy,
+				claim,
 				user_id: score.user_id,
 				game_user_id: user.id
 			})

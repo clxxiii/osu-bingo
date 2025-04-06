@@ -2,106 +2,77 @@
  * Takes an osu score and the current claim condition, and determines whether
  * it has the ability to claim a square or not.
  *
- * Currently supported conditions:
- * - 'fc': Claimable if the score is an FC
- * - 'rank_*': Claimable if the grade is *at least* the specified letter
- * - 'pp_*': Claimable if the score has at least the specified amount of pp
- * - 'miss_*': Claimable if the score has less than the specified amount of misses
- * - 'combo_*': Claimable if the score has at least the specified combo
- * - 'score_*': Claimable if the score has at least the specified score
- * - 'pass': Claimable if the user passed (without NF)
- * - 'any': All scores are claimable (even fails)
+ * Check https://notes.clxxiii.dev/1b23f4b9c82c800499bbd95c9fccbbab#1b23f4b9c82c80e58c76eb659a56e4d1 for more info
  */
 
 import type { Options } from '$lib/gamerules/options';
 import type { Osu } from '$lib/osu';
 
-type Evaluator = {
-	display_string: (value: string) => string;
-	evaluate: (score: Osu.LazerScore, value: string) => boolean;
-};
+type Evaluator = (score: Osu.LazerScore, quantifier?: "lt" | "gt" | "eq", value?: string) => boolean;
 
 const evaluators: { [key: string]: Evaluator } = {
-	fc: {
-		display_string: () => 'FC',
-		evaluate: (score) => evaluators["pass"].evaluate(score, "") && score.is_perfect_combo
-	},
-	rank: {
-		display_string: (value) => `${value.toUpperCase()} rank or higher`,
-		evaluate: (score, value) => {
-			const hierarchy = ['SSH', 'SS', 'SH', 'S', 'A', 'B', 'C', 'D', 'F'];
-			const scoreRank = hierarchy.indexOf(score.rank.toUpperCase() ?? 'F');
-			const testRank = hierarchy.indexOf(value.toUpperCase() ?? 'F');
+	fc: (score) => (evaluators["pass"](score) && score.is_perfect_combo),
+	rank: (score, q, value) => {
+		if (!q || !value) return false;
 
-			return evaluators["pass"].evaluate(score, value) && (scoreRank <= testRank);
-		}
-	},
-	pp: {
-		display_string: (value) => `${parseFloat(value).toLocaleString()}pp or higher`,
-		evaluate: (score, value) => {
-			const pp = score.pp ?? 0;
-			const target = parseFloat(value);
+		const hierarchy = ['SSH', 'SS', 'SH', 'S', 'A', 'B', 'C', 'D', 'F'];
+		const scoreRank = hierarchy.indexOf(score.rank.toUpperCase() ?? 'F');
+		const testRank = hierarchy.indexOf(value.toUpperCase() ?? 'F');
 
-			return evaluators["pass"].evaluate(score, value) && (pp >= target);
-		}
+		return evaluators["pass"](score) && quantify(testRank, q, scoreRank);
 	},
-	miss: {
-		display_string: (value) => `${parseInt(value).toLocaleString()} misses or fewer`,
-		evaluate: (score, value) => {
-			const miss = score.statistics.miss ?? 0;
-			const target = parseInt(value);
+	pp: (score, q, value) => {
+		if (!q || !value) return false;
 
-			return evaluators["pass"].evaluate(score, value) && (miss <= target);
-		}
-	},
-	combo: {
-		display_string: (value) => `${parseInt(value).toLocaleString()} combo or more`,
-		evaluate: (score, value) => {
-			const combo = score.max_combo;
-			const target = parseInt(value);
+		const pp = score.pp ?? 0;
+		const target = parseFloat(value);
 
-			return evaluators["pass"].evaluate(score, value) && (combo >= target);
-		}
+		return evaluators["pass"](score) && quantify(pp, q, target);
 	},
-	score: {
-		display_string: (value) => `${parseInt(value).toLocaleString()} or more`,
-		evaluate: (score, value) => {
-			const total_score = score.total_score;
-			const target = parseInt(value);
+	miss: (score, q, value) => {
+		if (!q || !value) return false;
 
-			return evaluators["pass"].evaluate(score, value) && (total_score >= target);
-		}
+		const miss = score.statistics.miss ?? 0;
+		const target = parseInt(value);
+
+		return evaluators["pass"](score) && quantify(miss, q, target);
 	},
-	pass: {
-		display_string: () => 'Pass',
-		evaluate: (score) => {
-			if (!score.passed) return false;
-			return !score.mods.map((x) => x.acronym).includes('NF');
-		}
+	combo: (score, q, value) => {
+		if (!q || !value) return false;
+		const combo = score.max_combo;
+		const target = parseInt(value);
+
+		return evaluators["pass"](score) && quantify(combo, q, target);
 	},
-	any: {
-		display_string: () => 'None',
-		evaluate: () => true
+	score: (score, q, value) => {
+		if (!q || !value) return false;
+
+		const total_score = score.total_score;
+		const target = parseInt(value);
+
+		return evaluators["pass"](score) && quantify(total_score, q, target);
+	},
+	pass: (score) => {
+		if (!score.passed) return false;
+		return !score.mods.map((x) => x.acronym).includes('NF');
+	},
+	any: () => true
+};
+
+const quantify = (n1: number, q: "lt" | "gt" | "eq", n2: number) => {
+	if (q == "gt") {
+		return n1 >= n2;
+	} else if (q == "lt") {
+		return n1 < n2;
 	}
-};
 
-export const isClaimworthy = (score: Osu.LazerScore, claim_condition: string) => {
-	const [type] = claim_condition.split('_');
-	const value = claim_condition.split('_').slice(1).join('_');
+	return n1 == n2;
+}
 
-	let evaluator = evaluators[type];
-	if (!evaluator) evaluator = evaluator['fc'];
+export const isClaimworthy = (score: Osu.LazerScore, claim_condition: Options.ClaimCondition) => {
 
-	return evaluator.evaluate(score, value);
-};
-
-export const getMeaning = (claim_condition?: Options.ClaimCondition) => {
-	const metric = claim_condition?.metric ?? 'fc';
-	const [type] = metric.split('_');
-	const value = metric.split('_').slice(1).join('_');
-
-	let evaluator = evaluators[type];
+	let evaluator = evaluators[claim_condition.metric];
 	if (!evaluator) evaluator = evaluators['fc'];
 
-	return evaluator.display_string(value);
+	return evaluator(score, claim_condition.quantifier, claim_condition.value);
 };

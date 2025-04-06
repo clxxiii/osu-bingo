@@ -110,6 +110,7 @@ export const startGame = async (game_id: string) => {
 
 	// Update last settings and send game to clients
 	await q.setGameState(game.id, 1);
+	await q.setStartTime(game.id, new Date(now));
 	addGame(game_id);
 	sendToGame(game_id, {
 		type: 'state',

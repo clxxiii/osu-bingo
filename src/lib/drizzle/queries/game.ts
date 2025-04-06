@@ -255,6 +255,34 @@ export const updateGameOptions = async (game_id: string, options: Options) => {
 	return q;
 };
 
+export const setStartTime = async (game_id: string, start_time: Date) => {
+	logger.silly('Started db request', {
+		function: 'setStartTime',
+		obj: 'query',
+		dir: 'start'
+	});
+	const q = (
+		await db.update(BingoGame).set({ start_time }).where(eq(BingoGame.id, game_id)).returning()
+	)[0];
+	logger.silly('Finished db request', { function: 'setStartTime', obj: 'query', dir: 'end' });
+	if (!q) return null;
+	return q;
+};
+
+export const setEndTime = async (game_id: string, end_time: Date) => {
+	logger.silly('Started db request', {
+		function: 'setStartTime',
+		obj: 'query',
+		dir: 'start'
+	});
+	const q = (
+		await db.update(BingoGame).set({ end_time }).where(eq(BingoGame.id, game_id)).returning()
+	)[0];
+	logger.silly('Finished db request', { function: 'setStartTime', obj: 'query', dir: 'end' });
+	if (!q) return null;
+	return q;
+};
+
 export const deleteGame = async (game_id: string) => {
 	logger.silly('Started db request', {
 		function: 'deleteGame',

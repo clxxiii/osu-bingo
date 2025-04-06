@@ -1,6 +1,7 @@
 import type { Osu } from "$lib/osu";
-import { test, expect, beforeEach, assert } from "vitest";
+import { test, expect, beforeEach, assert, afterEach } from "vitest";
 import { isClaimworthy } from "./claimworthy";
+import type { Options } from "$lib/gamerules/options";
 
 const exampleScore: Osu.LazerScore = {
   "classic_total_score": 7602279,
@@ -119,19 +120,19 @@ const exampleScore: Osu.LazerScore = {
 let testData: Osu.LazerScore | null = null;
 
 // Reset test data before each test
-beforeEach(() => { testData = exampleScore })
+beforeEach(() => { testData = { ...exampleScore } })
 
 test("FC Tests", () => {
   if (testData == null) assert.fail("testData is null");
   testData.is_perfect_combo = false;
   testData.passed = false;
-  expect(isClaimworthy(testData, "fc")).toBe(false)
+  expect(isClaimworthy(testData, { metric: "fc", allow_diff_reduction: true })).toBe(false)
 
   testData.is_perfect_combo = true;
-  expect(isClaimworthy(testData, "fc")).toBe(false)
+  expect(isClaimworthy(testData, { metric: "fc", allow_diff_reduction: true })).toBe(false)
 
   testData.passed = true;
-  expect(isClaimworthy(testData, "fc")).toBe(true)
+  expect(isClaimworthy(testData, { metric: "fc", allow_diff_reduction: true })).toBe(true)
 })
 
 test("Rank Tests", () => {
@@ -139,19 +140,21 @@ test("Rank Tests", () => {
   testData.passed = true;
   testData.rank = 'A';
 
+  const options: Options.ClaimCondition = { allow_diff_reduction: true, metric: "rank", quantifier: 'gt' }
+
   // Check that example rank works properly
-  expect(isClaimworthy(testData, "rank_ssh")).toBe(false)
-  expect(isClaimworthy(testData, "rank_ss")).toBe(false)
-  expect(isClaimworthy(testData, "rank_sh")).toBe(false)
-  expect(isClaimworthy(testData, "rank_s")).toBe(false)
-  expect(isClaimworthy(testData, "rank_a")).toBe(true)
-  expect(isClaimworthy(testData, "rank_b")).toBe(true)
-  expect(isClaimworthy(testData, "rank_c")).toBe(true)
-  expect(isClaimworthy(testData, "rank_d")).toBe(true)
-  expect(isClaimworthy(testData, "rank_f")).toBe(true)
+  expect(isClaimworthy(testData, { ...options, value: "ssh" })).toBe(false)
+  expect(isClaimworthy(testData, { ...options, value: "ss" })).toBe(false)
+  expect(isClaimworthy(testData, { ...options, value: "sh" })).toBe(false)
+  expect(isClaimworthy(testData, { ...options, value: "s" })).toBe(false)
+  expect(isClaimworthy(testData, { ...options, value: "a" })).toBe(true)
+  expect(isClaimworthy(testData, { ...options, value: "b" })).toBe(true)
+  expect(isClaimworthy(testData, { ...options, value: "c" })).toBe(true)
+  expect(isClaimworthy(testData, { ...options, value: "d" })).toBe(true)
+  expect(isClaimworthy(testData, { ...options, value: "f" })).toBe(true)
 
   testData.passed = false;
-  expect(isClaimworthy(testData, "rank_a")).toBe(false);
+  expect(isClaimworthy(testData, { ...options, value: "a" })).toBe(false)
 })
 
 test("PP Tests", () => {
@@ -159,16 +162,18 @@ test("PP Tests", () => {
   testData.passed = true;
   testData.pp = 190.2;
 
-  expect(isClaimworthy(testData, "pp_200")).toBe(false);
-  expect(isClaimworthy(testData, "pp_210.40")).toBe(false);
-  expect(isClaimworthy(testData, "pp_190.30")).toBe(false);
-  expect(isClaimworthy(testData, "pp_190.20")).toBe(true);
-  expect(isClaimworthy(testData, "pp_190.10")).toBe(true);
-  expect(isClaimworthy(testData, "pp_190")).toBe(true);
-  expect(isClaimworthy(testData, "pp_100")).toBe(true);
+  const options: Options.ClaimCondition = { allow_diff_reduction: true, metric: "pp", quantifier: 'gt' }
+
+  expect(isClaimworthy(testData, { ...options, value: 200 })).toBe(false)
+  expect(isClaimworthy(testData, { ...options, value: 210.40 })).toBe(false)
+  expect(isClaimworthy(testData, { ...options, value: 190.30 })).toBe(false)
+  expect(isClaimworthy(testData, { ...options, value: 190.20 })).toBe(true)
+  expect(isClaimworthy(testData, { ...options, value: 190.10 })).toBe(true)
+  expect(isClaimworthy(testData, { ...options, value: 190 })).toBe(true)
+  expect(isClaimworthy(testData, { ...options, value: 100 })).toBe(true)
 
   testData.passed = false;
-  expect(isClaimworthy(testData, "pp_100")).toBe(false);
+  expect(isClaimworthy(testData, { ...options, value: 100 })).toBe(false)
 })
 
 test("Miss Tests", () => {
@@ -176,13 +181,15 @@ test("Miss Tests", () => {
   testData.passed = true;
   testData.statistics.miss = 5;
 
-  expect(isClaimworthy(testData, "miss_10")).toBe(true);
-  expect(isClaimworthy(testData, "miss_6")).toBe(true);
-  expect(isClaimworthy(testData, "miss_5")).toBe(true);
-  expect(isClaimworthy(testData, "miss_4")).toBe(false);
+  const options: Options.ClaimCondition = { allow_diff_reduction: true, metric: "miss", quantifier: 'lt' }
+
+  expect(isClaimworthy(testData, { ...options, value: 10 })).toBe(true)
+  expect(isClaimworthy(testData, { ...options, value: 6 })).toBe(true)
+  expect(isClaimworthy(testData, { ...options, value: 5 })).toBe(false)
+  expect(isClaimworthy(testData, { ...options, value: 4 })).toBe(false)
 
   testData.passed = false;
-  expect(isClaimworthy(testData, "miss_4")).toBe(false);
+  expect(isClaimworthy(testData, { ...options, value: 10 })).toBe(false)
 })
 
 test("Combo Tests", () => {
@@ -190,13 +197,15 @@ test("Combo Tests", () => {
   testData.passed = true;
   testData.max_combo = 75
 
-  expect(isClaimworthy(testData, "combo_100")).toBe(false);
-  expect(isClaimworthy(testData, "combo_76")).toBe(false);
-  expect(isClaimworthy(testData, "combo_75")).toBe(true);
-  expect(isClaimworthy(testData, "combo_74")).toBe(true);
+  const options: Options.ClaimCondition = { allow_diff_reduction: true, metric: "combo", quantifier: 'gt' }
+
+  expect(isClaimworthy(testData, { ...options, value: 100 })).toBe(false)
+  expect(isClaimworthy(testData, { ...options, value: 76 })).toBe(false)
+  expect(isClaimworthy(testData, { ...options, value: 75 })).toBe(true)
+  expect(isClaimworthy(testData, { ...options, value: 74 })).toBe(true)
 
   testData.passed = false;
-  expect(isClaimworthy(testData, "combo_60")).toBe(false);
+  expect(isClaimworthy(testData, { ...options, value: 60 })).toBe(false)
 })
 
 test("Score Tests", () => {
@@ -204,23 +213,50 @@ test("Score Tests", () => {
   testData.passed = true;
   testData.total_score = 350_000;
 
-  expect(isClaimworthy(testData, "score_1000000")).toBe(false);
-  expect(isClaimworthy(testData, "score_400000")).toBe(false);
-  expect(isClaimworthy(testData, "score_350000")).toBe(true);
-  expect(isClaimworthy(testData, "score_300000")).toBe(true);
+  const options: Options.ClaimCondition = { allow_diff_reduction: true, metric: "score", quantifier: 'gt' }
+
+  expect(isClaimworthy(testData, { ...options, value: 1000000 })).toBe(false)
+  expect(isClaimworthy(testData, { ...options, value: 400000 })).toBe(false)
+  expect(isClaimworthy(testData, { ...options, value: 350000 })).toBe(true)
+  expect(isClaimworthy(testData, { ...options, value: 300000 })).toBe(true)
 
   testData.passed = false;
-  expect(isClaimworthy(testData, "score_100000")).toBe(false);
+  expect(isClaimworthy(testData, { ...options, value: 100000 })).toBe(false)
 })
 
 test("Pass Tests", () => {
   if (testData == null) assert.fail("testData is null");
+
+  const options: Options.ClaimCondition = { allow_diff_reduction: true, metric: "pass" }
+
   testData.passed = false;
-  expect(isClaimworthy(testData, "pass")).toBe(false);
+  expect(isClaimworthy(testData, options)).toBe(false);
 
   testData.passed = true;
-  expect(isClaimworthy(testData, "pass")).toBe(true);
+  expect(isClaimworthy(testData, options)).toBe(true);
 
   testData.mods = [{ acronym: "NF" }]
-  expect(isClaimworthy(testData, "pass")).toBe(false);
+  expect(isClaimworthy(testData, options)).toBe(false);
+})
+
+test("Quantifier Tests", () => {
+  if (testData == null) assert.fail("testData is null");
+  testData.passed = true;
+
+  const options: Options.ClaimCondition = { allow_diff_reduction: true, metric: "rank", value: 'a' }
+
+  testData.rank = 'A';
+  expect(isClaimworthy(testData, { ...options, quantifier: 'lt' })).toBe(false)
+  expect(isClaimworthy(testData, { ...options, quantifier: 'eq' })).toBe(true)
+  expect(isClaimworthy(testData, { ...options, quantifier: 'gt' })).toBe(true)
+
+  testData.rank = 'B';
+  expect(isClaimworthy(testData, { ...options, quantifier: 'lt' })).toBe(true)
+  expect(isClaimworthy(testData, { ...options, quantifier: 'eq' })).toBe(false)
+  expect(isClaimworthy(testData, { ...options, quantifier: 'gt' })).toBe(false)
+
+  testData.rank = 'S';
+  expect(isClaimworthy(testData, { ...options, quantifier: 'lt' })).toBe(false)
+  expect(isClaimworthy(testData, { ...options, quantifier: 'eq' })).toBe(false)
+  expect(isClaimworthy(testData, { ...options, quantifier: 'gt' })).toBe(true)
 })
