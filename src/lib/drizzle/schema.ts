@@ -40,7 +40,7 @@ export const BingoGame = sqliteTable('BingoGame', {
 	allow_team_switching: integer('allow_team_switching', { mode: 'boolean' }).default(true),
 
 	// All other settings are stored in this json object (See the docs: https://notes.clxxiii.dev/1b23f4b9c82c800499bbd95c9fccbbab)
-	options: text('options').notNull().default(JSON.stringify({ min_sr: 4.0, max_sr: 5.0, min_length: 0, max_length: 200 })),
+	options: text('options').notNull().default(JSON.stringify({ setup: { stars: { min_sr: 4.0, max_sr: 5.0 }, length: { min: 0, max: 200 } } })),
 
 	template_id: text('template_id').references(() => Template.id)
 });

@@ -14,7 +14,7 @@ CREATE TABLE `new_BingoGame` (
 	`state` integer DEFAULT 0 NOT NULL,
 	`public` integer DEFAULT true NOT NULL,
 	`allow_team_switching` integer DEFAULT true,
-  `options` text DEFAULT '{"min_sr":4,"max_sr":5,"min_length":0,"max_length":200}' NOT NULL,
+  `options` text DEFAULT '{"setup":{"stars":{"min_sr":4,"max_sr":5},"length":{"min":0,"max":200}}}' NOT NULL,
 	`template_id` text,
 	FOREIGN KEY (`template_id`) REFERENCES `Template`(`id`) ON UPDATE no action ON DELETE no action
 ); --> statement-breakpoint
