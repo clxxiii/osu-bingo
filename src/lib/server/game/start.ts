@@ -69,7 +69,6 @@ export const startGame = async (game_id: string) => {
 			counts.sort((a, b) => a.maps - b.maps);
 			counts[0].maps += squares.length - counts.map((x) => x.maps).reduce((a, b) => a + b);
 		}
-		console.log(counts);
 
 		// Fetch maps in all the pools
 		const maps = [];

@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
 	import { getEvents } from '$lib/gamerules/get_rules';
 	import { getEventMeaning } from '$lib/gamerules/meaning';
 	import type { Options } from '$lib/gamerules/options';
 	import { game } from '$lib/stores';
-	import { BookCheck, BookText, Flag, Infinity, Timer } from 'lucide-svelte';
+	import { BookText, Flag, Infinity, Timer } from 'lucide-svelte';
 
 	let gametime: number;
 	let progress: number;

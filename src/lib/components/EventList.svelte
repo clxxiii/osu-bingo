@@ -1,25 +1,27 @@
 <script lang="ts">
-	import type { Writable } from 'svelte/store';
 	import EventScore from './EventScore.svelte';
 	import { fly } from 'svelte/transition';
 	import EventTime from './EventTime.svelte';
 	import EventStart from './EventStart.svelte';
 	import { afterUpdate } from 'svelte';
 	import { game as store, game_rules } from '$lib/stores';
+	import { getEvents } from '$lib/gamerules/get_rules';
+	import type { Options } from '$lib/gamerules/options';
 
-	type Event = ScoreInfo | TimeEvent | StartEvent;
+	type Event = ScoreInfo | GameEvent | StartEvent;
 	type StartEvent = {
 		type: 'start';
 		date: Date;
 	};
 	const isStart = (e: Event): e is StartEvent => e.type == 'start';
 
-	type TimeEvent = {
+	type GameEvent = {
+		id: string;
 		type: 'time';
 		date: Date;
-		data: Bingo.TimeEvent;
+		data: Options.Event;
 	};
-	const isTimeEvent = (e: Event): e is TimeEvent => e.type == 'time';
+	const isGameEvent = (e: Event): e is GameEvent => e.type == 'time';
 
 	type ScoreInfo = {
 		type: 'score';
@@ -42,7 +44,7 @@
 			square: Bingo.Card.FullSquare;
 			square_index: number;
 		}[] = [];
-		const time_events = [];
+		const time_events: Options.Event[] = [];
 		for (let i = 0; i < card.squares.length; i++) {
 			const square = card.squares[i];
 			for (const score of square.scores) {
@@ -53,7 +55,9 @@
 				});
 			}
 		}
-		for (const event of card.events) {
+
+		const eventList = getEvents(card) ?? [];
+		for (const event of eventList) {
 			time_events.push(event);
 		}
 
@@ -79,12 +83,14 @@
 			}
 		}
 
-		const event_id_map = events.filter((x) => isTimeEvent(x)).map((x) => x.data.id);
+		const event_id_map = events.filter((x) => isGameEvent(x)).map((x) => x.id);
 		for (const event of time_events) {
-			if (!event_id_map.includes(event.id)) {
+			const id = event.event + ((card.start_time?.valueOf() ?? 0) + event.seconds_after_start);
+			if (!event_id_map.includes(id)) {
 				events.push({
+					id,
 					type: 'time',
-					date: event.time,
+					date: new Date((card.start_time?.valueOf() ?? 0) + event.seconds_after_start * 1000),
 					data: event
 				});
 			}
@@ -119,8 +125,8 @@
 					square_index={event.data.square_index}
 					stat={$game_rules?.reclaim_condition ?? ''}
 				/>
-			{:else if isTimeEvent(event)}
-				{#if new Date(event.data.time).valueOf() < new Date().valueOf() && event.data.fulfilled}
+			{:else if isGameEvent(event)}
+				{#if new Date(event.date).valueOf() < new Date().valueOf()}
 					<EventTime event={event.data} />
 				{/if}
 			{:else if isStart(event)}
