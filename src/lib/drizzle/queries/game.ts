@@ -4,6 +4,7 @@ import { BingoGame, BingoSquare, GameUser, Map, MapStats, Score, Template, TimeE
 import { logger } from '$lib/logger';
 import { getTemplate } from './template';
 import { invitedTeam, kickedTeam, noneTeam } from './gameuser';
+import type { Options } from '$lib/gamerules/options';
 
 export const newGame = async () => {
 	const randomLetter = () => {
@@ -240,16 +241,44 @@ export const canSwitch = async (game_id: string, guid: string, user_id: number) 
 	return gu[0].id == guid;
 };
 
-export const updateGameSettings = async (game_id: string, settings: Bingo.SettingsUpdate) => {
+export const updateGameOptions = async (game_id: string, options: Options) => {
 	logger.silly('Started db request', {
 		function: 'updateGameSettings',
 		obj: 'query',
 		dir: 'start'
 	});
 	const q = (
-		await db.update(BingoGame).set(settings).where(eq(BingoGame.id, game_id)).returning()
+		await db.update(BingoGame).set({ options: JSON.stringify(options) }).where(eq(BingoGame.id, game_id)).returning()
 	)[0];
 	logger.silly('Finished db request', { function: 'updateGameSettings', obj: 'query', dir: 'end' });
+	if (!q) return null;
+	return q;
+};
+
+export const setStartTime = async (game_id: string, start_time: Date) => {
+	logger.silly('Started db request', {
+		function: 'setStartTime',
+		obj: 'query',
+		dir: 'start'
+	});
+	const q = (
+		await db.update(BingoGame).set({ start_time }).where(eq(BingoGame.id, game_id)).returning()
+	)[0];
+	logger.silly('Finished db request', { function: 'setStartTime', obj: 'query', dir: 'end' });
+	if (!q) return null;
+	return q;
+};
+
+export const setEndTime = async (game_id: string, end_time: Date) => {
+	logger.silly('Started db request', {
+		function: 'setStartTime',
+		obj: 'query',
+		dir: 'start'
+	});
+	const q = (
+		await db.update(BingoGame).set({ end_time }).where(eq(BingoGame.id, game_id)).returning()
+	)[0];
+	logger.silly('Finished db request', { function: 'setStartTime', obj: 'query', dir: 'end' });
 	if (!q) return null;
 	return q;
 };

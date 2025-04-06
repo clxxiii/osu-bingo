@@ -13,7 +13,7 @@ export const getBest = (square: Bingo.Card.FullSquare, tiebreaker: string) => {
 	let evaluator = evaluators[tiebreaker];
 	if (!evaluator) evaluator = evaluator['score'];
 
-	const scores = square.scores.filter((x) => x.important);
+	const scores = square.scores.filter((x) => x.claimworthy);
 	return evaluator(scores);
 };
 
@@ -25,7 +25,7 @@ export const scoreBeatsBest = (
 	let evaluator = evaluators[tiebreaker];
 	if (!evaluator) evaluator = evaluator['score'];
 
-	const scores: Bingo.Score[] = square.scores.filter((x) => x.important);
+	const scores: Bingo.Score[] = square.scores.filter((x) => x.claimworthy);
 	if (scores.length == 0) return true;
 
 	const currentBest = evaluator(scores);

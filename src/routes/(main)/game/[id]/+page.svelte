@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import { onDestroy, onMount } from 'svelte';
-	import { game as store, square, listener, login_request } from '$lib/stores';
+	import { game as store, square, listener, login_request, game_rules } from '$lib/stores';
 	import LoginRequest from '$lib/components/LoginRequest.svelte';
 	import { fade } from 'svelte/transition';
 	import InterfaceGrids from '$lib/components/InterfaceGrids.svelte';
@@ -14,6 +14,7 @@
 	import HostSettings from '$lib/components/HostSettings.svelte';
 	import WinConfetti from '$lib/components/WinConfetti.svelte';
 	import PageContainer from '$lib/components/PageContainer.svelte';
+	import { getRules } from '$lib/gamerules/get_rules';
 
 	export let data: PageData;
 
@@ -25,6 +26,9 @@
 		winner = game.winning_team;
 		currentTeam = game.users.find((x) => x.user_id == data?.user?.id)?.team_name;
 		host = game.hosts.find((x) => x.id == data?.user?.id) != undefined;
+
+		game_rules.set(getRules(game));
+		console.log(getRules(game));
 	});
 
 	$: {
@@ -104,7 +108,7 @@
 				</article>
 
 				<article slot="square-sidebar" class="size-full">
-					<SquareSidebar gameStore={store} tiebreaker={$store.tiebreaker} />
+					<SquareSidebar gameStore={store} tiebreaker={$game_rules?.reclaim_condition ?? 'score'} />
 				</article>
 
 				<article slot="chat" class="size-full">
@@ -114,7 +118,7 @@
 					/>
 				</article>
 				<article class="size-full bg-zinc-800 p-2" slot="event-list">
-					<EventList {store}></EventList>
+					<EventList />
 				</article>
 				<article class="size-full" slot="host-settings">
 					<HostSettings />

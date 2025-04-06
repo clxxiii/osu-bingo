@@ -19,36 +19,28 @@ export const BingoGame = sqliteTable('BingoGame', {
 	id: text('id')
 		.primaryKey()
 		.$defaultFn(() => `gam_${randomUUID()}`),
-	link_id: text('link_id'), // Four letters, similar to Jackbox
 
-	// Don't bother processing scores before this date:
-	start_time: integer('start_time', { mode: 'timestamp' }),
-
-	// Settings
-	// 0: Before starting, 1: In game, 2: Finished
-	state: integer('state').default(0).notNull(),
+	name: text('name'),
 	winning_team: text('winning_team'),
 
-	// Square Filling Settings
-	min_sr: real('min_sr'),
-	max_sr: real('max_sr'),
-	min_length: real('min_length'),
-	max_length: real('max_length'),
+	// Four letters, similar to a Jackbox invite code
+	link_id: text('link_id'),
 
-	// Restrict users that can join
-	min_rank: integer('min_rank'),
-	max_rank: integer('max_rank'),
+	// The time the lobby started (or will start), so the game doesn't process scores set before this.
+	start_time: integer('start_time', { mode: 'timestamp' }),
+	end_time: integer('end_time', { mode: 'timestamp' }),
 
-	// Only takes effect when game state is 0.
+	// Settings
+	// 0: Before starting, 1: In game, 2: Finished, 3: Final Showdown
+	state: integer('state').default(0).notNull(),
+
+	public: integer('public', { mode: 'boolean' }).notNull().default(true),
+
+	// Whether or not players are allowed to pick their own team at the start of the game
 	allow_team_switching: integer('allow_team_switching', { mode: 'boolean' }).default(true),
 
-	// What dictates whether a square is claimed. See more: `lib/server/claimworthy.ts`
-	claim_condition: text('claim_condition').notNull().default('fc'),
-	// How to sort scores for reclaims See more: `lib/server/get_best_score.ts`
-	tiebreaker: text('tiebreaker').notNull().default('score'),
-
-	// Whether this game shows up in public listing
-	public: integer('public', { mode: 'boolean' }).notNull().default(true),
+	// All other settings are stored in this json object (See the docs: https://notes.clxxiii.dev/1b23f4b9c82c800499bbd95c9fccbbab)
+	options: text('options').notNull().default(JSON.stringify({ setup: { stars: { min_sr: 4.0, max_sr: 5.0 }, length: { min: 0, max: 200 } } })),
 
 	template_id: text('template_id').references(() => Template.id)
 });
@@ -199,7 +191,7 @@ export const MapInPool = sqliteTable('MapInPool', {
 	pool_id: text('pool_id').references(() => Mappool.id),
 	map_id: integer('map_id').references(() => Map.id),
 
-	required_mods: text('') // For tournament mappools and such
+	required_mods: text('required_mods') // For tournament mappools and such
 });
 
 /**
@@ -285,9 +277,12 @@ export const Score = sqliteTable('Score', {
 	mods: text('mods').default(''),
 	lazer: integer('lazer', { mode: 'boolean' }).notNull(),
 
-	important: integer('important', {
-		mode: 'boolean'
-	}).default(false), // Whether this score appears as a notification
+	// Whether this score is sufficient to claim a square
+	claimworthy: integer('important', { mode: 'boolean' }).default(false),
+
+	// Whether this score had an effect on the state on the board
+	// 0: No Change, 1: Claim, 2: Reclaim, 3: Win
+	claim: integer('claim').notNull().default(0),
 
 	square_id: text('square_id')
 		.notNull()
@@ -331,6 +326,7 @@ export const Template = sqliteTable('Template', {
 		.notNull()
 		.references(() => User.id),
 	name: text('name'),
+	description: text('description'),
 
 	data: text('data').notNull()
 });

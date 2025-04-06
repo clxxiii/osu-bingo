@@ -27,7 +27,7 @@
 			if (tiebreaker == 'pp') return (b.pp ?? 0) - (a.pp ?? 0);
 			return b.score - a.score;
 		});
-		square.scores.sort((a, b) => (b.important ? 1 : 0) - (a.important ? 1 : 0));
+		square.scores.sort((a, b) => (b.claimworthy ? 1 : 0) - (a.claimworthy ? 1 : 0));
 		transition = !transition;
 	});
 	gameStore.subscribe((value) => {
@@ -43,7 +43,7 @@
 				if (tiebreaker == 'pp') return (b.pp ?? 0) - (a.pp ?? 0);
 				return b.score - a.score;
 			});
-			square.scores.sort((a, b) => (b.important ? 1 : 0) - (a.important ? 1 : 0));
+			square.scores.sort((a, b) => (b.claimworthy ? 1 : 0) - (a.claimworthy ? 1 : 0));
 		}
 	});
 	const close = () => {

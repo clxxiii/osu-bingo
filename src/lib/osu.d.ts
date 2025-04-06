@@ -355,7 +355,7 @@ export namespace Osu {
 		ended_at: string;
 		has_replay: boolean;
 		is_perfect_combo: boolean;
-		legacy_perect: boolean;
+		legacy_perfect: boolean;
 		legacy_score_id: number | null;
 		legacy_total_score: number; // 0 if set on lazer
 		classic_total_score: number;

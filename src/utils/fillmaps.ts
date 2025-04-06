@@ -4,6 +4,7 @@ import { and, count, eq } from 'drizzle-orm';
 import { createClient } from '@libsql/client';
 import { drizzle } from 'drizzle-orm/libsql';
 import type { Osu } from '$lib/osu';
+import type { Options } from '$lib/gamerules/options';
 
 const sqlite = createClient({ url: 'file:./db/dev.db' });
 export const db = drizzle(sqlite);
@@ -43,36 +44,44 @@ const run = async () => {
 	let public_template = (await db.select().from(Template).where(eq(Template.id, 'tmt_public')))[0];
 	if (!public_template) {
 		console.log('Making Public Template');
-		const template: Template = {
+		const template: Options = {
 			setup: {
-				claim_condition: 'fc',
-				reclaim_condition: 'score',
-				board: '5x5'
-			},
-			maps: [
-				{
-					chance: 0.9,
-					mappool_id: random.id,
-					mode: 'osu'
+				claim_condition: {
+					metric: "score",
+					quantifier: "gt",
+					value: 500000,
+					allow_diff_reduction: true
 				},
-				{
-					chance: 0.1,
-					mappool_id: most_played.id,
-					mode: 'osu'
-				}
-			],
+				reclaim_condition: 'score',
+				multipliers: [],
+				maps: [
+					{
+						chance: 0.9,
+						mappool_id: random.id,
+						mode: 'osu'
+					},
+					{
+						chance: 0.1,
+						mappool_id: most_played.id,
+						mode: 'osu'
+					}
+				],
+			},
+			board: '5x5',
 			event: [
 				{
+					seconds_after_start: 1500,
+					event: 'claimchange',
+					detail: {
+						metric: "score",
+						quantifier: "gt",
+						value: 250000,
+						allow_diff_reduction: true
+					}
+				},
+				{
 					seconds_after_start: 1800,
-					text: 'claimchange_rank_s'
-				},
-				{
-					seconds_after_start: 3000,
-					text: 'claimchange_rank_a'
-				},
-				{
-					seconds_after_start: 3600,
-					text: 'finalcall'
+					event: 'finalcall'
 				}
 			]
 		};
@@ -223,7 +232,7 @@ const addMap = async (
 		square_url: set.covers['list@2x'],
 		banner_url: set.covers['card@2x'],
 		status: set.status,
-		max_combo: map.max_combo,
+		max_combo: map.max_combo ?? 0,
 		last_updated: new Date(map.last_updated),
 		available: map.is_scoreable,
 		fetch_time: new Date()

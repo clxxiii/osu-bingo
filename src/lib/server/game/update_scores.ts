@@ -11,6 +11,7 @@ import { isClaimworthy } from '$lib/bingo-helpers/claimworthy';
 import { removeGame } from './watch';
 import { logger } from '$lib/logger';
 import { sendToGame, sendToUser } from '$lib/emitter/server';
+import { getRules } from '$lib/gamerules/get_rules';
 
 const updating = new Set<string>();
 
@@ -82,11 +83,17 @@ export const updateScores = async (game_id: string) => {
 		);
 	});
 
+	const processedScores = await q.getScoresFromGame(game.id);
+	const processedIds = processedScores.map(x => x.score_id);
+
 	const updates: { score: Bingo.Card.FullScore; square: Bingo.Card.FullSquare; claim: boolean }[] =
 		[];
 	let win = false;
 	let winner = '';
 	for (const score of scores) {
+		// Skip scores that have been processed already
+		if (processedIds.includes(score.id)) continue;
+
 		const event = await processScore(score, game);
 		if (event) {
 			updates.push(event);
@@ -118,25 +125,28 @@ export const updateScores = async (game_id: string) => {
 const processScore = async (score: Osu.LazerScore, game: Bingo.Card) => {
 	if (!game.squares) return;
 
-	// This score is not related to the board
+	logger.info(
+		`Processing Score: ${score.user.username} on ${score.beatmapset?.title}: (${score.total_score})`,
+		{ score, type: 'process_score' }
+	);
+
+	// Throw out scores that are not related to the board
 	const square = game.squares.find((x) => x.map_id == score?.beatmap?.id);
 	if (!square) return;
 
-	const scores = await q.getScores(score.user_id, square.id);
+	// TODO: Check that the score meets the mod requirements (also disallowing converts if configured to do so)
 
-	// Score has already been processed
-	const scoreMap = scores.map((x) => x.score);
-	if (scoreMap.includes(score.total_score)) return;
-	logger.info(
-		`Processing Score: ${score.user.username} on ${score.beatmapset?.title}: (${score.total_score})`,
-		{ ...score, type: 'process_score' }
-	);
 
 	// Add score to database
-	const claimworthy = isClaimworthy(score, game.claim_condition);
+	const rules = getRules(game);
+	const claimworthy = isClaimworthy(score, rules.claim_condition);
 	const user: Bingo.Card.FullUser | undefined = game.users.find((x) => x.user_id == score.user_id);
 	if (!user) return;
 	const newScore = await q.addScore(score, user, square.id, claimworthy);
+
+	// Update score on game object so the next score in this burst will be calculated correctly.
+	const sqIdx = game.squares.findIndex(x => x.id == square.id);
+	game.squares[sqIdx].scores.push(newScore);
 
 	// For sending to the client
 	const update = {
@@ -154,7 +164,8 @@ const processScore = async (score: Osu.LazerScore, game: Bingo.Card) => {
 		if (!winCheck) return update;
 		const win = checkWin(winCheck);
 		if (win) {
-			q.setGameState(game.id, 2, win.winner.toUpperCase());
+			await q.setGameState(game.id, 2, win.winner.toUpperCase());
+			await q.setEndTime(game.id, new Date());
 			removeGame(game.id);
 			update.win = true;
 			update.winner = win.winner.toUpperCase();

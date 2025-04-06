@@ -1,15 +1,11 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
+	import { getEventMeaning } from '$lib/gamerules/meaning';
+	import type { Options } from '$lib/gamerules/options';
 	import { Clock } from 'lucide-svelte';
 
-	export let event: Bingo.TimeEvent;
+	export let event: Options.Event;
 
-	let eventMeaning: string;
-	if (event && browser) {
-		fetch(`/get_event_meaning?action=${event?.action}`).then((r) =>
-			r.text().then((r) => (eventMeaning = r))
-		);
-	}
+	let eventMeaning = getEventMeaning(event);
 </script>
 
 <div class="flex size-full h-8 items-center rounded bg-pink-400/50 p-2">
