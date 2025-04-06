@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { getEvents } from '$lib/gamerules/get_rules';
+	import { getEventMeaning } from '$lib/gamerules/meaning';
+	import type { Options } from '$lib/gamerules/options';
 	import { game } from '$lib/stores';
 	import { BookCheck, BookText, Flag, Infinity, Timer } from 'lucide-svelte';
 
@@ -16,8 +19,8 @@
 
 	let endless: boolean = false;
 
-	let events: Bingo.TimeEvent[] = [];
-	let last_event: Bingo.TimeEvent;
+	let events: Options.Event[] = [];
+	let last_event: Options.Event;
 
 	let interval: globalThis.Timer;
 
@@ -32,19 +35,11 @@
 		progress = gametime / duration;
 	};
 
-	const getMeaning = async (event: Bingo.TimeEvent) => {
-		if (event && browser) {
-			const req = await fetch(`/get_event_meaning?action=${event?.action}`);
-			const meaning = await req.text();
-			return meaning;
-		}
-	};
-
 	game.subscribe((game) => {
 		if (!game || !game.start_time) return;
 
 		start_time = new Date(game.start_time);
-		events = game.events;
+		events = getEvents(game);
 		endless = false;
 
 		let last_event_check = null;
@@ -54,17 +49,18 @@
 				continue;
 			}
 
-			if (ev.time > last_event_check.time) {
+			if (ev.seconds_after_start > last_event_check.seconds_after_start) {
 				last_event_check = ev;
 			}
 		}
 		if (last_event_check == null) return;
 		last_event = last_event_check;
-		end_time = new Date(last_event.time);
+		end_time = new Date(start_time.valueOf() + last_event.seconds_after_start * 1000);
+
 		// Padding is added to the right side of the timer
 		// if the event is not a "final" event, since there
 		// technically isn't an end
-		if (!last_event.action.startsWith('final')) {
+		if (!last_event.event.startsWith('final')) {
 			end_time = new Date(end_time.valueOf() + 5 * 60 * 1000);
 			endless = true;
 		}
@@ -95,27 +91,20 @@
 				{#each events as event}
 					<div
 						class="absolute left-[--i] top-0 h-full"
-						style="--i: {((new Date(event.time).valueOf() - start_time.valueOf()) / duration) *
-							cw}px"
+						style="--i: {(new Date(event.seconds_after_start * 1000).valueOf() / duration) * cw}px"
 					>
 						<div class="peer absolute left-[-25px] flex w-[50px] justify-center">
-							{#if event.action == 'finalcall'}
+							{#if event.event == 'finalcall'}
 								<Flag size={20} />
-							{:else if event.fulfilled}
-								<BookCheck size={20} />
 							{:else}
 								<BookText size={20} />
 							{/if}
 						</div>
-						{#await getMeaning(event)}
-							...
-						{:then meaning}
-							<div
-								class="invisible absolute -bottom-12 left-[-110px] z-20 w-[220px] rounded bg-zinc-900/80 p-2 text-sm opacity-0 backdrop-blur-sm transition peer-hover:visible peer-hover:opacity-100"
-							>
-								{meaning}
-							</div>
-						{/await}
+						<div
+							class="invisible absolute -bottom-12 left-[-110px] z-20 w-[220px] rounded bg-zinc-900/80 p-2 text-sm opacity-0 backdrop-blur-sm transition peer-hover:visible peer-hover:opacity-100"
+						>
+							{getEventMeaning(event)}
+						</div>
 					</div>
 				{/each}
 			</div>

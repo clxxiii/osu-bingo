@@ -29,6 +29,14 @@ const evaluators: { [key: string]: Evaluator } = {
 
 		return evaluators["pass"](score) && quantify(pp, q, target);
 	},
+	accuracy: (score, q, value) => {
+		if (!q || !value) return false;
+
+		const pp = (score.accuracy ?? 0) * 100;
+		const target = parseFloat(value);
+
+		return evaluators["pass"](score) && quantify(pp, q, target);
+	},
 	miss: (score, q, value) => {
 		if (!q || !value) return false;
 

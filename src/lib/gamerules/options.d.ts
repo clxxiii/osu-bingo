@@ -25,7 +25,7 @@ export namespace Options {
     }
   }
 
-  type ClaimMetric = "fc" | "rank" | "pp" | "miss" | "combo" | "score" | "pass" | "any"
+  type ClaimMetric = "fc" | "rank" | "pp" | "miss" | "combo" | "score" | "accuracy" | "pass" | "any"
   type ClaimCondition = {
     metric: Options.ClaimMetric,
     quantifier?: "lt" | "gt" | "eq",

@@ -28,3 +28,8 @@ export const getRules = (game: Bingo.Card, squareIdx?: number): GameRules => {
 
   return rules;
 }
+
+export const getEvents = (game: Bingo.Card) => {
+  const options: Options = JSON.parse(game.options);
+  return options.event;
+}
