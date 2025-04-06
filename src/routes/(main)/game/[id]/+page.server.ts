@@ -277,4 +277,29 @@ export const actions: Actions = {
 		const success = await q.deleteGame(game_check.id);
 		if (!success) error(StatusCodes.BAD_REQUEST);
 	},
+	change_name: async ({ params, locals, request }) => {
+		const user = locals.user;
+		const linkId = params.id;
+		const game = await q.getGame(`gam_${linkId}`);
+
+		const body = await request.formData();
+
+		const name = body.get("name")
+		if (!name || typeof name != 'string' || name.length > 50) error(StatusCodes.BAD_REQUEST);
+
+		if (!user) error(StatusCodes.UNAUTHORIZED);
+		if (!game) error(StatusCodes.BAD_REQUEST);
+
+		const is_host = await q.isHost(game.id, user.id);
+		if (!is_host) error(StatusCodes.UNAUTHORIZED);
+
+		const success = await q.changeGameName(game.id, name);
+		if (!success) error(StatusCodes.BAD_REQUEST);
+
+		game.name = name;
+		sendToGame(game.id, {
+			type: 'fullUpdate',
+			data: game
+		});
+	},
 };

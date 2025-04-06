@@ -16,7 +16,11 @@
 		></div>
 		<div>
 			<h2 class="text-lg">
-				Game {game.link_id}
+				{#if game.name}
+					{game.name}
+				{:else}
+					Game {game.link_id}
+				{/if}
 			</h2>
 			<h3 class="text-lg font-light uppercase text-zinc-600">
 				{text[game.state]}

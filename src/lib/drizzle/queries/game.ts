@@ -6,7 +6,7 @@ import { getTemplate } from './template';
 import { invitedTeam, kickedTeam, noneTeam } from './gameuser';
 import type { Options } from '$lib/gamerules/options';
 
-export const newGame = async () => {
+export const newGame = async (name?: string) => {
 	const randomLetter = () => {
 		const A = 65;
 		const random = Math.floor(Math.random() * 26);
@@ -32,7 +32,8 @@ export const newGame = async () => {
 		await db
 			.insert(BingoGame)
 			.values({
-				link_id
+				link_id,
+				name: name ?? `Game ${link_id}`
 			})
 			.returning()
 	)[0];
@@ -251,6 +252,20 @@ export const updateGameOptions = async (game_id: string, options: Options) => {
 		await db.update(BingoGame).set({ options: JSON.stringify(options) }).where(eq(BingoGame.id, game_id)).returning()
 	)[0];
 	logger.silly('Finished db request', { function: 'updateGameSettings', obj: 'query', dir: 'end' });
+	if (!q) return null;
+	return q;
+};
+
+export const changeGameName = async (game_id: string, name: string) => {
+	logger.silly('Started db request', {
+		function: 'changeGameName',
+		obj: 'query',
+		dir: 'start'
+	});
+	const q = (
+		await db.update(BingoGame).set({ name }).where(eq(BingoGame.id, game_id)).returning()
+	)[0];
+	logger.silly('Finished db request', { function: 'changeGameName', obj: 'query', dir: 'end' });
 	if (!q) return null;
 	return q;
 };

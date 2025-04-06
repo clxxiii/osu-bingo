@@ -4,6 +4,7 @@
 	import NumberScale from './NumberScale.svelte';
 	import Invite from './Invite.svelte';
 	import DeleteButton from './DeleteButton.svelte';
+	import TextInput from './TextInput.svelte';
 
 	const changeVisibility = async (is_public: boolean) => {
 		const body = new FormData();
@@ -36,6 +37,15 @@
 		});
 	};
 
+	const changeName = async (name: string) => {
+		const body = new FormData();
+		body.set('name', name);
+		await fetch('?/change_name', {
+			method: 'POST',
+			body
+		});
+	};
+
 	const start = async () => {
 		const data = new FormData();
 		await fetch(`?/start_game`, {
@@ -50,8 +60,21 @@
 		{#if $store}
 			<h1 class="pb-4 pt-4 text-center font-rounded text-2xl font-bold">Host Settings</h1>
 			<div class="flex gap-4">
+				<div class="mb-4 w-full rounded-lg bg-zinc-900/50 p-4 font-rounded font-bold uppercase">
+					<div class="w-full pl-1">Lobby Name</div>
+					<div class="mt-1 w-full">
+						<TextInput
+							value={$store.name ?? ''}
+							limit={50}
+							submitDelay={500}
+							on:change={(e) => changeName(e.detail)}
+						/>
+					</div>
+				</div>
+			</div>
+			<div class="mb-4 flex gap-4">
 				<div
-					class="mb-4 flex w-full flex-col items-center rounded-lg bg-zinc-900/50 p-2 font-rounded font-bold uppercase"
+					class="flex w-full flex-col items-center rounded-lg bg-zinc-900/50 p-2 font-rounded font-bold uppercase"
 				>
 					Game Visibility
 					<div class="w-full max-w-[200px] pt-1">
@@ -66,7 +89,7 @@
 					</div>
 				</div>
 
-				<div class="mb-4 flex w-full">
+				<div class="w-full">
 					<Invite hidden={!$store?.public} linkCode={$store?.link_id ?? ''} />
 				</div>
 			</div>
