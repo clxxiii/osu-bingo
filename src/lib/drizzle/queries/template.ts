@@ -2,6 +2,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '..';
 import { Template } from '../schema';
 import { logger } from '$lib/logger';
+import type { Options } from '$lib/gamerules/options';
 
 export const newTemplate = async (user_id: number) => {
 	const tmt_public = (await db.select().from(Template).where(eq(Template.id, `tmt_public`)))[0];
@@ -30,7 +31,7 @@ export const getTemplate = async (id: string | null) => {
 	return template;
 };
 
-export const updateTemplate = async (id: string, data: Template) => {
+export const updateTemplate = async (id: string, data: Options) => {
 	logger.silly('Started db request', { function: 'updateTemplate', obj: 'update', dir: 'start' });
 	await db
 		.update(Template)

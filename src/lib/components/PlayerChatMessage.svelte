@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { GameUserEvent } from '$lib/events';
+	import type { GameUserEvent } from '$lib/emitter';
 	import { ArrowLeft, ArrowRight, ArrowRightLeft } from 'lucide-svelte';
 
 	export let event: GameUserEvent;

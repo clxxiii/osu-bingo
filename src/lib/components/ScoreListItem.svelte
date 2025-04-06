@@ -7,7 +7,7 @@
 </script>
 
 <a
-	data-claimer={score.important ? score.user.team_name : ''}
+	data-claimer={score.claimworthy ? score.user.team_name : ''}
 	data-pass={score.grade != 'F'}
 	target="_blank"
 	rel="noopener noreferrer"
@@ -23,13 +23,13 @@
 				alt=""
 			/>
 			<div
-				data-user={score.important ? '' : score.user.team_name}
+				data-user={score.claimworthy ? '' : score.user.team_name}
 				class="text-l row-end 2 col-start-2 col-end-3 row-start-1 text-left data-[user=BLUE]:text-blue-600 data-[user=RED]:text-amber-600"
 			>
 				{score.user.user.username}
 			</div>
 			<div
-				data-user={score.important ? '' : score.user.team_name}
+				data-user={score.claimworthy ? '' : score.user.team_name}
 				class="col-start-2 col-end-3 row-start-2 row-end-3 text-left text-xs data-[user=BLUE]:text-blue-200 data-[user=RED]:text-amber-200"
 			>
 				#{score.user.user.global_rank?.toLocaleString()}

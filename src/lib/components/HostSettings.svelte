@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { game as store } from '$lib/stores';
+	import { game as store, game_rules } from '$lib/stores';
 	import ToggleSwitch from './ToggleSwitch.svelte';
 	import NumberScale from './NumberScale.svelte';
 	import Invite from './Invite.svelte';
@@ -78,8 +78,8 @@
 				<div class="w-full pt-1">
 					<NumberScale
 						color="#ee92c2"
-						selected_min={($store.min_sr ?? 4) * 10}
-						selected_max={($store.max_sr ?? 5) * 10}
+						selected_min={($game_rules?.stars?.min ?? 4) * 10}
+						selected_max={($game_rules?.stars?.max ?? 5) * 10}
 						disabled={$store.state != 0}
 						divisor={10}
 						on:update={(e) => changeStarRating(e.detail.min, e.detail.max)}
@@ -95,8 +95,8 @@
 					<NumberScale
 						color="#fef08a"
 						max={600}
-						selected_min={$store.min_length ?? 30}
-						selected_max={$store.max_length ?? 200}
+						selected_min={$game_rules?.length?.min ?? 30}
+						selected_max={$game_rules?.length?.max ?? 200}
 						disabled={$store.state != 0}
 						decimals={0}
 						on:update={(e) => changeLength(e.detail.min, e.detail.max)}

@@ -19,7 +19,7 @@
 {#if score.grade != 'F'}
 	<a
 		href="https://osu.ppy.sh/scores/{score.score_id}"
-		data-claimer={score.important ? score.user.team_name : ''}
+		data-claimer={score.claimworthy ? score.user.team_name : ''}
 		class="flex size-full rounded bg-zinc-900/50 p-2 data-[claimer=BLUE]:bg-blue-600 data-[claimer=RED]:bg-amber-600"
 		target="_blank"
 		rel="noopener noreferrer"

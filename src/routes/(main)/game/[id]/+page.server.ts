@@ -1,10 +1,11 @@
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import q from '$lib/drizzle/queries';
 import { error, redirect } from '@sveltejs/kit';
 import { StatusCodes } from '$lib/StatusCodes';
 import { sendToChannel, sendToGame } from '$lib/emitter/server';
 import { sendBoard } from '$lib/server/bancho/bancho_board';
 import { startGame } from '$lib/server/game/start';
+import type { Options } from '$lib/gamerules/options';
 
 export const load: PageServerLoad = async ({ params, locals, url }) => {
 	const join = url.searchParams.get('join') == '' ? true : false;
@@ -46,7 +47,7 @@ export const load: PageServerLoad = async ({ params, locals, url }) => {
 	return { game_id: game.id, is_host, invited: true };
 };
 
-export const actions = {
+export const actions: Actions = {
 	join_game: async ({ request, params, locals }) => {
 		const form = await request.formData();
 		const linkId = params.id;
@@ -212,43 +213,51 @@ export const actions = {
 		const game = await q.getGame(game_check.id);
 		if (!game) error(StatusCodes.BAD_REQUEST);
 
+		const options: Options = JSON.parse(game.options)
+
 		// Literally anything would fix this, ZOD, tRPC, etc.
 		// but I'm lazy and want less dependencies, so we're rolling with it.
-		const min_sr = form.get('min_sr');
-		if (min_sr && typeof min_sr == 'string' && !isNaN(parseFloat(min_sr)))
-			game.min_sr = parseFloat(min_sr);
+		const form_min_sr = form.get('min_sr');
+		if (form_min_sr && typeof form_min_sr == 'string' && !isNaN(parseFloat(form_min_sr))) {
+			if (!options.setup.stars) options.setup.stars = { min: 0, max: 10 }
+			options.setup.stars.min = parseFloat(form_min_sr);
+		}
+
 		const max_sr = form.get('max_sr');
-		if (max_sr && typeof max_sr == 'string' && !isNaN(parseFloat(max_sr)))
-			game.max_sr = parseFloat(max_sr);
+		if (max_sr && typeof max_sr == 'string' && !isNaN(parseFloat(max_sr))) {
+			if (!options.setup.stars) options.setup.stars = { min: 0, max: 10 }
+			options.setup.stars.max = parseFloat(max_sr);
+		}
 
 		const min_length = form.get('min_length');
-		if (min_length && typeof min_length == 'string' && !isNaN(parseFloat(min_length)))
-			game.min_length = parseFloat(min_length);
+		if (min_length && typeof min_length == 'string' && !isNaN(parseFloat(min_length))) {
+			if (!options.setup.length) options.setup.length = { min: 0, max: 300 }
+			options.setup.length.min = parseFloat(min_length);
+		}
+
 		const max_length = form.get('max_length');
-		if (max_length && typeof max_length == 'string' && !isNaN(parseFloat(max_length)))
-			game.max_length = parseFloat(max_length);
+		if (max_length && typeof max_length == 'string' && !isNaN(parseFloat(max_length))) {
+			if (!options.setup.length) options.setup.length = { min: 0, max: 300 }
+			options.setup.length.max = parseFloat(max_length);
+		}
 
 		const min_rank = form.get('min_rank');
-		if (min_rank && typeof min_rank == 'string' && !isNaN(parseFloat(min_rank)))
-			game.min_rank = parseFloat(min_rank);
+		if (min_rank && typeof min_rank == 'string' && !isNaN(parseFloat(min_rank))) {
+			if (!options.setup.rank) options.setup.rank = {}
+			options.setup.rank.min = parseFloat(min_rank);
+		}
 		const max_rank = form.get('max_rank');
-		if (max_rank && typeof max_rank == 'string' && !isNaN(parseFloat(max_rank)))
-			game.max_rank = parseFloat(max_rank);
+		if (max_rank && typeof max_rank == 'string' && !isNaN(parseFloat(max_rank))) {
+			if (!options.setup.rank) options.setup.rank = {}
+			options.setup.rank.max = parseFloat(max_rank);
+		}
 
 		const is_public = form.get('public') === 'true';
 		if (form.has('public') && typeof is_public == 'boolean') game.public = is_public;
 
-		const settings: Bingo.SettingsUpdate = {
-			min_sr: game.min_sr ?? undefined,
-			max_sr: game.max_sr ?? undefined,
-			min_length: game.min_length ?? undefined,
-			max_length: game.max_length ?? undefined,
-			min_rank: game.min_rank ?? undefined,
-			max_rank: game.max_rank ?? undefined,
-			public: game.public ?? undefined
-		};
 
-		await q.updateGameSettings(game.id, settings);
+		await q.updateGameOptions(game.id, options);
+		game.options = JSON.stringify(options);
 		sendToGame(game.id, {
 			type: 'fullUpdate',
 			data: game

@@ -13,6 +13,7 @@
  * - 'any': All scores are claimable (even fails)
  */
 
+import type { Options } from '$lib/gamerules/options';
 import type { Osu } from '$lib/osu';
 
 type Evaluator = {
@@ -94,9 +95,10 @@ export const isClaimworthy = (score: Osu.LazerScore, claim_condition: string) =>
 	return evaluator.evaluate(score, value);
 };
 
-export const getMeaning = (claim_condition: string) => {
-	const [type] = claim_condition.split('_');
-	const value = claim_condition.split('_').slice(1).join('_');
+export const getMeaning = (claim_condition?: Options.ClaimCondition) => {
+	const metric = claim_condition?.metric ?? 'fc';
+	const [type] = metric.split('_');
+	const value = metric.split('_').slice(1).join('_');
 
 	let evaluator = evaluators[type];
 	if (!evaluator) evaluator = evaluators['fc'];

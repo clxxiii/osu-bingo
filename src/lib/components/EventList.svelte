@@ -5,6 +5,7 @@
 	import EventTime from './EventTime.svelte';
 	import EventStart from './EventStart.svelte';
 	import { afterUpdate } from 'svelte';
+	import { game as store, game_rules } from '$lib/stores';
 
 	type Event = ScoreInfo | TimeEvent | StartEvent;
 	type StartEvent = {
@@ -30,8 +31,6 @@
 		};
 	};
 	const isScore = (e: Event): e is ScoreInfo => e.type == 'score';
-
-	export let store: Writable<Bingo.Card | null>;
 
 	let events: Event[] = [];
 	store.subscribe((card) => {
@@ -118,7 +117,7 @@
 					score={event.data.score}
 					square={event.data.square}
 					square_index={event.data.square_index}
-					stat={$store?.tiebreaker ?? ''}
+					stat={$game_rules?.reclaim_condition ?? ''}
 				/>
 			{:else if isTimeEvent(event)}
 				{#if new Date(event.data.time).valueOf() < new Date().valueOf() && event.data.fulfilled}
