@@ -8,81 +8,104 @@ import boards from '$lib/bingo-helpers/default_boards';
 import { logger } from '$lib/logger';
 import { sendToGame } from '$lib/emitter/server';
 import { clearTimer } from './auto_deletion';
+import type { Options } from '$lib/gamerules/options';
 
 export const startGame = async (game_id: string) => {
 	logger.info(`Starting game ${game_id}!`, { type: 'game_start' });
+	const now = Date.now();
 	clearTimer(game_id);
 
 	const game = await q.getGame(game_id);
 	if (!game) return;
 
-	const template: Template = JSON.parse(game.template.data);
+	// Merge options from template with game-specific options
+	const template: Options = JSON.parse(game.template.data);
+	const gameOptions: Options = JSON.parse(game.options);
 
-	// Set initial settings
-	const now = Date.now();
-	await q.updateGameSettings(game_id, {
-		claim_condition: template.setup.claim_condition,
-		tiebreaker: template.setup.reclaim_condition,
-		start_time: new Date(now)
-	});
+	const options = { ...template, ...gameOptions, setup: { ...template.setup, ...gameOptions.setup } }
 
-	// Create board of maps
+	// Grab board from default boards if necessary
 	const board =
-		typeof template.setup.board == 'string' ? boards[template.setup.board] : template.setup.board;
+		typeof options.board == 'string' ? boards[options.board] : options.board;
+	options.board = board;
 
-	const squareCount = board.squares.length;
-	const totalChance = template.maps.map((x) => x.chance).reduce((a, b) => a + b);
+	await q.updateGameOptions(game_id, options);
 
-	// Calculate how many maps in each pool to fetch
-	const counts = [];
-	for (const mappool of template.maps) {
-		const chance = mappool.chance / totalChance;
-		counts.push({
-			id: mappool.mappool_id,
-			maps: Math.floor(squareCount * chance),
-			mode: mappool.mode
-		});
-	}
-	if (counts.map((x) => x.maps).reduce((a, b) => a + b) < squareCount) {
-		counts.sort((a, b) => a.maps - b.maps);
-		counts[0].maps += squareCount - counts.map((x) => x.maps).reduce((a, b) => a + b);
-	}
+	// ===========
+	// MAP PICKING
+	// ===========
 
-	// Fetch maps in all the pools
-	const maps = [];
-	for (const pool of counts) {
-		if (pool.maps == 0) continue;
 
-		const picks = await q.getRandomMaps(
-			pool.id,
-			pool.maps,
-			game.min_sr,
-			game.max_sr,
-			game.min_length,
-			game.max_length,
-			pool.mode
-		);
-		maps.push(...picks);
+	// Group squares via block
+	const blocks: { block: Options.Block, squares: [number, number][] }[] = []
+	for (let i = 0; i < board.squares.length; i++) {
+		let block = board.blocks?.find(x => x.indices.includes(i))?.block;
+		if (!block) block = options.setup;
+
+		const blocksIdx = blocks.findIndex(x => x.block == block);
+		if (blocksIdx != -1) {
+			blocks[blocksIdx].squares.push(board.squares[i]);
+		} else {
+			blocks.push({ block, squares: [board.squares[i]] })
+		}
 	}
 
-	// Shuffle maps
-	maps.sort(() => (Math.random() > 0.5 ? -1 : 1));
+	// Pick maps in each block
+	for (const { block, squares } of blocks) {
+		const totalChance = block.maps.reduce((a, b) => a + (b.chance ?? 1), 0);
 
-	// Create squares
-	for (const i in board.squares) {
-		const square = board.squares[i];
-		await q.newSquare({
-			game_id,
-			map_id: maps[i].id,
-			x_pos: square[0],
-			y_pos: square[1]
-		});
+		// Calculate how many maps in each pool to fetch
+		const counts = [];
+		for (const mappool of block.maps) {
+			const chance = (mappool.chance ?? 1) / totalChance;
+			counts.push({
+				mappool,
+				maps: Math.floor(squares.length * chance),
+			});
+		}
+
+		// If the count doesn't add up to the number of squares, add the difference to the smallest pool
+		if (counts.map((x) => x.maps).reduce((a, b) => a + b) < squares.length) {
+			counts.sort((a, b) => a.maps - b.maps);
+			counts[0].maps += squares.length - counts.map((x) => x.maps).reduce((a, b) => a + b);
+		}
+		console.log(counts);
+
+		// Fetch maps in all the pools
+		const maps = [];
+		for (const pool of counts) {
+			if (pool.maps == 0) continue;
+
+			const picks = await q.getRandomMaps(
+				pool.mappool.mappool_id,
+				pool.maps,
+				// Pick block's settings, or fallback to default block's settings
+				block.stars?.min ?? options.setup.stars?.min,
+				block.stars?.max ?? options.setup.stars?.max,
+				block.length?.min ?? options.setup.length?.min,
+				block.length?.max ?? options.setup.length?.max,
+				pool.mappool.mode
+			);
+			maps.push(...picks);
+		}
+
+		// Shuffle maps
+		maps.sort(() => (Math.random() > 0.5 ? -1 : 1));
+		for (let i = 0; i < squares.length; i++) {
+			const square = squares[i];
+			await q.newSquare({
+				game_id,
+				map_id: maps[i].id,
+				x_pos: square[0],
+				y_pos: square[1]
+			});
+		}
 	}
 
 	// Create Events
 	for (const event of template.event) {
 		const date = new Date(now + event.seconds_after_start * 1000);
-		await q.setEvent(game_id, event.text, date);
+		await q.setEvent(game_id, event.event, date);
 	}
 
 	// Update last settings and send game to clients

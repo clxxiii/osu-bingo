@@ -1,3 +1,4 @@
+import type { Options } from '$lib/gamerules/options';
 import boards from './default_boards';
 
 const default_lines = [
@@ -25,7 +26,7 @@ export const checkWin = (game: Bingo.Card) => {
 	if (!game.squares) return null;
 
 	// Get board and lines from template
-	let template: Template;
+	let template: Options;
 	try {
 		template = JSON.parse(game.template.data);
 	} catch {
@@ -33,11 +34,11 @@ export const checkWin = (game: Bingo.Card) => {
 	}
 
 	// Get board and lines from template
-	let board: Template.Board;
-	if (typeof template.setup.board == 'string') {
-		board = boards[template.setup.board];
+	let board: Options.Board;
+	if (typeof template.board == 'string') {
+		board = boards[template.board];
 	} else {
-		board = template.setup.board;
+		board = template.board;
 	}
 
 	if (!board) {
