@@ -27,8 +27,9 @@
 		if (!card) return;
 
 		if (card.squares) {
-			yMax = Math.max(...card.squares.map((x) => x.y_pos));
-			xMax = Math.max(...card.squares.map((x) => x.x_pos));
+			// Height & Width of card is the largest y or x position, and must be at least 0
+			yMax = Math.max(...card.squares.map((x) => x.y_pos), 0);
+			xMax = Math.max(...card.squares.map((x) => x.x_pos), 0);
 		}
 		const win = checkWin(card);
 		if (win) {
@@ -56,7 +57,7 @@
 		class="relative grid w-full rounded bg-base-950 p-2"
 		bind:clientWidth={square_width}
 		style="
-	grid-template-columns: 30px repeat({xMax + 1}, {xMax + 1}fr); 
+	grid-template-columns: 30px repeat({xMax + 1}, {xMax + 1}fr);
 	grid-template-rows: 30px repeat({yMax + 1}, {yMax + 1}fr);
 	aspect-ratio: {xMax + 1} / {yMax + 1}
 	"
