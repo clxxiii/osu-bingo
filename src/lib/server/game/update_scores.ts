@@ -84,7 +84,7 @@ export const updateScores = async (game_id: string) => {
 	});
 
 	const processedScores = await q.getScoresFromGame(game.id);
-	const processedIds = processedScores.map(x => x.score_id);
+	const processedIds = processedScores.map((x) => x.score_id);
 
 	const updates: { score: Bingo.Card.FullScore; square: Bingo.Card.FullSquare; claim: boolean }[] =
 		[];
@@ -136,17 +136,12 @@ const processScore = async (score: Osu.LazerScore, game: Bingo.Card) => {
 
 	// TODO: Check that the score meets the mod requirements (also disallowing converts if configured to do so)
 
-
 	// Add score to database
 	const rules = getRules(game);
 	const claimworthy = isClaimworthy(score, rules.claim_condition);
 	const user: Bingo.Card.FullUser | undefined = game.users.find((x) => x.user_id == score.user_id);
 	if (!user) return;
 	const newScore = await q.addScore(score, user, square.id, claimworthy);
-
-	// Update score on game object so the next score in this burst will be calculated correctly.
-	const sqIdx = game.squares.findIndex(x => x.id == square.id);
-	game.squares[sqIdx].scores.push(newScore);
 
 	// For sending to the client
 	const update = {
@@ -171,5 +166,10 @@ const processScore = async (score: Osu.LazerScore, game: Bingo.Card) => {
 			update.winner = win.winner.toUpperCase();
 		}
 	}
+
+	// Update score on game object so the next score in this burst will be calculated correctly.
+	const sqIdx = game.squares.findIndex((x) => x.id == square.id);
+	game.squares[sqIdx].scores.push(newScore);
+
 	return update;
 };
