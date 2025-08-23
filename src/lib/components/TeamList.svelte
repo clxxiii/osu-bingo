@@ -91,7 +91,7 @@
 				/>
 			{/each}
 		</div>
-		{#if invited && $gameStore && $gameStore.state == 0}
+		{#if invited && $gameStore && $gameStore.state == 0 && $gameStore.allow_team_switching}
 			<div class="absolute bottom-0 w-full rounded-xl bg-black/30 p-1">
 				{#if !gameuser?.team_name}
 					<button

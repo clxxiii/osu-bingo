@@ -15,6 +15,7 @@
 	import WinConfetti from '$lib/components/WinConfetti.svelte';
 	import PageContainer from '$lib/components/PageContainer.svelte';
 	import { getRules } from '$lib/gamerules/get_rules';
+	import { browser } from '$app/environment';
 
 	export let data: PageData;
 
@@ -57,6 +58,29 @@
 		store.set(null);
 		square.set(null);
 	});
+
+	const leave = async () => {
+		await fetch(`?/leave_game`, {
+			method: 'POST',
+			body: new FormData()
+		});
+	};
+
+	const join = async () => {
+		if (!data.user) {
+			if (browser) {
+				const params = new URLSearchParams();
+				params.set('from', window.location.href + `?join`);
+				window.location.href = `/auth/login/osu?${params.toString()}`;
+			}
+		}
+
+		const form = new FormData();
+		await fetch(`?/join_game`, {
+			body: form,
+			method: 'POST'
+		});
+	};
 </script>
 
 <svelte:head>
@@ -82,25 +106,45 @@
 	<div class="grid">
 		{#if $store}
 			<InterfaceGrids {host} state={$store.state}>
-				<article slot="player-list" class="grid h-full grid-rows-2 gap-y-2 bg-zinc-900">
-					<div class="h-full w-full">
-						<TeamList
-							invited={data.invited}
-							team="BLUE"
-							gameStore={store}
-							host={data.is_host}
-							user={data.user}
-						/>
+				<article slot="player-list" class="flex h-full flex-col bg-zinc-900">
+					<div class="grid h-full grid-rows-2 gap-y-2">
+						<div class="h-full w-full">
+							<TeamList
+								invited={data.invited}
+								team="BLUE"
+								gameStore={store}
+								host={data.is_host}
+								user={data.user}
+							/>
+						</div>
+						<div class="h-full w-full">
+							<TeamList
+								invited={data.invited}
+								team="RED"
+								gameStore={store}
+								host={data.is_host}
+								user={data.user}
+							/>
+						</div>
 					</div>
-					<div class="h-full w-full">
-						<TeamList
-							invited={data.invited}
-							team="RED"
-							gameStore={store}
-							host={data.is_host}
-							user={data.user}
-						/>
-					</div>
+					{#if !$store.allow_team_switching}
+						<div>
+							{#if !currentTeam}
+								<button
+									on:click={join}
+									class="h-12 w-full rounded-lg bg-green-600 p-1 px-2 font-rounded text-xl font-bold transition hover:bg-green-700 active:bg-green-800"
+									>Join Game</button
+								>
+							{:else}
+								<button
+									on:click={leave}
+									class="h-12 w-full rounded-lg bg-amber-600 p-1 px-2 font-rounded text-xl font-bold transition"
+								>
+									Leave Game
+								</button>
+							{/if}
+						</div>
+					{/if}
 				</article>
 
 				<article slot="board" class="grid aspect-square">

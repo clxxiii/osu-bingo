@@ -19,7 +19,7 @@
 	};
 </script>
 
-<div class="h-full w-full rounded-lg bg-zinc-900/50 p-2">
+<div class="flex h-full w-full flex-col justify-center rounded-lg bg-zinc-900/50 p-2">
 	<div class="w-full text-center font-rounded font-bold uppercase">Invite Link</div>
 	<div class="flex h-8 rounded-lg border-[1px] border-zinc-700 bg-zinc-900">
 		<button

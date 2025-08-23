@@ -270,6 +270,20 @@ export const changeGameName = async (game_id: string, name: string) => {
 	return q;
 };
 
+export const changeTeamSwitchSetting = async (game_id: string, allow_team_switching: boolean) => {
+	logger.silly('Started db request', {
+		function: 'changeTeamSwitching',
+		obj: 'query',
+		dir: 'start'
+	});
+	const q = (
+		await db.update(BingoGame).set({ allow_team_switching }).where(eq(BingoGame.id, game_id)).returning()
+	)[0];
+	logger.silly('Finished db request', { function: 'changeTeamSwitching', obj: 'query', dir: 'end' });
+	if (!q) return null;
+	return q;
+};
+
 export const setStartTime = async (game_id: string, start_time: Date) => {
 	logger.silly('Started db request', {
 		function: 'setStartTime',

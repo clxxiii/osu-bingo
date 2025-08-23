@@ -56,14 +56,14 @@ export const actions: Actions = {
 		const game = await q.gameExists(linkId);
 
 		if (!user) error(StatusCodes.UNAUTHORIZED);
-		if (!team || !game || typeof team != 'string') error(StatusCodes.BAD_REQUEST);
+		if (!game || (team && typeof team != 'string')) error(StatusCodes.BAD_REQUEST);
 
 		if (!game.public) {
 			const invited = await q.isInvited(game.id, user.id);
 			if (!invited) error(StatusCodes.UNAUTHORIZED);
 		}
 
-		const fulluser = await q.joinGame(game.id, user.id, team);
+		const fulluser = await q.joinGame(game.id, user.id, team ?? undefined);
 		if (fulluser == null) error(StatusCodes.BAD_REQUEST, 'User is already in game');
 
 		sendToGame(game.id, {
@@ -297,6 +297,31 @@ export const actions: Actions = {
 		if (!success) error(StatusCodes.BAD_REQUEST);
 
 		game.name = name;
+		sendToGame(game.id, {
+			type: 'fullUpdate',
+			data: game
+		});
+	},
+	change_team_switching: async ({ params, locals, request }) => {
+		const user = locals.user;
+		const linkId = params.id;
+		const game = await q.getGame(`gam_${linkId}`);
+
+		const body = await request.formData();
+
+		const can_switch = body.get('can_switch') === 'true';
+		if (!body.has('can_switch') || typeof can_switch != 'boolean') error(StatusCodes.BAD_REQUEST)
+
+		if (!user) error(StatusCodes.UNAUTHORIZED);
+		if (!game) error(StatusCodes.BAD_REQUEST);
+
+		const is_host = await q.isHost(game.id, user.id);
+		if (!is_host) error(StatusCodes.UNAUTHORIZED);
+
+		const success = await q.changeTeamSwitchSetting(game.id, can_switch);
+		if (!success) error(StatusCodes.BAD_REQUEST);
+
+		game.allow_team_switching = can_switch;
 		sendToGame(game.id, {
 			type: 'fullUpdate',
 			data: game
