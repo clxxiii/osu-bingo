@@ -29,7 +29,6 @@
 		host = game.hosts.find((x) => x.id == data?.user?.id) != undefined;
 
 		game_rules.set(getRules(game));
-		console.log(getRules(game));
 	});
 
 	$: {
