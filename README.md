@@ -1,3 +1,9 @@
+
+
+<div align="center">
+  <h1><a href="https://clxxiii.notion.site/Rewrite-in-Rust-lmao-2733f4b9c82c8029977dde15cac45c52">✨This project is in the process of being rewritten!✨</a></h1>
+</div>
+
 <div align="center">
   <img width="362" height="119" alt="image" src="https://github.com/user-attachments/assets/f761f22c-77f1-48c5-91ca-d64123ae5b0c" />
 </div>
