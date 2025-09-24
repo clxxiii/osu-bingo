@@ -14,7 +14,7 @@ export const GET: RequestHandler = async ({ locals }) => {
 		error(StatusCodes.BAD_REQUEST, "You already hosting an active game!")
 	}
 
-	const game = await q.newGame();
+	const game = await q.newGame(`${locals.user.username}'s game`);
 	await q.joinGame(game.id, locals.user.id, noneTeam);
 	await q.setHost(game.id, locals.user.id);
 	registerGame(game.id);

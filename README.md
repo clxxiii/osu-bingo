@@ -1,38 +1,36 @@
-# create-svelte
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
 
-## Creating a project
+<div align="center">
+  <h1><a href="https://clxxiii.notion.site/Rewrite-in-Rust-lmao-2733f4b9c82c8029977dde15cac45c52">✨This project is in the process of being rewritten!✨</a></h1>
+</div>
 
-If you're seeing this, you've probably already done this step. Congrats!
+<div align="center">
+  <img width="362" height="119" alt="image" src="https://github.com/user-attachments/assets/f761f22c-77f1-48c5-91ca-d64123ae5b0c" />
+</div>
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+---
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+### How it Works
+osu! Bingo is just like regular Bingo, but with a twist. Two teams of up to 50 players compete to try and fill in any horizontal, vertical, or diagonal line on a Bingo Board.
+Claim a square
 
-## Developing
+In public games, squares start off by requiring an FC. Over the course of the game, the requirement goes down, from just needing an A rank, to any pass working as a claim.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+### No square is safe!
 
-```bash
-npm run dev
+Even if a team claims a square, the other team can reclaim that square by getting a high score on the map that also meets the claim condition.
+### Play Anywhere
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+Games support submitting scores from both osu!stable and osu!lazer. Play wherever you're most comfortable!
 
-## Building
+### Play with Friends
 
-To create a production version of your app:
+Host a lobby privately with friends, where only those you send the invite code to can join, or host a public lobby open to anybody who desires!
 
-```bash
-npm run build
-```
+### Play it your way
 
-You can preview the production build with `npm run preview`.
+The settings for the game are infinitely customizable. Change the claim conditions, edit the claim change timings or remove them all together. Change reclaim conditions, set your own custom board, or pick from a map pool, or make your own custom shaped board all together.
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+### Stream-friendly
+
+If you're streaming, you can keep your viewers up-to-date without leaving the stream using one of our stream overlays, that will automatically update as the game progresses

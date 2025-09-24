@@ -4,11 +4,21 @@
 	import NumberScale from './NumberScale.svelte';
 	import Invite from './Invite.svelte';
 	import DeleteButton from './DeleteButton.svelte';
+	import TextInput from './TextInput.svelte';
 
 	const changeVisibility = async (is_public: boolean) => {
 		const body = new FormData();
 		body.set('public', `${is_public}`);
 		await fetch('?/change_settings', {
+			method: 'POST',
+			body
+		});
+	};
+
+	const changeTeamSwitching = async (can_switch: boolean) => {
+		const body = new FormData();
+		body.set('can_switch', `${can_switch}`);
+		await fetch('?/change_team_switching', {
 			method: 'POST',
 			body
 		});
@@ -36,6 +46,15 @@
 		});
 	};
 
+	const changeName = async (name: string) => {
+		const body = new FormData();
+		body.set('name', name);
+		await fetch('?/change_name', {
+			method: 'POST',
+			body
+		});
+	};
+
 	const start = async () => {
 		const data = new FormData();
 		await fetch(`?/start_game`, {
@@ -49,25 +68,46 @@
 	<div class="absolute right-0 h-full w-full p-2">
 		{#if $store}
 			<h1 class="pb-4 pt-4 text-center font-rounded text-2xl font-bold">Host Settings</h1>
-			<div class="flex gap-4">
-				<div
-					class="mb-4 flex w-full flex-col items-center rounded-lg bg-zinc-900/50 p-2 font-rounded font-bold uppercase"
-				>
-					Game Visibility
-					<div class="w-full max-w-[200px] pt-1">
-						<ToggleSwitch
-							onText="Public"
-							onColor="#16a34a"
-							offColor="#755780"
-							offText="Private"
-							on:update={(e) => changeVisibility(e.detail)}
-							toggle={$store.public}
+			<div class="mb-4 flex gap-4">
+				<div class="w-full rounded-lg bg-zinc-900/50 p-4 font-rounded font-bold uppercase">
+					<div class="w-full pl-1">Lobby Name</div>
+					<div class="mt-1 w-full">
+						<TextInput
+							value={$store.name ?? ''}
+							limit={50}
+							submitDelay={500}
+							on:change={(e) => changeName(e.detail)}
 						/>
 					</div>
 				</div>
-
-				<div class="mb-4 flex w-full">
+				<div class="flex w-full flex-col items-center">
 					<Invite hidden={!$store?.public} linkCode={$store?.link_id ?? ''} />
+				</div>
+			</div>
+			<div class="mb-4 flex gap-4">
+				<div class="flex w-full rounded-lg bg-zinc-900/50 p-2 font-rounded font-bold uppercase">
+					<div class="flex w-full flex-col items-center">
+						Game Visibility
+						<div class="w-full max-w-[200px] pt-1">
+							<ToggleSwitch
+								onText="Public"
+								onColor="#16a34a"
+								offColor="#755780"
+								offText="Private"
+								on:update={(e) => changeVisibility(e.detail)}
+								toggle={$store.public}
+							/>
+						</div>
+					</div>
+					<div class="flex w-full flex-col items-center">
+						Lock Teams
+						<div class="w-full max-w-[200px] pt-1">
+							<ToggleSwitch
+								on:update={(e) => changeTeamSwitching(e.detail)}
+								toggle={$store.allow_team_switching ?? true}
+							/>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div
