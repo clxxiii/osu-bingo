@@ -1,0 +1,74 @@
+{
+	"/(overlays)": [
+		"src/routes/+layout.server.ts"
+	],
+	"/(main)": [
+		"src/routes/(main)/+page.server.ts",
+		"src/routes/(main)/+layout.server.ts",
+		"src/routes/+layout.server.ts",
+		"src/routes/(main)/+layout.server.ts",
+		"src/routes/+layout.server.ts"
+	],
+	"/": [
+		"src/routes/+layout.server.ts"
+	],
+	"/(api)/auth/callback/osu": [
+		"src/routes/(api)/auth/callback/osu/+server.ts"
+	],
+	"/(api)/auth/login/osu": [
+		"src/routes/(api)/auth/login/osu/+server.ts"
+	],
+	"/(api)/auth/logout": [
+		"src/routes/(api)/auth/logout/+server.ts"
+	],
+	"/(api)/game_stream": [
+		"src/routes/(api)/game_stream/+server.ts"
+	],
+	"/(api)/game_stream/change_channel": [
+		"src/routes/(api)/game_stream/change_channel/+server.ts"
+	],
+	"/(api)/game_stream/change_game": [
+		"src/routes/(api)/game_stream/change_game/+server.ts"
+	],
+	"/(main)/games": [
+		"src/routes/(main)/games/+page.server.ts",
+		"src/routes/(main)/+layout.server.ts",
+		"src/routes/+layout.server.ts"
+	],
+	"/(main)/games/new": [
+		"src/routes/(main)/games/new/+server.ts"
+	],
+	"/(main)/game/[id]": [
+		"src/routes/(main)/game/[id]/+page.server.ts",
+		"src/routes/(main)/+layout.server.ts",
+		"src/routes/+layout.server.ts"
+	],
+	"/(api)/get_user_game": [
+		"src/routes/(api)/get_user_game/+server.ts"
+	],
+	"/(api)/login_request": [
+		"src/routes/(api)/login_request/+server.ts"
+	],
+	"/(api)/login_request/close": [
+		"src/routes/+layout.server.ts"
+	],
+	"/(overlays)/overlays/board": [
+		"src/routes/(overlays)/overlays/board/+page.server.ts",
+		"src/routes/+layout.server.ts"
+	],
+	"/(main)/templates": [
+		"src/routes/(main)/+layout.server.ts",
+		"src/routes/+layout.server.ts"
+	],
+	"/(main)/templates/new": [
+		"src/routes/(main)/templates/new/+server.ts"
+	],
+	"/(main)/templates/[id]": [
+		"src/routes/(main)/templates/[id]/+page.server.ts",
+		"src/routes/(main)/+layout.server.ts",
+		"src/routes/+layout.server.ts"
+	],
+	"/[r=redirect]": [
+		"src/routes/[r=redirect]/+server.ts"
+	]
+}

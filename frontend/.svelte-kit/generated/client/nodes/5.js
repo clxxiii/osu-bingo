@@ -1,0 +1,1 @@
+export { default as component } from "../../../../src/routes/(api)/login_request/close/+page.svelte";

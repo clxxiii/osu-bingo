@@ -26,3 +26,5 @@ pub struct OauthToken {
     refresh_token: String,
     token_type: String,
 }
+
+fn main() {}
