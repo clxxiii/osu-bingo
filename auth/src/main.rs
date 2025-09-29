@@ -1,30 +1,32 @@
-use chrono::{DateTime, Utc};
-use serde::{Deserialize, Serialize};
+use bingo_auth::routes::router;
+use std::net::SocketAddr;
 
-#[derive(sqlx::FromRow, Deserialize, Serialize)]
-pub struct Session {
-    id: String,
-    user_id: i32,
+#[tokio::main]
+async fn main() {
+    let router = router().await;
 
-    token: String,
+    // Get port from environment, or default 3100
+    let port: u16 = std::env::var("PORT")
+        .unwrap_or(String::from("3100"))
+        .parse::<u16>()
+        .expect("Supplied port variable cannot be parsed into an integer");
+    let addr = SocketAddr::from(([0, 0, 0, 0], port));
 
-    created_at: DateTime<Utc>,
-    last_used: Option<DateTime<Utc>>,
+    let listener = tokio::net::TcpListener::bind(addr).await.expect(
+        format!(
+            "Address {} should be available so a connection can be opened",
+            addr
+        )
+        .as_str(),
+    );
 
-    device: Option<String>,
-    browser: Option<String>,
-    os: Option<String>,
+    // Logger
+    colog::default_builder()
+        .format_timestamp_secs()
+        .format_file(true)
+        .filter_level(log::LevelFilter::Trace)
+        .init();
+
+    log::info!("Opened a connection at {}", addr);
+    axum::serve(listener, router).await.unwrap();
 }
-
-#[derive(sqlx::FromRow, Deserialize, Serialize)]
-pub struct OauthToken {
-    id: String,
-    user_id: String,
-    service: String,
-    access_token: String,
-    expires_at: DateTime<Utc>,
-    refresh_token: String,
-    token_type: String,
-}
-
-fn main() {}
