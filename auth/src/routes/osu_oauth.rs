@@ -6,6 +6,7 @@ use serde::Deserialize;
 
 const OSU_LOGIN_URL: &str = "https://osu.ppy.sh/oauth/authorize";
 const OSU_TOKEN_URL: &str = "https://osu.ppy.sh/oauth/token";
+const OSU_USER_URL: &str = "https://osu.ppy.sh/api/v2/me";
 
 #[derive(Deserialize)]
 struct Code {
@@ -28,12 +29,12 @@ pub async fn router() -> Router {
 }
 
 async fn login() -> Redirect {
-    let OSU_CLIENT_ID = std::env::var("OSU_CLIENT_ID").expect("OSU_CLIENT_ID environment variable should be defined");
-    let OSU_REDIRECT_URI = std::env::var("OSU_REDIRECT_URI").expect("OSU_REDIRECT_URI environment variable should be defined");
+    let client_id = std::env::var("OSU_CLIENT_ID").expect("OSU_CLIENT_ID environment variable should be defined");
+    let redirect_uri = std::env::var("OSU_REDIRECT_URI").expect("OSU_REDIRECT_URI environment variable should be defined");
 
     let mut params = QueryParams::new();
-    params.insert("client_id", &OSU_CLIENT_ID);
-    params.insert("redirect_uri", &OSU_REDIRECT_URI);
+    params.insert("client_id", &client_id);
+    params.insert("redirect_uri", &redirect_uri);
     params.insert("scope", "identify");
     params.insert("response_type", "code");
     let url = format!("{}?{}", OSU_LOGIN_URL, params);
@@ -41,17 +42,17 @@ async fn login() -> Redirect {
 }
 
 async fn callback(query: Query<Code>) -> Response {
-    let OSU_CLIENT_ID = std::env::var("OSU_CLIENT_ID").expect("OSU_CLIENT_ID environment variable should be defined");
-    let OSU_CLIENT_SECRET = std::env::var("OSU_CLIENT_SECRET").expect("OSU_CLIENT_SECRET environment variable should be defined");
-    let OSU_REDIRECT_URI = std::env::var("OSU_REDIRECT_URI").expect("OSU_REDIRECT_URI environment variable should be defined");
+    let client_id = std::env::var("OSU_CLIENT_ID").expect("OSU_CLIENT_ID environment variable should be defined");
+    let client_secret = std::env::var("OSU_CLIENT_SECRET").expect("OSU_CLIENT_SECRET environment variable should be defined");
+    let redirect_uri = std::env::var("OSU_REDIRECT_URI").expect("OSU_REDIRECT_URI environment variable should be defined");
 
     let req_client = reqwest::Client::new();
     let mut body = HashMap::new();
     body.insert("grant_type", "authorization_code");
-    body.insert("client_id", &OSU_CLIENT_ID);
-    body.insert("client_secret", &OSU_CLIENT_SECRET);
+    body.insert("client_id", &client_id);
+    body.insert("client_secret", &client_secret);
     body.insert("code", &query.code);
-    body.insert("redirect_uri", &OSU_REDIRECT_URI);
+    body.insert("redirect_uri", &redirect_uri);
     println!("{}", query.code);
 
     let token: AccessToken = match req_client
@@ -78,6 +79,27 @@ async fn callback(query: Query<Code>) -> Response {
     };
 
     println!("{:?}", token);
+    let user: serde_json::Value = match req_client
+        .get(OSU_USER_URL)
+        .bearer_auth(token.access_token)
+        .send()
+        .await 
+    {
+        Ok(req) => {
+            match req.json().await {
+                Ok(x) => {
+                    x
+                },
+                Err(x) => {
+                    return error_to_response(x)
+                }
+            }
+        },
+        Err(x) =>  {
+           return error_to_response(x) 
+        }
+    };
+    println!("{:?}", user);
         
     
     Response::new("".into())
