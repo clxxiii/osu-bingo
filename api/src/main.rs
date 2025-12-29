@@ -3,6 +3,8 @@ use std::net::SocketAddr;
 
 #[tokio::main]
 async fn main() {
+    dotenv::dotenv().ok();
+
     let router = router().await;
 
     // Get port from environment, or default 3000
