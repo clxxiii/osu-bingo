@@ -1,0 +1,35 @@
+{
+	"nodes":[
+		{"id":"db3b0a18fa003628","type":"file","file":"Excalidraw/Services.excalidraw.md","x":-1080,"y":-440,"width":400,"height":560,"color":"1"},
+		{"id":"0a2632a144662f21","type":"file","file":"Rust Rewrite Goals (Why I'm doing all this).md","x":-1270,"y":-1660,"width":780,"height":600,"color":"2"},
+		{"id":"ce88cf24bc64cb03","type":"file","file":"Score Fetcher.md","x":-2080,"y":-840,"width":832,"height":360,"color":"1"},
+		{"id":"629f7d88bb6034ec","type":"file","file":"API.md","x":-2080,"y":-440,"width":832,"height":362,"color":"1"},
+		{"id":"3972d34e29693856","type":"file","file":"A note on RabbitMQ.md","x":1000,"y":-480,"width":957,"height":223,"color":"3"},
+		{"id":"8806960b839b665e","type":"file","file":"Frontend.md","x":-2080,"y":-20,"width":832,"height":230,"color":"1"},
+		{"id":"e7cd2d82b2ce9b35","type":"file","file":"Discord Bot.md","x":-2080,"y":280,"width":832,"height":240,"color":"1"},
+		{"id":"2245b0df603468e1","type":"file","file":"Bancho Bot.md","x":-2080,"y":560,"width":832,"height":220,"color":"1"},
+		{"id":"258083f36711dc8e","type":"file","file":"Service Authentication Sequence.md","x":-880,"y":720,"width":616,"height":620,"color":"#5961d9"},
+		{"id":"21863276e92a89e2","type":"file","file":"User Fetch Sequence.md","x":120,"y":1120,"width":700,"height":680,"color":"#5961d9"},
+		{"id":"e7f145244e2e4174","type":"file","file":"Game Update Sequence.md","x":-1142,"y":1460,"width":1140,"height":980,"color":"#5961d9"},
+		{"id":"cd3515f0416c5b0b","type":"file","file":"User Login Sequence.md","x":940,"y":1060,"width":854,"height":801,"color":"#5961d9"},
+		{"id":"6867e3f600192009","type":"file","file":"Purpose of this vault.md","x":-1960,"y":-1640,"width":593,"height":188,"color":"2"},
+		{"id":"172984455ed67d04","type":"file","file":"Design Decisions.md","x":-340,"y":-1700,"width":995,"height":1120,"color":"2"},
+		{"id":"9df448fb11399deb","type":"file","file":"Authentication.md","x":-3040,"y":-360,"width":832,"height":681,"color":"1"},
+		{"id":"4c6f362a231fd0c4","type":"file","file":"Architecture.md","x":-20,"y":-480,"width":887,"height":900,"color":"3"}
+	],
+	"edges":[
+		{"id":"fb5649e8d0c1ff04","fromNode":"0a2632a144662f21","fromSide":"bottom","toNode":"db3b0a18fa003628","toSide":"top"},
+		{"id":"24cff31521311deb","fromNode":"db3b0a18fa003628","fromSide":"left","toNode":"629f7d88bb6034ec","toSide":"right"},
+		{"id":"ec9a394914eaf974","fromNode":"db3b0a18fa003628","fromSide":"left","toNode":"9df448fb11399deb","toSide":"right"},
+		{"id":"a46366a181a0c3e2","fromNode":"db3b0a18fa003628","fromSide":"left","toNode":"ce88cf24bc64cb03","toSide":"right"},
+		{"id":"781da96e4870bf9a","fromNode":"db3b0a18fa003628","fromSide":"left","toNode":"8806960b839b665e","toSide":"right"},
+		{"id":"f8e91a5eb25c7d8a","fromNode":"db3b0a18fa003628","fromSide":"left","toNode":"2245b0df603468e1","toSide":"right"},
+		{"id":"45bdcd9f351a00eb","fromNode":"db3b0a18fa003628","fromSide":"right","toNode":"4c6f362a231fd0c4","toSide":"left"},
+		{"id":"29820d2c0d66e967","fromNode":"4c6f362a231fd0c4","fromSide":"right","toNode":"3972d34e29693856","toSide":"left"},
+		{"id":"5bdcbce7852591aa","fromNode":"258083f36711dc8e","fromSide":"right","toNode":"21863276e92a89e2","toSide":"left"},
+		{"id":"aad28c5a0d0bcf46","fromNode":"258083f36711dc8e","fromSide":"bottom","toNode":"e7f145244e2e4174","toSide":"top"},
+		{"id":"e03c91b036c23ded","fromNode":"21863276e92a89e2","fromSide":"left","toNode":"e7f145244e2e4174","toSide":"right"},
+		{"id":"1388364b3e62c80b","fromNode":"0a2632a144662f21","fromSide":"right","toNode":"172984455ed67d04","toSide":"left"},
+		{"id":"8bcf36ffea1a97a1","fromNode":"0a2632a144662f21","fromSide":"left","toNode":"6867e3f600192009","toSide":"right"}
+	]
+}

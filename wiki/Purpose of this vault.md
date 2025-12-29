@@ -1,0 +1,2 @@
+This vault is an attempt to design out as much of the program as is required to get started working on it without thinking too hard.
+If I ever get to a stage in implementation where I'm not sure the best way to implement something, this vault exists for additional planning. 

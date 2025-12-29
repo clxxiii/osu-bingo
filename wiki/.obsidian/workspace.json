@@ -1,0 +1,221 @@
+{
+  "main": {
+    "id": "df90a8cd1e752601",
+    "type": "split",
+    "children": [
+      {
+        "id": "64a1c20e3faf976d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "590b6fca4c03cfe6",
+            "type": "leaf",
+            "state": {
+              "type": "canvas",
+              "state": {
+                "file": "Planning.canvas",
+                "viewState": {
+                  "x": 459.8639359568623,
+                  "y": -77.1969349276727,
+                  "zoom": -3.4
+                }
+              },
+              "icon": "lucide-layout-dashboard",
+              "title": "Planning"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "c6be180cb00f179a",
+    "type": "split",
+    "children": [
+      {
+        "id": "665fc8aeaa42cfe4",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "dba683da43cb0b17",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "317f46c8be572713",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "7ae18b7b23c38d23",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "cc4d8d97f53027ce",
+    "type": "split",
+    "children": [
+      {
+        "id": "2b49654defb1337e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "db863a5651c8f2bb",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Excalidraw/GameUpdate.excalidraw.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for GameUpdate.excalidraw"
+            }
+          },
+          {
+            "id": "bdc641013dfc6bdd",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Excalidraw/GameUpdate.excalidraw.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from GameUpdate.excalidraw"
+            }
+          },
+          {
+            "id": "0baea7f234a8f59b",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "a052432aaa615c94",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "c13469a384e60e0c",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Excalidraw/GameUpdate.excalidraw.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of GameUpdate.excalidraw"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false,
+      "obsidian-excalidraw-plugin:New drawing": false
+    }
+  },
+  "active": "590b6fca4c03cfe6",
+  "lastOpenFiles": [
+    "Excalidraw/Drawing 2025-12-28 00.43.13.excalidraw.md",
+    "Planning.canvas",
+    "Purpose of this vault.md",
+    "README.md",
+    "Rust Rewrite Goals (Why I'm doing all this).md",
+    "Score Fetcher.md",
+    "Sequence diagrams.md",
+    "Service Authentication Sequence.md",
+    "Services.md",
+    "User Fetch Sequence.md",
+    "User Login Sequence.md",
+    "osu!Bingo Options Spec.md",
+    "Untitled.base",
+    "Untitled.md",
+    "Architecture.md",
+    "osu! Bingo Options Spec.md",
+    "Brain Storming.md",
+    "Excalidraw/Services.excalidraw.md",
+    "Excalidraw/UserLogin.excalidraw.md",
+    "Excalidraw/UserFetch.excalidraw.md",
+    "Excalidraw/ServiceAuthentication.excalidraw.md",
+    "Excalidraw/GameUpdate.excalidraw.md",
+    "Game Update Sequence.md",
+    "Design Decisions.md",
+    "API.md",
+    "Excalidraw/Architecture.excalidraw.md",
+    "Authentication.md",
+    "Excalidraw/Untitled-2025-10-16-2324.excalidraw",
+    "Excalidraw"
+  ]
+}

@@ -1,0 +1,1 @@
+RabbitMQ is what makes a micro service architecture possible. In this instance, many of the actions a service take use the RabbitMQ queue as it's queue. This enables multiple services of the same type to run at the same time, enabling horizontal scaling. This consideration is really important in each function the services attempt to do.

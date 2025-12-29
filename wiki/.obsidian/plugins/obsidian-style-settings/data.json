@@ -1,0 +1,11 @@
+{
+  "anuppuccin-theme-settings@@anuppuccin-theme-dark": "ctp-frappe",
+  "anuppuccin-theme-settings@@anuppuccin-theme-accents": "ctp-accent-pink",
+  "anuppuccin-theme-settings@@anp-canvas-dark-bg": false,
+  "anuppuccin-theme-settings@@anp-custom-vault-toggle": false,
+  "anuppuccin-theme-settings@@anp-file-icons": false,
+  "anuppuccin-theme-settings@@anp-floating-header": false,
+  "anuppuccin-theme-settings@@anp-collapse-folders": false,
+  "anuppuccin-theme-settings@@anp-alt-tab-style": "anp-mini-tab-toggle",
+  "anuppuccin-theme-settings@@anp-alt-rainbow-style": "anp-default-rainbow"
+}

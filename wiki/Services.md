@@ -1,0 +1,7 @@
+![[Services.excalidraw|100%]]
+- [[API]]
+- [[Authentication]]
+- [[Score Fetcher]]
+- [[Frontend]]
+- [[Bancho Bot]]
+- [[Discord Bot]]
