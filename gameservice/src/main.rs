@@ -5,6 +5,8 @@ mod functions;
 
 #[tokio::main]
 async fn main() {
+    dotenv::dotenv().ok();
+
     // Logger
     colog::default_builder()
         .format_timestamp_secs()

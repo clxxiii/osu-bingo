@@ -942,6 +942,7 @@ dependencies = [
  "bingolib",
  "chrono",
  "colog",
+ "dotenv",
  "log",
  "reqwest 0.13.2",
  "rosu-v2",
