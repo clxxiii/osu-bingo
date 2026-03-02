@@ -5,3 +5,6 @@ members = [
   "auth",
   "bingolib"
 ]
+
+[workspace.package]
+version = "0.1.0"
