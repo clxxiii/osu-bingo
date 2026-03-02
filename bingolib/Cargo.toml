@@ -4,3 +4,4 @@ version.workspace = true
 edition = "2024"
 
 [dependencies]
+chrono = "0.4.44"

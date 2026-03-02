@@ -3,7 +3,8 @@ resolver = "1"
 members = [
   "api",
   "auth",
-  "bingolib"
+  "bingolib",
+  "gameservice"
 ]
 
 [workspace.package]
