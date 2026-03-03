@@ -24,7 +24,7 @@ async fn main() {
         expires_at: Utc::now(),
     };
 
-    let scores = functions::update_user_scores(token).await;
+    let scores = functions::fetch_user_scores(token).await;
 
     println!("{scores:?}");
 }
