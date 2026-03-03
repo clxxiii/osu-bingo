@@ -8,3 +8,5 @@ path = "lib.rs"
 
 [dependencies]
 chrono = "0.4.44"
+lapin = "4.1.0"
+log = "0.4.29"
