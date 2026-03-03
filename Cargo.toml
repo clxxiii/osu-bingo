@@ -1,11 +1,6 @@
 [workspace]
 resolver = "1"
-members = [
-  "api",
-  "auth",
-  "bingolib",
-  "gameservice"
-]
+members = ["src/*"]
 
 [workspace.package]
 version = "0.1.0"

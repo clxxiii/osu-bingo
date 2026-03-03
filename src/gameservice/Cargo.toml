@@ -1,7 +1,11 @@
 [package]
-name = "gameservice"
+name = "bingo_gameservice"
 version.workspace = true
 edition = "2024"
+
+[[bin]]
+name = "gameservice"
+path = "main.rs"
 
 [dependencies]
 bingolib = { path = "../bingolib" }
