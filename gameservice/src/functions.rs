@@ -1,2 +1,2 @@
-mod update_user_scores;
-pub use update_user_scores::*;
+mod fetch_user_scores;
+pub use fetch_user_scores::*;
