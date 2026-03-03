@@ -1,13 +1,12 @@
-
 mod jwt;
 mod osu_oauth;
 
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
-use axum::{routing::get, extract::Extension, Router};
+use axum::{Router, extract::Extension, routing::get};
 
-use crate::{database::Database};
+use crate::database::Database;
 
 pub async fn router() -> Router {
     Router::new()

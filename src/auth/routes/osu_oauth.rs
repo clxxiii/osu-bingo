@@ -1,6 +1,11 @@
 use std::collections::HashMap;
 
-use axum::{extract::Query, response::{Redirect, Response}, routing::get, Router};
+use axum::{
+    Router,
+    extract::Query,
+    response::{Redirect, Response},
+    routing::get,
+};
 use bingolib::QueryParams;
 use serde::Deserialize;
 
@@ -10,7 +15,7 @@ const OSU_USER_URL: &str = "https://osu.ppy.sh/api/v2/me";
 
 #[derive(Deserialize)]
 struct Code {
-    code: String
+    code: String,
 }
 
 #[derive(Deserialize, Debug)]
@@ -18,7 +23,7 @@ struct AccessToken {
     access_token: String,
     expires_in: i32,
     refresh_token: String,
-    token_type: String
+    token_type: String,
 }
 
 pub async fn router() -> Router {
@@ -29,8 +34,10 @@ pub async fn router() -> Router {
 }
 
 async fn login() -> Redirect {
-    let client_id = std::env::var("OSU_CLIENT_ID").expect("OSU_CLIENT_ID environment variable should be defined");
-    let redirect_uri = std::env::var("OSU_REDIRECT_URI").expect("OSU_REDIRECT_URI environment variable should be defined");
+    let client_id = std::env::var("OSU_CLIENT_ID")
+        .expect("OSU_CLIENT_ID environment variable should be defined");
+    let redirect_uri = std::env::var("OSU_REDIRECT_URI")
+        .expect("OSU_REDIRECT_URI environment variable should be defined");
 
     let mut params = QueryParams::new();
     params.insert("client_id", &client_id);
@@ -42,9 +49,12 @@ async fn login() -> Redirect {
 }
 
 async fn callback(query: Query<Code>) -> Response {
-    let client_id = std::env::var("OSU_CLIENT_ID").expect("OSU_CLIENT_ID environment variable should be defined");
-    let client_secret = std::env::var("OSU_CLIENT_SECRET").expect("OSU_CLIENT_SECRET environment variable should be defined");
-    let redirect_uri = std::env::var("OSU_REDIRECT_URI").expect("OSU_REDIRECT_URI environment variable should be defined");
+    let client_id = std::env::var("OSU_CLIENT_ID")
+        .expect("OSU_CLIENT_ID environment variable should be defined");
+    let client_secret = std::env::var("OSU_CLIENT_SECRET")
+        .expect("OSU_CLIENT_SECRET environment variable should be defined");
+    let redirect_uri = std::env::var("OSU_REDIRECT_URI")
+        .expect("OSU_REDIRECT_URI environment variable should be defined");
 
     let req_client = reqwest::Client::new();
     let mut body = HashMap::new();
@@ -61,21 +71,13 @@ async fn callback(query: Query<Code>) -> Response {
         .header("Content-Type", "application/x-www-form-urlencoded")
         .form(&body)
         .send()
-        .await 
+        .await
     {
-        Ok(req) => {
-            match req.json().await {
-                Ok(x) => {
-                    x
-                },
-                Err(x) => {
-                    return error_to_response(x)
-                }
-            }
+        Ok(req) => match req.json().await {
+            Ok(x) => x,
+            Err(x) => return error_to_response(x),
         },
-        Err(x) =>  {
-           return error_to_response(x) 
-        }
+        Err(x) => return error_to_response(x),
     };
 
     println!("{:?}", token);
@@ -83,25 +85,16 @@ async fn callback(query: Query<Code>) -> Response {
         .get(OSU_USER_URL)
         .bearer_auth(token.access_token)
         .send()
-        .await 
+        .await
     {
-        Ok(req) => {
-            match req.json().await {
-                Ok(x) => {
-                    x
-                },
-                Err(x) => {
-                    return error_to_response(x)
-                }
-            }
+        Ok(req) => match req.json().await {
+            Ok(x) => x,
+            Err(x) => return error_to_response(x),
         },
-        Err(x) =>  {
-           return error_to_response(x) 
-        }
+        Err(x) => return error_to_response(x),
     };
     println!("{:?}", user);
-        
-    
+
     Response::new("".into())
 }
 
@@ -109,7 +102,10 @@ async fn logout() {}
 
 fn error_to_response(err: reqwest::Error) -> Response {
     Response::builder()
-        .status(err.status().unwrap_or(reqwest::StatusCode::INTERNAL_SERVER_ERROR))
+        .status(
+            err.status()
+                .unwrap_or(reqwest::StatusCode::INTERNAL_SERVER_ERROR),
+        )
         .body(axum::body::Body::from(err.to_string()))
         .unwrap()
 }
