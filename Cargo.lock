@@ -479,8 +479,10 @@ name = "bingolib"
 version = "0.1.0"
 dependencies = [
  "chrono",
+ "futures-lite",
  "lapin",
  "log",
+ "tokio",
 ]
 
 [[package]]
