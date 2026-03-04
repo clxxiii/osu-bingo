@@ -1,5 +1,6 @@
 use chrono::{DateTime, Utc};
 
+#[derive(serde::Serialize, serde::Deserialize)]
 pub struct OauthToken {
     pub id: String,
     pub user_id: String,

@@ -482,6 +482,8 @@ dependencies = [
  "futures-lite",
  "lapin",
  "log",
+ "serde",
+ "serde_json",
  "tokio",
 ]
 
