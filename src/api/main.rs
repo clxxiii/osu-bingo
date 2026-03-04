@@ -23,11 +23,10 @@ async fn main() {
     );
 
     // Logger
-    colog::default_builder()
-        .format_timestamp_secs()
-        .format_file(true)
-        .filter_level(log::LevelFilter::Trace)
-        .init();
+    if std::env::var("RUST_LOG").is_err() {
+        unsafe { std::env::set_var("RUST_LOG", "info") }
+    }
+    env_logger::init();
 
     log::info!("Opened a connection at {}", addr);
     axum::serve(listener, router).await.unwrap();

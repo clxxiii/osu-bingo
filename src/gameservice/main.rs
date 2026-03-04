@@ -9,11 +9,10 @@ async fn main() {
     dotenv::dotenv().ok();
 
     // Logger
-    colog::default_builder()
-        .format_timestamp_secs()
-        .format_file(true)
-        .filter_level(log::LevelFilter::Debug)
-        .init();
+    if std::env::var("RUST_LOG").is_err() {
+        unsafe { std::env::set_var("RUST_LOG", "info") }
+    }
+    env_logger::init();
 
     let conn = match get_connection().await {
         Ok(x) => x,
