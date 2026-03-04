@@ -1,0 +1,12 @@
+FROM public.ecr.aws/docker/library/rust:slim AS builder
+WORKDIR /build
+COPY . .
+RUN apt-get update && apt-get install -y musl-tools libssl-dev perl make
+RUN rustup target add x86_64-unknown-linux-musl
+RUN cargo build --release --target x86_64-unknown-linux-musl
+
+FROM scratch AS run
+WORKDIR /
+COPY --from=builder /build/target/x86_64-unknown-linux-musl/release/auth /
+
+CMD ["/auth"]

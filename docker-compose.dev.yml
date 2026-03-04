@@ -1,0 +1,14 @@
+# This docker compose file should ONLY be used for development purposes.
+# This config exposes each container using host mode, which is great for simple testing,
+# not great for deployment.
+
+services:
+  auth:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.auth
+    network_mode: host
+
+    env_file:
+      - .env
