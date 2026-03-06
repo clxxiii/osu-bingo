@@ -38,40 +38,6 @@ impl Database {
             .as_ref()
             .ok_or("Disconnected from Database".into())
     }
-
-    pub async fn get_all_keys(&mut self) -> Result<Vec<SigningKey>, String> {
-        let pool = self.connect().await?;
-        sqlx::query_as("SELECT * FROM signing_key ;")
-            .fetch_all(pool)
-            .await
-            .map_err(|e| e.to_string())
-    }
-
-    pub async fn get_latest_key(&mut self) -> Result<Option<SigningKey>, String> {
-        let pool = self.connect().await?;
-        // Delete old keys
-        let _: Option<()> = sqlx::query_as("DELETE FROM signing_key WHERE expires_at<NOW();")
-            .fetch_optional(pool)
-            .await
-            .map_err(|e| e.to_string())?;
-
-        sqlx::query_as("SELECT * FROM signing_key ORDER BY expires_at DESC;")
-            .fetch_optional(pool)
-            .await
-            .map_err(|e| e.to_string())
-    }
-
-    pub async fn insert_key(&mut self, key: &SigningKey) -> Result<(), String> {
-        let pool = self.connect().await?;
-        sqlx::query_as("INSERT INTO signing_key (id, jwk_key, expires_at) VALUES ($1, $2, $3);")
-            .bind(&key.id)
-            .bind(&key.jwk_key)
-            .bind(&key.expires_at)
-            .fetch_optional(pool)
-            .await
-            .map_err(|e| e.to_string())
-            .map(|_: Option<()>| ())
-    }
 }
 
 pub type Context = Arc<Mutex<Database>>;
